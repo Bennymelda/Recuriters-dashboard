@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+html {
+  scroll-behavior: smooth;
+}
+
+@keyframes fadeInOut {
+ 0% {
+ opacity: 0;
+ transform: translateY(8px);
+ }
+
+ 10% {
+ opacity: 1;
+ transform: translateY(0);
+ }
+
+ 90% {
+ opacity: 1;
+ }
+
+ 100% {
+ opacity: 0;
+ transform: translateY(-8px);
+ }
+}
+
+.animate-fade {
+ animation: fadeInOut 4s ease-in-out;
+}
