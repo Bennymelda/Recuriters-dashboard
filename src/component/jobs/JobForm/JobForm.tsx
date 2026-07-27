@@ -7,7 +7,7 @@ import DescriptionSection from "./DesriptionSection";
 import { useState } from "react";
 import type { Job } from "../../../types/job";
 import { useJobStore } from "../../../store/jobStore";
-import { MdWork } from "react-icons/md";
+
 import { useToastStore } from "../../toast/toastStore";
 interface JobFormProps {
  mode: "create" | "edit";
@@ -80,7 +80,7 @@ if (!description.trim()) {
  const jobData= {
  id: crypto.randomUUID(),
     name: title,
-    icon: MdWork,
+    icon: "work",
     iconColor: "#408A71",
  title,
  department,

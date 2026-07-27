@@ -109,7 +109,7 @@ const unreadCount = useNotificationStore(
  </p>
  </div>
  ) : (
- notifications.slice(0, 5).map((notification) => (
+ notifications.map((notification) => (
  <button
  key={notification.id}
 onClick={() => {

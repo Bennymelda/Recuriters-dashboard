@@ -7,7 +7,7 @@ import DescriptionSection from "./JobForm/DesriptionSection";
 import { useState, useEffect } from "react";
 import type { Job } from "../../types/job";
 import { useJobStore } from "../../store/jobStore";
-import { MdWork } from "react-icons/md";
+
 import { useToastStore } from "../toast/toastStore";
 interface JobFormProps {
  mode: "create" | "edit";
@@ -58,7 +58,7 @@ const handleSubmit = (e: React.FormEvent) => {
 
  const jobData = {
  name: title,
- icon: MdWork,
+ icon: "work",
  iconColor: "#408A71",
  title,
  department,

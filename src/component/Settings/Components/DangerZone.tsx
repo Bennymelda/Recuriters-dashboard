@@ -51,6 +51,10 @@ const exportData = {
  localStorage.getItem("careerflow-candidates") || "{}"
  ),
 
+jobs: JSON.parse(
+ localStorage.getItem("careerflow-jobs") || "{}"
+),
+
  team: JSON.parse(
  localStorage.getItem("careerflow-team") || "{}"
  ),
@@ -352,9 +356,6 @@ clearNotifications();
 />
 
 
-😫
-😭
-💪
 
 
 

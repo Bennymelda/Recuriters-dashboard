@@ -79,8 +79,8 @@ const hasChanges =
 
  {/* Avatar */}
 
- <div className="rounded-[32px] border border-zinc-100 bg-white p-8 dark:border-zinc-800 dark:bg-zinc-900">
- <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+ <div className="rounded-[32px] border border-zinc-100 bg-white p-4  md:p-8 dark:border-zinc-800 dark:bg-zinc-900">
+ <div className="flex flex-col  gap-4 md:gap-8 lg:flex-row lg:items-center lg:justify-between">
 
  {/* Left */}
  <div className="flex items-center gap-5">
@@ -117,8 +117,9 @@ const hasChanges =
  }
  alt={fullName}
  className="
- h-28
- w-28
+ h-24 w-25
+ md:h-28
+ md:w-28
  rounded-full
  border
  border-zinc-200
@@ -137,8 +138,9 @@ const hasChanges =
  bottom-0
  right-0
  flex
- h-10
- w-10
+ h-8 w-8
+ md:h-10
+ md:w-10
  items-center
  justify-center
  rounded-full
@@ -181,12 +183,12 @@ const hasChanges =
 
  {/* Profile Info */}
  <div>
- <h1 className="text-3xl font-bold text-zinc-900 dark:text-white">
+ <h1 className="text-2xl md:text-3xl font-bold text-zinc-900 dark:text-white">
  {fullName || "Your Name"}
  </h1>
 
 
- <p className="mt-1 max-w-xl text-sm leading-7 text-zinc-500 dark:text-zinc-400">
+ <p className="mt-1 max-w-sm md:max-w-xl text-sm leading-7 text-zinc-500 dark:text-zinc-400">
  Manage your personal information, profile photo, and professional details.
  This information is visible across your recruiter workspace.
  </p>

@@ -11,7 +11,7 @@ const NotificationCard = ({
 }: NotificationCardProps) => {
  return (
  <button
- onClick​={onRead}
+ onClick={onRead}
  className={`
  flex
  w-full
@@ -25,7 +25,7 @@ const NotificationCard = ({
 
  ${
  !notification.read
- ? "bg-[hashtag#EEF8F3] border-[hashtag#408A71]/30"
+ ? "bg-[#EEF8F3] border-[#408A71]/30"
  : "bg-white border-zinc-200"
  }
 
@@ -43,7 +43,7 @@ const NotificationCard = ({
 
  ${
  !notification.read
- ? "bg-[hashtag#408A71]"
+ ? "bg-[#408A71]"
  : "bg-zinc-400"
  }
  `}

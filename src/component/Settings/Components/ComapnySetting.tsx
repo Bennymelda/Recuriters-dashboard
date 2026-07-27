@@ -69,15 +69,15 @@ useEffect(() => {
 const fileInputRef = useRef<HTMLInputElement>(null);
 
  return (
- <div className="space-y-8">
+ <div className="space-y-4 md:space-y-8">
 
 
  {/* Header */}
 
 
-<div className="rounded-[32px] border border-zinc-100 bg-white p-8  dark:border-zinc-800 dark:bg-zinc-900">
+<div className="rounded-[32px] border border-zinc-100 bg-white p-4 md:p-8  dark:border-zinc-800 dark:bg-zinc-900">
 
- <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+ <div className="flex flex-col gap-4 md:gap-8 lg:flex-row lg:items-center lg:justify-between">
 
  {/* Left */}
  <div className="flex items-center gap-4">
@@ -102,8 +102,9 @@ const fileInputRef = useRef<HTMLInputElement>(null);
  }
  alt="Company Logo"
  className="
- h-28
- w-28
+  h-24 w-25
+ md:h-28
+ md:w-28
  rounded-3xl
  border
  border-zinc-200
@@ -125,8 +126,9 @@ const fileInputRef = useRef<HTMLInputElement>(null);
  right-0
 
  flex
- h-10
- w-10
+ h-8 w-8
+ md:h-10
+ md:w-10
  items-center
  justify-center
 
@@ -191,7 +193,7 @@ const fileInputRef = useRef<HTMLInputElement>(null);
 
  
 
- <p className=" max-w-xl text-sm leading-7 text-zinc-500 dark:text-zinc-400">
+ <p className="max-w-sm md:max-w-xl text-sm leading-7 text-zinc-500 dark:text-zinc-400">
  Manage your organization's branding, contact information and
  workspace identity. Changes made here are reflected throughout
  your recruiter dashboard.
@@ -217,7 +219,8 @@ const fileInputRef = useRef<HTMLInputElement>(null);
  border
  border-zinc-100
  bg-white
- p-8
+ p-4
+ md:p-8
 
  dark:border-zinc-800
  dark:bg-zinc-900

@@ -48,6 +48,8 @@ function App() {
  <Route path="/interview" element={<InterviewsPage />} />
  <Route path="/team" element={<TeamPage />} />
  <Route path="/team/:memberId" element={<TeamMemberProfilePage />} />
+
+
 </Route>
 
 

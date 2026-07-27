@@ -5,18 +5,23 @@ import {
 
  MdBusiness,
  MdWarning,
+ MdArrowBack,
+
 } from "react-icons/md";
+import { Link} from "react-router";
 
 interface SettingsSidebarProps {
  activeSection: string;
  setActiveSection: (section: string) => void;
  isAdmin: boolean;
+ onClose?: () => void;
 }
 
 const SettingsSidebar = ({
  activeSection,
  setActiveSection,
  isAdmin,
+
 }: SettingsSidebarProps) => {
  const menuItems = [
  {
@@ -37,6 +42,7 @@ const SettingsSidebar = ({
 
  ];
 
+
  const adminItems = [
 
  {
@@ -54,23 +60,43 @@ const SettingsSidebar = ({
  return (
  <aside
  className="
+ sticky
+ top-0
+
  h-full
- rounded-3xl
- border
+ w-full
+
+ border-r
  border-zinc-200
+
  bg-white
- p-5
- 
- shadow-sm
- dark:border-zinc-700
+
+ px-5
+ py-6
+
+ dark:border-zinc-800
  dark:bg-zinc-900
  "
  >
- <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-zinc-500">
- Settings
- </p>
+ {/* Heading */}
+ <div className="mb-8 flex items-center gap-2">
+    <div  >
+    <Link to="/dashboard">
+<MdArrowBack size={20} className="bg-gary-600"/>
+</Link>
+    </div>
+    <div className="mb-6 flex items-center gap-3 lg:hidden">
 
- <div className="space-y-2">
+
+ 
+</div>
+ <p className="text-xs  font-semibold uppercase tracking-[0.2em] text-zinc-400">
+ Personal
+ </p>
+ </div>
+
+ {/* Main Menu */}
+ <nav className="space-y-2">
  {menuItems.map((item) => {
  const Icon = item.icon;
  const active = activeSection === item.id;
@@ -88,11 +114,12 @@ const SettingsSidebar = ({
  px-4
  py-3
  text-left
- transition
+ transition-all
+ duration-200
 
  ${
  active
- ? "bg-[#408A71] text-white shadow-md"
+ ? "bg-[#408A71] text-white shadow-sm"
  : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
  }
  `}
@@ -105,17 +132,17 @@ const SettingsSidebar = ({
  </button>
  );
  })}
- </div>
+ </nav>
 
  {isAdmin && (
  <>
- <div className="my-6 border-t border-zinc-200 dark:border-zinc-700" />
+ <div className="my-8 border-t border-zinc-200 dark:border-zinc-800" />
 
- <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-zinc-500">
+ <p className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-zinc-400">
  Workspace
  </p>
 
- <div className="space-y-2">
+ <nav className="space-y-2">
  {adminItems.map((item) => {
  const Icon = item.icon;
  const active = activeSection === item.id;
@@ -133,11 +160,12 @@ const SettingsSidebar = ({
  px-4
  py-3
  text-left
- transition
+ transition-all
+ duration-200
 
  ${
  active
- ? "bg-[#408A71] text-white shadow-md"
+ ? "bg-[#408A71] text-white shadow-sm"
  : item.id === "danger"
  ? "text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20"
  : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
@@ -152,11 +180,11 @@ const SettingsSidebar = ({
  </button>
  );
  })}
- </div>
+ </nav>
  </>
  )}
  </aside>
- );
+);
 };
 
 export default SettingsSidebar;

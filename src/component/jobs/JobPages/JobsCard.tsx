@@ -47,7 +47,10 @@ const truncateText = (text: string, limit: number) => {
 };
 const Icon =
  companyIcons[job.icon as keyof typeof companyIcons];
-  return (
+  console.log(companyIcons);
+console.log(job.icon);
+console.log(companyIcons[job.icon as keyof typeof companyIcons]);
+ return (
     <>
  <div className="
  group relative rounded-2xl border border-zinc-200
@@ -60,11 +63,14 @@ const Icon =
  >
 <div>
 
+    
+
     <div>
         <div className="flex justify-between gap-3 items-start">
             <div className="flex gap-2 items-center">
                {Icon && (
  <Icon
+ size={32}
  className="h-6 w-6 md:h-8 md:w-8"
  style={{
  color: theme === "dark"

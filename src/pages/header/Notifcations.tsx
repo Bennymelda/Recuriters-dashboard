@@ -32,10 +32,10 @@ const Notifications = () => {
 
  {notifications.length > 0 && (
  <button
- onClick​={markAllAsRead}
+ onClick={markAllAsRead}
  className="
  rounded-xl
- bg-[hashtag#408A71]
+ bg-[#408A71]
  px-5
  py-3
  text-sm
