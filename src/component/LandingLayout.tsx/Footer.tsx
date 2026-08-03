@@ -1,7 +1,7 @@
 export default function Footer() {
  return (
  <footer className=" text-gray-700 py-12 mt-20">
- <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-10">
+ <div className="max-w-12xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-10">
 
  {/* Brand */}
  <div>
@@ -46,7 +46,7 @@ export default function Footer() {
  </div>
 
  {/* Bottom */}
- <div className="border-t dark:text-gray-400 border-gray-300 mt-10 pt-6 text-center text-sm text-gray-500">
+ <div className="border-t dark:text-gray-400 border-gray-300 dark:border-gray-700 mt-10 pt-6 text-center text-sm text-gray-500">
  © {new Date().getFullYear()} CareerFlow. Built for modern hiring teams.
  </div>
  </footer>

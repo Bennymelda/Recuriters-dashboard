@@ -6,6 +6,7 @@ import {
  MdVerified,
 } from "react-icons/md";
 import { useCandidateStore } from "../../store/candidateStore";
+import { AiOutlineRise } from "react-icons/ai";
 const PipelineStats = () => {
  const candidates = useCandidateStore((state) => state.candidates);
 
@@ -27,6 +28,8 @@ const PipelineStats = () => {
  (candidate) => candidate.status === "Screening"
  ).length,
  icon: <MdManageSearch size={26} />,
+ num:"12",
+ 
  color:
  "bg-amber-100 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400",
  border: "hover:border-amber-300",
@@ -37,6 +40,7 @@ const PipelineStats = () => {
  value: candidates.filter(
  (candidate) => candidate.status === "Interview"
  ).length,
+ num:"15",
  icon: <MdCalendarMonth size={26} />,
  color:
  "bg-purple-100 text-purple-600 dark:bg-purple-500/10 dark:text-purple-400",
@@ -49,6 +53,7 @@ const PipelineStats = () => {
  (candidate) => candidate.status === "Offer"
  ).length,
  icon: <MdDescription size={26} />,
+ num:"20",
  color:
  "bg-orange-100 text-orange-600 dark:bg-orange-500/10 dark:text-orange-400",
  border: "hover:border-orange-300",
@@ -60,6 +65,7 @@ const PipelineStats = () => {
  (candidate) => candidate.status === "Hired"
  ).length,
  icon: <MdVerified size={26} />,
+ num:"16",
  color:
  "bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400",
  border: "hover:border-emerald-300",
@@ -95,14 +101,11 @@ snap-start
 
  lg:min-w-0
 
- flex
- items-center
+ 
  gap-4
 
  rounded-2xl
-
- border
- border-zinc-200
+shadow-sm
 
  bg-white
 
@@ -118,7 +121,21 @@ snap-start
  dark:bg-zinc-900
  "
  >
- <div
+    <div className="flex justify-between ">
+ 
+
+ <div className="min-w-0 flex-1">
+ 
+
+ <p className="mt-1 text-sm dark:text-white text-zinc-500 ">
+ {stat.title} candidate
+ </p>
+ <h2 className="text-3xl font-bold text-zinc-900 dark:text-white">
+ {stat.value}
+ </h2>
+ </div>
+
+<div
  className={`
  flex
  h-11
@@ -127,7 +144,7 @@ snap-start
  items-center
  justify-center
 
- rounded-2xl
+ rounded-xl
 
  transition-all
  duration-300
@@ -139,16 +156,16 @@ snap-start
  >
  {stat.icon}
  </div>
+</div>
+<div className="flex items-center gap-4 mt-5">
+                 <div className=" bg-green-100 text-xs px-2 rounded-4xl flex gap-1 items-center">
+                    <AiOutlineRise />
+                    <p className="text-xs dark:text-gray-700">{stat.num}</p>
+                </div> 
+                <p className="text-sm text-gray-600 font-semibold whitespace-nowrap dark:text-gray-200">{stat.title}</p>
+                </div>
 
- <div className="min-w-0 flex-1">
- <h2 className="text-3xl font-bold text-zinc-900 dark:text-white">
- {stat.value}
- </h2>
 
- <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
- {stat.title} candidate
- </p>
- </div>
  </div>
  ))}
 </section>

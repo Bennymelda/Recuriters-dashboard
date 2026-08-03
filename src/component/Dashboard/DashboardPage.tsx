@@ -1,7 +1,6 @@
-import DashboardHeader from "./DashboardHeader";
+//import DashboardHeader from "./DashboardHeader";
 import DashboardStats from "./DashboardStats";
 import NeedsAttention from "./NeedsAttention";
-//import UpcomingInterviews from "../interviews/UpcomingInterview";
 import PipelineOverview from "./PipelineOverview";
 import DashboardRecentApplications from "./RecentApplication";
 import RecentHiringActivity from "./RecentHiringActivity";
@@ -9,38 +8,46 @@ import DashboardUpcomingInterviews from "./UpcomingInterview";
 
 const DashboardPage = () => {
  return (
- <div className="space-y-8">
- <DashboardHeader />
+ <div className="w-full space-y-8 overflow-hidden">
+ 
 
+ {/* Stats */}
  <DashboardStats />
 
-<div className="flex flex-row gap-4 items-start">
-    
- <div className="w-full">
-     <RecentHiringActivity />
+ {/* Hiring Activity + Pipeline */}
+ <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1.7fr)_minmax(320px,1fr)]">
+ <div className="min-w-0">
+ <RecentHiringActivity />
  </div>
 
-<div className="w-[40%]">
-<PipelineOverview />
-    </div>
+ <div className="min-w-0">
+ <PipelineOverview />
+ </div>
  </div>
 
- <div className="flex flex-row gap-4 items-start">
- <div className="w-[50%]">
-<NeedsAttention />
- </div>
-<div className="w-[50%]">
-<DashboardUpcomingInterviews  />
-</div>
 
+
+ <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1.7fr)_minmax(320px,1fr)]">
+ <div className="min-w-0">
+ <NeedsAttention />
  </div>
 
- <div className="grid gap-8 xl:grid-cols-2">
+ <div className="min-w-0">
+ <DashboardUpcomingInterviews />
+ </div>
+ </div>
+
+
+
+ <div className="w-full min-w-0">
  
-<DashboardRecentApplications />
-
  
+ <DashboardRecentApplications />
  </div>
+
+
+ {/* Recent Applications */}
+
  </div>
  );
 };

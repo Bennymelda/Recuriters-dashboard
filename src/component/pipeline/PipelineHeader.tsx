@@ -2,11 +2,11 @@ import { MdAccountTree } from "react-icons/md";
 
 const PipelineHeader = () => {
  return (
- <section className="flex flex-col justify-between gap-6 lg:flex-row lg:items-center w-full ">
+ <section className="flex flex-col justify-between gap-6  w-full ">
 
 
 
- <div className="border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900 rounded-2xl">
+ <div className=" shadow-sm bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900 rounded-2xl">
 
  <div className="flex items-center gap-3">
 

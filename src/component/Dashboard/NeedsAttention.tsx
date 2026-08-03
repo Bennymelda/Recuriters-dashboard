@@ -1,6 +1,6 @@
 import {
  MdWarningAmber,
- MdArrowForward,
+
  MdPersonSearch,
  MdEventBusy,
  MdWorkOff,
@@ -74,11 +74,10 @@ const alerts = [
  <section
  className="
  rounded-3xl
- border
- border-zinc-200
+
  bg-white
  p-6
- shadow-sm
+
  dark:border-zinc-700
  dark:bg-zinc-900
  "
@@ -109,7 +108,7 @@ const alerts = [
  justify-between
  rounded-2xl
  border
- border-zinc-200
+ border-zinc-100
  p-4
  transition
  hover:border-[#408A71]
@@ -119,7 +118,7 @@ const alerts = [
  >
  <div className="flex items-start gap-4">
  <div
- className={`flex h-12 w-12 items-center justify-center rounded-2xl ${alert.color}`}
+ className={`flex md:h-12 md:w-12 h-10 w-10 items-center justify-center rounded-2xl ${alert.color}`}
  >
  {alert.icon}
  </div>
@@ -130,6 +129,19 @@ const alerts = [
  <h3 className="font-semibold text-zinc-900 dark:text-white">
  {alert.title}
  </h3>
+
+ 
+
+ </div>
+
+ <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
+ {alert.description}
+ </p>
+</div>
+
+
+
+ </div>
 
  <span
  className="
@@ -146,37 +158,6 @@ const alerts = [
  >
  {alert.count}
  </span>
-
- </div>
-
- <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
- {alert.description}
- </p>
-</div>
-
-
-
- </div>
-
- <button
- className="
- flex
- items-center
- gap-2
- rounded-xl
- px-4
- py-2
- text-sm
- font-semibold
- text-[#408A71]
- transition
- hover:bg-[#EEF8F3]
- dark:hover:bg-[#285A48]/20
- "
- >
- View
- <MdArrowForward />
- </button>
  </div>
  ))}
  </div>

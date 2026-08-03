@@ -52,7 +52,8 @@ const Testimonial = () => {
  key={index}
  className="
  min-w-[85%] md:min-w-0 snap-center
- bg-white dark:bg-zinc-800 p-4 rounded-xl
+ bg-white dark:bg-zinc-800 px-6
+ py-8 rounded-xl
  shadow-sm 
 
  transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]

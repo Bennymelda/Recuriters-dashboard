@@ -7,11 +7,10 @@ const DashboardRecentApplications = () => {
  <section
  className="
  rounded-3xl
- border
- border-zinc-200
+
  bg-white
  p-6
- shadow-sm
+
 
  dark:border-zinc-700
  dark:bg-zinc-900
@@ -41,10 +40,10 @@ const DashboardRecentApplications = () => {
  justify-between
  rounded-2xl
  border
- border-zinc-200
+ border-zinc-100
  p-4
  transition
- hover:shadow-md
+ hover:shadow-sm
 
  dark:border-zinc-700
  "
@@ -82,7 +81,7 @@ const DashboardRecentApplications = () => {
  </div>
 
 
- <div className="text-right">
+ <div className="text-right flex items-center gap-2">
 
  <span
  className="
@@ -102,7 +101,7 @@ const DashboardRecentApplications = () => {
  </span>
 
 
- <p className="mt-2 text-xs text-zinc-500">
+ <p className=" text-xs text-zinc-500">
  {
  new Date(candidate.createdAt)
  .toLocaleDateString("en-US", {

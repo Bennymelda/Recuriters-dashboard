@@ -69,7 +69,7 @@ useEffect(() => {
 const fileInputRef = useRef<HTMLInputElement>(null);
 
  return (
- <div className="space-y-4 md:space-y-8">
+ <div className="space-y-4 md:space-y-8 min-h-screen">
 
 
  {/* Header */}

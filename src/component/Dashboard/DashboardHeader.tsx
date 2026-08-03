@@ -9,28 +9,28 @@ const DashboardHeader = () => {
             : hour < 18
                 ? "Good Afternoon"
                 : "Good Evening";
-
+/*
     const today = new Date().toLocaleDateString("en-US", {
         weekday: "long",
         day: "numeric",
         month: "long",
         year: "numeric",
     });
-
+*/
     return (
  <section
  className="
  relative
  overflow-hidden
  rounded-3xl
- border border-zinc-200
+
  bg-white
- px-6 py-7
- shadow-sm
+ px-4 py-4
+
  dark:border-zinc-800
  dark:bg-zinc-900
- lg:px-8
- lg:py-8
+ lg:px-4
+ lg:py-4
  "
  >
  {/* Subtle decorative background */}
@@ -89,28 +89,7 @@ const DashboardHeader = () => {
  {/* Right */}
  <div className="flex shrink-0 flex-col items-start gap-4 sm:flex-row sm:items-center lg:flex-col lg:items-end">
  
- {/* Date */}
- <div
- className="
- flex
- items-center
- gap-2
- rounded-xl
- border
- border-zinc-200
- bg-zinc-50
- px-4
- py-2.5
- dark:border-zinc-700
- dark:bg-zinc-800/70
- "
- >
- <span className="h-2 w-2 rounded-full bg-[#285A48] dark:bg-[#B0E4CC]" />
-
- <p className="text-sm font-medium text-zinc-600 dark:text-zinc-300">
- {today}
- </p>
- </div>
+ 
 
  {/* Create Job */}
  <button

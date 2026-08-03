@@ -82,7 +82,7 @@ const SettingsSidebar = ({
  <div className="mb-8 flex items-center gap-2">
     <div  >
     <Link to="/dashboard">
-<MdArrowBack size={20} className="bg-gary-600"/>
+<MdArrowBack size={20} className="bg-gary-600 dark:text-gray-300"/>
 </Link>
     </div>
     <div className="mb-6 flex items-center gap-3 lg:hidden">

@@ -36,7 +36,7 @@ const SelectRole = () => {
  justify-center
  bg-white
  px-4
-
+shadow-sm
  dark:bg-zinc-950
  "
  >
@@ -76,6 +76,7 @@ const SelectRole = () => {
  className="
  mt-2
  text-zinc-500
+ dark:text-gray-300
  "
  >
  Choose your role to personalize your experience.
@@ -144,6 +145,7 @@ const SelectRole = () => {
  mt-2
  text-sm
  text-zinc-500
+ dark:text-gray-300
  "
  >
  Admin or Hiring Manager. Manage jobs,
@@ -206,6 +208,7 @@ const SelectRole = () => {
  className="
  mt-2
  text-sm
+ dark:text-gray-300
  text-zinc-500
  "
  >

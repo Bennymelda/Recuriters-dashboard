@@ -1,5 +1,5 @@
 import {
- MdEvent,
+
  MdPerson,
 } from "react-icons/md";
 
@@ -14,11 +14,10 @@ const DashboardUpcomingInterviews = () => {
  <section
  className="
  rounded-3xl
- border
- border-zinc-200
+
  bg-white
  p-6
- shadow-sm
+
 
  dark:border-zinc-700
  dark:bg-zinc-900
@@ -53,7 +52,7 @@ const DashboardUpcomingInterviews = () => {
  border-zinc-200
  p-4
  transition
- hover:shadow-md
+ hover:shadow-sm
 
  dark:border-zinc-700
  "
@@ -84,12 +83,12 @@ const DashboardUpcomingInterviews = () => {
  </h3>
 
 
- <p className="text-sm text-zinc-500">
+ <p className="text-sm text-zinc-500 dark:text-gray-300">
  {interview.appliedRole}
  </p>
 
 
- <div className="mt-2 flex items-center gap-2 text-xs text-zinc-500">
+ <div className="mt-2 flex items-center gap-2 text-xs text-zinc-500 dark:text-gray-300">
 
  <MdPerson size={15}/>
 
@@ -106,37 +105,22 @@ const DashboardUpcomingInterviews = () => {
 
  <div
  className="
- rounded-2xl
+ rounded-3xl
  bg-[#EEF8F3]
- px-4
- py-3
+ px-3
+ py-1
  text-right
-
+flex flex-row
+items-center
+gap-2
  dark:bg-[#285A48]/20
  "
  >
 
- <div
- className="
- flex
- items-center
- gap-2
- text-sm
- font-semibold
- text-[#285A48]
-
- dark:text-[#B0E4CC]
- "
- >
-
- <MdEvent size={16}/>
-
- {interview.stage}
-
- </div>
+ 
 
 
- <p className="mt-1 text-xs text-zinc-500">
+ <p className=" text-xs text-zinc-500 dark:text-gray-200">
 
  {
  new Date(interview.date)

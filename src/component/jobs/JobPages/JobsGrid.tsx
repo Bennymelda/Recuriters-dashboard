@@ -9,7 +9,7 @@ interface JobsGridProps {
 const JobsGrid = ({ jobs, onEdit }: JobsGridProps) => {
  if (jobs.length === 0) {
  return (
- <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-zinc-300 bg-white py-20 text-center dark:border-zinc-700 dark:bg-zinc-900">
+ <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-zinc-300 bg-white py-20 text-center dark:border-zinc-700 mt-5 dark:bg-zinc-900">
  <h2 className="text-xl font-semibold text-zinc-900 dark:text-white">
  No Jobs Found
  </h2>

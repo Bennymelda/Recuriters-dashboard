@@ -56,9 +56,9 @@ const hasSpecialCharacter = /[!@#$%^&*(),.?":{}|<>]/.test(newPassword);
 
 
  return (
- <div>
+ <div className="min-h-screen">
 
- <div className="mb-8">
+ <div className="mb-8 ">
  <h2 className="text-2xl font-bold text-zinc-900 dark:text-white">
  Security
  </h2>

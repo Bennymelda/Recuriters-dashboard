@@ -324,7 +324,7 @@ dark:ring-zinc-900
 
  {/* Details */}
 
- <div className="mt-5 mb-5 space-y-4">
+ <div className="mt-5 mb-5 space-y-4 w-fit">
 
 
 <div className="
