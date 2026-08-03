@@ -1,8 +1,11 @@
+import { Link } from "react-router";
+
+
 const CTA = () => {
     return ( <>
     <section className="py-10 mb-20">
  <div className="max-w-container-max mx-auto text-center">
- <div className="bg-[#e3e0ff] rounded-[2.5rem] py-xl px-10 py-10 md:py-10 md:px-20 space-y-md relative overflow-hidden">
+ <div className="dark:bg-[#ecfff3] bg-[#76cfae] rounded-[2.5rem] py-xl px-10 py-15 md:py-20 md:px-20 space-y-md relative overflow-hidden">
 
  {/* SVG Decorations */}
  <svg className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
@@ -31,17 +34,20 @@ const CTA = () => {
  </p>
 
  <div className="pt-5 relative z-10">
- <button
+ <Link to="/signup"
  className="
  px-6 py-4
- bg-[#3525cd]
+ bg-[#285A48]
+ dark:bg-[#B0E4CC]
  text-white
  mt-5
  rounded-lg
  font-bold
  cursor-pointer
 hover:bg-white
-hover:text-[#3525cd]
+hover:text-[#285A48]
+hover:dark:text-[#B0E4CC]
+dark:text-black
  transition-all duration-500 ease-out
  hover:-translate-y-2
  hover:shadow-2xl
@@ -51,7 +57,7 @@ hover:text-[#3525cd]
  "
  >
  Get Started Free
- </button>
+ </Link>
  </div>
 
  </div>

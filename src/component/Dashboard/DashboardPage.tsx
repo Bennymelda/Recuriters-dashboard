@@ -14,22 +14,32 @@ const DashboardPage = () => {
 
  <DashboardStats />
 
- <div className="grid gap-8 xl:grid-cols-3">
- <div className="xl:col-span-2">
- <NeedsAttention />
+<div className="flex flex-row gap-4 items-start">
+    
+ <div className="w-full">
+     <RecentHiringActivity />
  </div>
 
- <div>
- <DashboardUpcomingInterviews  />
- </div>
+<div className="w-[40%]">
+<PipelineOverview />
+    </div>
  </div>
 
- <PipelineOverview />
+ <div className="flex flex-row gap-4 items-start">
+ <div className="w-[50%]">
+<NeedsAttention />
+ </div>
+<div className="w-[50%]">
+<DashboardUpcomingInterviews  />
+</div>
+
+ </div>
 
  <div className="grid gap-8 xl:grid-cols-2">
- <DashboardRecentApplications />
+ 
+<DashboardRecentApplications />
 
- <RecentHiringActivity />
+ 
  </div>
  </div>
  );

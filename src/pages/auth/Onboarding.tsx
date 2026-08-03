@@ -34,7 +34,7 @@ const SelectRole = () => {
  min-h-screen
  items-center
  justify-center
- bg-zinc-50
+ bg-white
  px-4
 
  dark:bg-zinc-950
@@ -47,12 +47,13 @@ const SelectRole = () => {
  max-w-3xl
  rounded-3xl
  border
- border-zinc-200
+ border-zinc-100
  bg-white
- p-8
- shadow-xl
+ px-10
+ py-10
+ shadow-md
 
- dark:border-zinc-700
+ dark:border-zinc-800
  dark:bg-zinc-900
  "
  >
@@ -102,7 +103,7 @@ const SelectRole = () => {
  text-left
  transition
  hover:-translate-y-1
- hover:border-[hashtag#408A71]
+ hover:border-[#408A71]
  hover:shadow-lg
 
  dark:border-zinc-700
@@ -118,8 +119,8 @@ const SelectRole = () => {
  items-center
  justify-center
  rounded-2xl
- bg-[hashtag#EEF8F3]
- text-[hashtag#408A71]
+ bg-[#EEF8F3]
+ text-[#408A71]
  "
  >
  <MdBusiness size={28}/>
@@ -165,7 +166,7 @@ const SelectRole = () => {
  text-left
  transition
  hover:-translate-y-1
- hover:border-[hashtag#408A71]
+ hover:border-[#408A71]
  hover:shadow-lg
 
  dark:border-zinc-700

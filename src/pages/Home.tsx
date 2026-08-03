@@ -9,7 +9,7 @@ import HowItWorks from "./sections/HowItWorks";
 import Testimonial from "./sections/Testimonial";
 
 const Home = () => {
-    return ( <div className="px-5 md:px-10">
+    return ( <div className="px-5 md:px-10 bg-white dark:bg-zinc-950">
         <Navbar/>
     <Hero />
     <LazyReveal>

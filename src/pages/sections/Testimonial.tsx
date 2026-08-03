@@ -52,7 +52,7 @@ const Testimonial = () => {
  key={index}
  className="
  min-w-[85%] md:min-w-0 snap-center
- bg-white p-4 rounded-xl
+ bg-white dark:bg-zinc-800 p-4 rounded-xl
  shadow-sm 
 
  transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]
@@ -60,14 +60,14 @@ const Testimonial = () => {
  "
  >
  {/* Stars */}
- <div className="flex text-[#3525cd] mb-4 gap-1">
+ <div className="flex text-[#285A48] dark:text-[#B0e4CC] mb-4 gap-1">
  {Array.from({ length: item.stars }).map((_, i) => (
  <FaRegStar key={i} />
  ))}
  </div>
 
  {/* Text */}
- <p className="italic md:text-md  mb-4">
+ <p className="italic md:text-md dark:text-gray-300 mb-4">
  "{item.text}"
  </p>
 
@@ -79,10 +79,10 @@ const Testimonial = () => {
  alt={item.name}
  />
  <div>
- <p className="font-seibold ">
+ <p className="font-seibold dark:text-gray-200">
  {item.name}
  </p>
- <p className="text-xs text-gray-600 md:text-sm">
+ <p className="text-xs text-gray-600 dark:text-gray-300 md:text-sm">
  {item.role}
  </p>
  </div>

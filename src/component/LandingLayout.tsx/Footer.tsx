@@ -6,15 +6,15 @@ export default function Footer() {
  {/* Brand */}
  <div>
  <h2 className="text-black text-xl font-bold">CareerFlow</h2>
- <p className="text-sm mt-3 text-gray-700">
+ <p className="text-sm mt-3 dark:text-gray-300 text-gray-700">
  A modern recruitment dashboard for managing jobs, candidates, and hiring workflows.
  </p>
  </div>
 
  {/* Dashboard */}
  <div>
- <h3 className="text-black font-semibold mb-4">Dashboard</h3>
- <ul className="space-y-2 text-sm">
+ <h3 className="text-black font-semibold mb-4 dark:text-gray-300 ">Dashboard</h3>
+ <ul className="space-y-2 text-sm dark:text-gray-400 ">
  <li>Overview</li>
  <li>Jobs</li>
  <li>Candidates</li>
@@ -24,8 +24,8 @@ export default function Footer() {
 
  {/* Management */}
  <div>
- <h3 className="text-black font-semibold mb-4">Management</h3>
- <ul className="space-y-2 text-sm">
+ <h3 className="text-black font-semibold mb-4 dark:text-gray-300">Management</h3>
+ <ul className="space-y-2 text-sm dark:text-gray-400">
  <li>Interviews</li>
  <li>Analytics</li>
  <li>Team</li>
@@ -35,8 +35,8 @@ export default function Footer() {
 
  {/* Product */}
  <div>
- <h3 className="text-black font-semibold mb-4">Product</h3>
- <ul className="space-y-2 text-sm">
+ <h3 className="text-black font-semibold mb-4 dark:text-gray-300 ">Product</h3>
+ <ul className="space-y-2 text-sm dark:text-gray-400">
  <li>Features</li>
  <li>How it Works</li>
  <li>Demo</li>
@@ -46,7 +46,7 @@ export default function Footer() {
  </div>
 
  {/* Bottom */}
- <div className="border-t border-gray-300 mt-10 pt-6 text-center text-sm text-gray-500">
+ <div className="border-t dark:text-gray-400 border-gray-300 mt-10 pt-6 text-center text-sm text-gray-500">
  © {new Date().getFullYear()} CareerFlow. Built for modern hiring teams.
  </div>
  </footer>

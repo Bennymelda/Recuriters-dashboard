@@ -1,3 +1,4 @@
+/*
 import {
   MdPersonAdd,
   MdEvent,
@@ -17,6 +18,7 @@ import useRecentHiringActivity, {
   type DashboardActivity,
 } from "./hooks/useRecentActivity";
 import { timeAgo } from "../../utils/timeAgo";
+
 
 const getActivityIconAndStyle = (action: string) => {
   const act = action.toLowerCase();
@@ -272,7 +274,7 @@ console.log("current use:", user)
       dark:bg-zinc-900
       "
     >
-      {/* Widget Header */}
+      
       <div className="mb-6 flex items-center justify-between">
         <div>
           <div className="flex items-center gap-2">
@@ -295,7 +297,7 @@ console.log("current use:", user)
         </div>
       </div>
 
-      {/* Activity Timeline Feed */}
+     
       <div className="space-y-3.5">
         {activities.map((activity) => {
           const { icon, badgeStyle } = getActivityIconAndStyle(
@@ -325,7 +327,7 @@ console.log("current use:", user)
               dark:hover:bg-zinc-800/70
               "
             >
-              {/* Action Icon Badge */}
+            
               <div
                 className={`
                 flex
@@ -343,7 +345,7 @@ console.log("current use:", user)
                 {icon}
               </div>
 
-              {/* Activity Info */}
+             
               <div className="flex-1 min-w-0">
                 <div className="text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">
                   {renderActivityContent(activity)}
@@ -372,6 +374,281 @@ console.log("current use:", user)
       </div>
     </section>
   );
+};
+
+export default DashboardRecentHiringActivity;
+*/
+
+
+
+import {
+ ResponsiveContainer,
+ LineChart,
+ Line,
+ XAxis,
+ YAxis,
+ CartesianGrid,
+ Tooltip,
+} from "recharts";
+import { useMemo, useState } from "react";
+import useRecentHiringActivity from "./hooks/useRecentActivity";
+
+const DashboardRecentHiringActivity = () => {
+ const { activities } = useRecentHiringActivity();
+
+ const [range, setRange] = useState<"7d" | "30d">("30d");
+
+ const chartData = useMemo(() => {
+ const days = range === "7d" ? 7 : 30;
+ const today = new Date();
+
+ return Array.from({ length: days }, (_, index) => {
+ const date = new Date(today);
+
+ date.setDate(today.getDate() - (days - 1 - index));
+
+ const dateKey = date.toISOString().split("T")[0];
+
+ const dayActivities = activities.filter((activity) => {
+ const activityDate = new Date(
+ activity.createdAt ?? activity.date
+ );
+
+ if (isNaN(activityDate.getTime())) return false;
+
+ return (
+ activityDate.toISOString().split("T")[0] === dateKey
+ );
+ });
+
+ const interviews = dayActivities.filter((activity) => {
+ const action = activity.action.toLowerCase();
+
+ return (
+ action.includes("interview") ||
+ action.includes("scheduled") ||
+ action.includes("rescheduled") ||
+ action.includes("completed")
+ );
+ }).length;
+
+ const hires = dayActivities.filter((activity) =>
+ activity.action.toLowerCase().includes("hired")
+ ).length;
+
+ const offers = dayActivities.filter((activity) =>
+ activity.action.toLowerCase().includes("offer")
+ ).length;
+
+ return {
+ date: dateKey,
+ label:
+ range === "7d"
+ ? date.toLocaleDateString("en-US", {
+ weekday: "short",
+ })
+ : date.toLocaleDateString("en-US", {
+ month: "short",
+ day: "numeric",
+ }),
+ interviews,
+ hires,
+ offers,
+ totalActivity: interviews + hires + offers,
+ };
+ });
+ }, [activities, range]);
+
+ const maxValue = Math.max(
+ 1,
+ ...chartData.map((item) => item.totalActivity)
+ );
+
+ return (
+ <section
+ className="
+ rounded-2xl
+
+ bg-white
+ p-6
+
+ dark:border-zinc-800
+ dark:bg-zinc-900
+ "
+ >
+ {/* Header */}
+ <div className="flex items-start justify-between gap-4">
+ <div>
+ <h2 className="text-lg font-bold text-zinc-900 dark:text-white">
+ Hiring Activity
+ </h2>
+
+ <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+ Track your team's hiring activity over time.
+ </p>
+ </div>
+
+ {/* Range */}
+ <select
+ value={range}
+ onChange={(e) =>
+ setRange(e.target.value as "7d" | "30d")
+ }
+ className="
+ rounded-xl
+ border border-zinc-200
+ bg-white
+ px-3
+ py-2
+ text-sm
+ font-medium
+ text-zinc-700
+ outline-none
+ transition
+ focus:border-[#408A71]
+ dark:border-zinc-700
+ dark:bg-zinc-800
+ dark:text-zinc-200
+ "
+ >
+ <option value="7d">7 Days</option>
+ <option value="30d">30 Days</option>
+ </select>
+ </div>
+
+ {/* Summary */}
+ <div className="mt-6">
+ <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+ Total activity
+ </p>
+
+ <p className="mt-1 text-3xl font-bold tracking-tight text-zinc-900 dark:text-white">
+ {activities.length}
+ </p>
+ </div>
+
+ {/* Chart */}
+ <div className="mt-5 h-[300px] w-full">
+ <ResponsiveContainer width="100%" height="100%">
+ <LineChart
+ data={chartData}
+ margin={{
+ top: 20,
+ right: 10,
+ left: -20,
+ bottom: 5,
+ }}
+ >
+ {/* Subtle horizontal grid */}
+ <CartesianGrid
+ vertical={false}
+ stroke="#E4E4E7"
+ strokeDasharray="3 5"
+ />
+
+ {/* Bottom labels */}
+ <XAxis
+ dataKey="label"
+ axisLine={false}
+ tickLine={false}
+ tick={{
+ fontSize: 11,
+ fill: "#A1A1AA",
+ }}
+ dy={10}
+ interval={range === "30d" ? 3 : 0}
+ />
+
+ {/* Left numbers */}
+ <YAxis
+ axisLine={false}
+ tickLine={false}
+ allowDecimals={false}
+ domain={[0, maxValue + 1]}
+ tick={{
+ fontSize: 11,
+ fill: "#A1A1AA",
+ }}
+ />
+
+ {/* Screenshot-style tooltip */}
+ <Tooltip
+ cursor={{
+ stroke: "#D4D4D8",
+ strokeWidth: 1,
+ strokeDasharray: "4 4",
+ }}
+ contentStyle={{
+ backgroundColor: "#18181B",
+ border: "none",
+ borderRadius: "12px",
+ padding: "10px 14px",
+ boxShadow:
+ "0 10px 25px rgba(0, 0, 0, 0.18)",
+ }}
+ labelStyle={{
+ color: "#A1A1AA",
+ fontSize: "11px",
+ marginBottom: "4px",
+ }}
+ itemStyle={{
+ color: "#FFFFFF",
+ fontSize: "13px",
+ fontWeight: 600,
+ }}
+ formatter={(value, _name, props) => {
+ const data = props.payload;
+
+ return [
+ `${value} activities`,
+ "Total activity",
+ ];
+ }}
+ />
+
+ {/* Main smooth line */}
+ <Line
+ type="monotone"
+ dataKey="totalActivity"
+ stroke="#408A71"
+ strokeWidth={3}
+ dot={false}
+ activeDot={{
+ r: 5,
+ fill: "#408A71",
+ stroke: "#FFFFFF",
+ strokeWidth: 3,
+ }}
+ />
+ </LineChart>
+ </ResponsiveContainer>
+ </div>
+
+ {/* Activity breakdown */}
+ <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-zinc-100 pt-4 dark:border-zinc-800">
+ <div className="flex items-center gap-2">
+ <span className="h-2 w-2 rounded-full bg-[#408A71]" />
+ <span className="text-xs text-zinc-500 dark:text-zinc-400">
+ Interviews
+ </span>
+ </div>
+
+ <div className="flex items-center gap-2">
+ <span className="h-2 w-2 rounded-full bg-blue-500" />
+ <span className="text-xs text-zinc-500 dark:text-zinc-400">
+ Hires
+ </span>
+ </div>
+
+ <div className="flex items-center gap-2">
+ <span className="h-2 w-2 rounded-full bg-violet-500" />
+ <span className="text-xs text-zinc-500 dark:text-zinc-400">
+ Offers
+ </span>
+ </div>
+ </div>
+ </section>
+ );
 };
 
 export default DashboardRecentHiringActivity;

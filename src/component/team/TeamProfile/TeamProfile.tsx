@@ -8,11 +8,15 @@ import TeamPerformance from "./TeamPerformance";
 import TeamInterviewSchedule from "./TeamInterview";
 const TeamMemberProfilePage = () => {
  return (
- <section className="space-y-8">
+ <section className="space-y-8 ">
+<TeamMemberStats />
+
+<div className="bg-white p-4 space-y-4 rounded-2xl">
+
 
  <TeamMemberHeader />
 
- <TeamMemberStats />
+ 
 
  <div className="grid gap-8 xl:grid-cols-3">
 
@@ -34,6 +38,7 @@ const TeamMemberProfilePage = () => {
 
  </div>
 
+ </div>
  </div>
 
  </section>

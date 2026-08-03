@@ -7,6 +7,7 @@ export interface DashboardActivity {
   target: string;
   secondaryTarget?: string;
   date: string;
+  createdAt?: string;
   category?: "interview" | "pipeline" | "job" | "team" | "candidate";
 }
 

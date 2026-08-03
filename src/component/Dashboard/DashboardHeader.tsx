@@ -1,8 +1,8 @@
 import { MdAdd } from "react-icons/md";
-
+import { useAuthStore } from "../../store/authStore";
 const DashboardHeader = () => {
     const hour = new Date().getHours();
-
+ const user = useAuthStore((state) => state.user);
     const greeting =
         hour < 12
             ? "Good Morning"
@@ -18,49 +18,137 @@ const DashboardHeader = () => {
     });
 
     return (
-        <section className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-            <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#285A48] dark:text-[#B0E4CC]">
-                    Recruiter Dashboard
-                </p>
+ <section
+ className="
+ relative
+ overflow-hidden
+ rounded-3xl
+ border border-zinc-200
+ bg-white
+ px-6 py-7
+ shadow-sm
+ dark:border-zinc-800
+ dark:bg-zinc-900
+ lg:px-8
+ lg:py-8
+ "
+ >
+ {/* Subtle decorative background */}
+ <div
+ className="
+ pointer-events-none
+ absolute
+ -right-20
+ -top-24
+ h-64
+ w-64
+ rounded-full
+ bg-[#285A48]/5
+ blur-3xl
+ dark:bg-[#B0E4CC]/5
+ "
+ />
 
-                <h1 className="mt-2 text-3xl font-bold text-zinc-900 dark:text-white">
-                    {greeting} 👋
-                </h1>
+ <div
+ className="
+ pointer-events-none
+ absolute
+ -bottom-32
+ right-40
+ h-48
+ w-48
+ rounded-full
+ bg-[#B0E4CC]/10
+ blur-3xl
+ "
+ />
 
-                <p className="mt-3 max-w-2xl text-sm leading-7 text-zinc-500 dark:text-zinc-400">
-                    Welcome back. Here's a quick overview of your recruitment pipeline,
-                    upcoming interviews, and tasks that need your attention today.
-                </p>
-            </div>
+ <div className="relative flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+ 
+ {/* Left */}
+ <div className="max-w-2xl">
+ 
 
-            <div className="flex flex-col items-start gap-4 lg:items-end">
-                <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
-                    {today}
-                </p>
+ {/* Greeting */}
+ <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-white sm:text-4xl">
+ {greeting},{" "}
+ <span className="text-[#285A48] dark:text-[#B0E4CC]">
+ {user?.fullName}
+ </span>{" "}
+ 👋
+ </h1>
 
-                <button
-                    className="
- flex items-center gap-2
- rounded-2xl
+ {/* Description */}
+ <p className="mt-4 max-w-xl text-sm leading-7 text-zinc-500 dark:text-zinc-400">
+ Here's a quick overview of your recruitment pipeline,
+ upcoming interviews, and tasks that need your attention
+ today.
+ </p>
+ </div>
+
+ {/* Right */}
+ <div className="flex shrink-0 flex-col items-start gap-4 sm:flex-row sm:items-center lg:flex-col lg:items-end">
+ 
+ {/* Date */}
+ <div
+ className="
+ flex
+ items-center
+ gap-2
+ rounded-xl
+ border
+ border-zinc-200
+ bg-zinc-50
+ px-4
+ py-2.5
+ dark:border-zinc-700
+ dark:bg-zinc-800/70
+ "
+ >
+ <span className="h-2 w-2 rounded-full bg-[#285A48] dark:bg-[#B0E4CC]" />
+
+ <p className="text-sm font-medium text-zinc-600 dark:text-zinc-300">
+ {today}
+ </p>
+ </div>
+
+ {/* Create Job */}
+ <button
+ className="
+ group
+ flex
+ items-center
+ gap-2.5
+ rounded-xl
  bg-[#285A48]
- px-5 py-3
+ px-5
+ py-3
+ text-sm
  font-semibold
  text-white
- transition
+ shadow-sm
+ transition-all
+ duration-200
+ hover:-translate-y-0.5
  hover:bg-[#1f4739]
-
+ hover:shadow-lg
+ active:translate-y-0
  dark:bg-[#B0E4CC]
  dark:text-[#285A48]
  dark:hover:bg-[#9ddbbc]
  "
-                >
-                    <MdAdd size={22} />
-                    Create Job
-                </button>
-            </div>
-        </section>
-    );
+ >
+ <MdAdd
+ size={20}
+ className="transition-transform duration-200 group-hover:rotate-90"
+ />
+
+ Create Job
+ </button>
+ </div>
+ </div>
+ </section>
+);
 };
 
 export default DashboardHeader;

@@ -72,7 +72,7 @@ const ForgotPassword = () => {
  px-4
  py-3
  outline-none
- focus:border-[hashtag#408A71]
+ focus:border-[#408A71]
  dark:border-zinc-700
  dark:bg-zinc-800
  dark:text-white
@@ -84,12 +84,12 @@ const ForgotPassword = () => {
  className="
  w-full
  rounded-2xl
- bg-[hashtag#408A71]
+ bg-[#408A71]
  py-3
  font-semibold
  text-white
  transition
- hover:bg-[hashtag#285A48]
+ hover:bg-[#285A48]
  "
  >
  Send Reset Link
@@ -113,13 +113,13 @@ const ForgotPassword = () => {
  mt-8
  inline-block
  rounded-2xl
- bg-[hashtag#408A71]
+ bg-[#408A71]
  px-6
  py-3
  font-semibold
  text-white
  transition
- hover:bg-[hashtag#285A48]
+ hover:bg-[#285A48]
  "
  >
  Back to Login
