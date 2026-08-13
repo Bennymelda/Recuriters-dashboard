@@ -78,52 +78,134 @@ const DashboardStats = () => {
         },
     ];
 
-    return (
-        <section className="grid mb-10 grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-5">
-            {stats.map((stat) => (
-             <div 
-           className="  
-            group
+   return (
+ <section
+ className="
+ mb-10
+
+ flex
+ gap-4
+ overflow-x-auto
+ pb-3
+
+ sm:grid
+ sm:grid-cols-2
+ sm:gap-5
+ sm:overflow-visible
+ sm:pb-0
+
+ xl:grid-cols-5
+
+ scrollbar-thin
+ scrollbar-thumb-zinc-300
+ dark:scrollbar-thumb-zinc-700
+ "
+ >
+ {stats.map((stat) => (
+ <div
+ key={stat.title}
+ className="
+ group
  relative
+ min-w-[230px]
+ shrink-0
  overflow-hidden
  rounded-xl
-shadow-sm
  bg-white
  p-4
- md:p-5
+ shadow-sm
 
  transition-all
  duration-300
  ease-out
+
  hover:-translate-y-1
- hover:border-zinc-300
  hover:shadow-xl
- dark:border-zinc-800
+
  dark:bg-zinc-900
- dark:hover:border-zinc-700
+
+ sm:min-w-0
+ sm:shrink
  "
-             >
-                <div className="flex justify-between items-center">
-                    <div
- className={`rounded-2xl p-3 transition-transform duration-300 group-hover:scale-110 ${stat.color}`}
+ >
+ {/* Top */}
+ <div className="flex items-center justify-between">
+ <div
+ className={`
+ rounded-2xl
+ p-3
+ transition-transform
+ duration-300
+ group-hover:scale-110
+ ${stat.color}
+ `}
  >
  {stat.icon}
  </div>
-                    <div className="bg-gray-100 dark:bg-zinc-800  dark:text-white px-2 py-1 rounded-md"><GoArrowUpRight className="text-gray-700 dark:text-white"/></div>
-                </div>
-                <p className="mt-5 font-semibold text-zinc-800 dark:text-gray-200">{stat.title}</p>
-                <p className="text-xl font-bold mt-5 dark:text-gray-300">{stat.value}</p>
-                <div className="flex justify-between mt-5">
-                 <div className=" bg-green-100 text-xs px-2 rounded-4xl flex gap-1 items-center">
-                    <AiOutlineRise />
-                    <p className="text-xs">{stat.num}</p>
-                </div> 
-                <p className="text-sm text-gray-600 font-semibold whitespace-nowrap text-xs dark:text-gray-300">{stat.output}</p>
-                </div>
-             </div>
-            ))}
-        </section>
-    );
+
+ <div
+ className="
+ rounded-md
+ bg-gray-100
+ px-2
+ py-1
+ dark:bg-zinc-800
+ dark:text-white
+ "
+ >
+ <GoArrowUpRight className="text-gray-700 dark:text-white" />
+ </div>
+ </div>
+
+ {/* Title */}
+ <p className="mt-5 font-semibold text-zinc-800 dark:text-gray-200">
+ {stat.title}
+ </p>
+
+ {/* Value */}
+ <p className="mt-5 text-xl font-bold text-zinc-900 dark:text-gray-300">
+ {stat.value}
+ </p>
+
+ {/* Bottom */}
+ <div className="mt-5 flex items-center justify-between gap-3">
+ <div
+ className="
+ flex
+ items-center
+ gap-1
+ rounded-full
+ bg-green-100
+ px-2
+ py-1
+ text-xs
+ text-green-700
+ dark:bg-green-500/15
+ dark:text-green-400
+ "
+ >
+ <AiOutlineRise />
+ <p className="text-xs">
+ {stat.num}
+ </p>
+ </div>
+
+ <p
+ className="
+ whitespace-nowrap
+ text-xs
+ font-semibold
+ text-gray-600
+ dark:text-gray-300
+ "
+ >
+ {stat.output}
+ </p>
+ </div>
+ </div>
+ ))}
+ </section>
+);
 };
 
 export default DashboardStats;

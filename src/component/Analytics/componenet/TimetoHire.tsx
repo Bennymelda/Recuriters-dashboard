@@ -15,51 +15,47 @@ const TimeToHire = () => {
  const candidates = useCandidateStore((state) => state.candidates);
 
  const hiredCandidates = useMemo(() => {
- return candidates
- .filter(
- (candidate) =>
- candidate.status === "Hired" &&
- candidate.hiredAt &&
- candidate.createdAt
- )
- .map((candidate) => {
- const createdDate = new Date(candidate.createdAt);
- const hiredDate = new Date(candidate.hiredAt!);
+    return candidates
+      .filter((candidate) => candidate.status === "Hired")
+      .map((candidate) => {
+        const createdDate = new Date(candidate.createdAt || Date.now());
+        const hiredDateStr =
+          candidate.hiredAt ||
+          candidate.updatedAt ||
+          candidate.stageUpdatedAt ||
+          new Date().toISOString();
+        const hiredDate = new Date(hiredDateStr);
 
- if (
- Number.isNaN(createdDate.getTime()) ||
- Number.isNaN(hiredDate.getTime())
- ) {
- return null;
- }
+        if (
+          Number.isNaN(createdDate.getTime()) ||
+          Number.isNaN(hiredDate.getTime())
+        ) {
+          return null;
+        }
 
- const difference =
- hiredDate.getTime() - createdDate.getTime();
+        const difference = hiredDate.getTime() - createdDate.getTime();
+        const days = Math.max(
+          0,
+          Math.ceil(difference / (1000 * 60 * 60 * 24))
+        );
 
- const days = Math.max(
- 0,
- Math.ceil(
- difference / (1000 * 60 * 60 * 24)
- )
- );
-
- return {
- id: candidate.id,
- name: candidate.fullName,
- days,
- };
- })
- .filter(
- (
- candidate
- ): candidate is {
- id: string;
- name: string;
- days: number;
- } => candidate !== null
- )
- .sort((a, b) => b.days - a.days);
- }, [candidates]);
+        return {
+          id: candidate.id,
+          name: candidate.fullName,
+          days,
+        };
+      })
+      .filter(
+        (
+          candidate
+        ): candidate is {
+          id: string;
+          name: string;
+          days: number;
+        } => candidate !== null
+      )
+      .sort((a, b) => b.days - a.days);
+  }, [candidates]);
 
  const statistics = useMemo(() => {
  if (hiredCandidates.length === 0) {

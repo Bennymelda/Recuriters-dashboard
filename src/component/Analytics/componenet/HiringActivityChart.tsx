@@ -9,12 +9,15 @@ import {
  Tooltip,
 } from "recharts";
 import { useTeamStore } from "../../../store/teamStore";
+import { useCandidateStore } from "../../../store/candidateStore";
+
 type Range = "7d" | "30d";
 
 type Activity = {
  action: string;
  date: string;
  createdAt?: string;
+ recruiterName?: string;
 };
 
 const getActivityDate = (activity: Activity) => {
@@ -33,18 +36,78 @@ const getActivityDate = (activity: Activity) => {
 
 const HiringActivityAnalytics = () => {
 	const members = useTeamStore((state) => state.members);
+  const candidates = useCandidateStore((state) => state.candidates);
 
-	const activities = useMemo(() => {
-		return members
-			.flatMap((member) =>
-				member.recentActivity.map((activity) => ({
-					...activity,
-					recruiterName:
-						activity.recruiterName?.trim() || member.fullName?.trim() || "Unknown",
-				}))
-			)
-			.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-	}, [members]);
+  const candidateActivities = useMemo(() => {
+    const list: Activity[] = [];
+
+    candidates.forEach((candidate) => {
+      // 1. Interview History
+      if (candidate.interviewHistory && candidate.interviewHistory.length > 0) {
+        candidate.interviewHistory.forEach((interview) => {
+          if (interview.date) {
+            list.push({
+              action: `Scheduled ${interview.stage || ""} interview`,
+              date: interview.date,
+              createdAt: interview.date,
+            });
+          }
+        });
+      }
+
+      // 2. Hires
+      if (candidate.status === "Hired") {
+        const hiredDate =
+          candidate.hiredAt || candidate.updatedAt || candidate.stageUpdatedAt;
+        if (hiredDate) {
+          list.push({
+            action: "Hired candidate",
+            date: hiredDate,
+            createdAt: hiredDate,
+          });
+        }
+      }
+
+      // 3. Offers
+      if (candidate.status === "Offer") {
+        const offerDate = candidate.stageUpdatedAt || candidate.updatedAt;
+        if (offerDate) {
+          list.push({
+            action: "Moved candidate to Offer",
+            date: offerDate,
+            createdAt: offerDate,
+          });
+        }
+      }
+
+      // 4. Interview stage status
+      if (candidate.status === "Interview" && candidate.stageUpdatedAt) {
+        list.push({
+          action: "Scheduled interview",
+          date: candidate.stageUpdatedAt,
+          createdAt: candidate.stageUpdatedAt,
+        });
+      }
+    });
+
+    return list;
+  }, [candidates]);
+
+  const activities = useMemo(() => {
+    const teamActivities = members.flatMap((member) =>
+      (member.recentActivity || []).map((activity) => ({
+        ...activity,
+        recruiterName:
+          activity.recruiterName?.trim() || member.fullName?.trim() || "Unknown",
+      }))
+    );
+
+    return [...teamActivities, ...candidateActivities].sort(
+      (a, b) =>
+        new Date(b.createdAt || b.date).getTime() -
+        new Date(a.createdAt || a.date).getTime()
+    );
+  }, [members, candidateActivities]);
 
  const [range, setRange] = useState<Range>("7d");
 

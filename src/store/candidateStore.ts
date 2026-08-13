@@ -3,7 +3,7 @@ import { candidates as initialCandidates } from "../data/candidates";
 import type { Candidate, InterviewHistoryItem, InterviewStage } from "../types/candidate";
 
 const STORAGE_KEY = "careerflow-candidates";
-const STORAGE_VERSION = 2;
+const STORAGE_VERSION = 3;
 
 type PersistedCandidateState = {
  version: number;
@@ -38,9 +38,21 @@ const loadPersistedCandidates = (): Candidate[] => {
  return initialCandidates as Candidate[];
  }
 
- if (parsed.version === STORAGE_VERSION && Array.isArray(parsed.candidates)) {
- return parsed.candidates as Candidate[];
- }
+    if (parsed.version === STORAGE_VERSION && Array.isArray(parsed.candidates)) {
+      const initialMap = new Map(initialCandidates.map((c) => [c.id, c.source]));
+      return parsed.candidates.map((c, idx) => ({
+        ...c,
+        source:
+          c.source ||
+          initialMap.get(c.id) ||
+          initialCandidates[idx % initialCandidates.length]?.source ||
+          "LinkedIn",
+        hiredAt:
+          c.status === "Hired"
+            ? c.hiredAt || c.updatedAt || c.stageUpdatedAt || new Date().toISOString()
+            : c.hiredAt,
+      })) as Candidate[];
+    }
 
  window.localStorage.removeItem(STORAGE_KEY);
  return initialCandidates as Candidate[];
@@ -264,11 +276,15 @@ updateCandidateStatus: (id, status) =>
  (candidate) => candidate.id !== id
  );
 
- const updatedCandidate = {
- ...candidate,
- status,
- updatedAt: new Date().toISOString(),
- };
+  const updatedCandidate = {
+    ...candidate,
+    status,
+    updatedAt: new Date().toISOString(),
+    hiredAt:
+      status === "Hired"
+        ? candidate.hiredAt || new Date().toISOString()
+        : candidate.hiredAt,
+  };
 
  const updatedCandidates = [
  updatedCandidate,
