@@ -382,103 +382,198 @@ export default DashboardRecentHiringActivity;
 
 
 import {
- ResponsiveContainer,
- LineChart,
- Line,
- XAxis,
- YAxis,
- CartesianGrid,
- Tooltip,
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
 } from "recharts";
 import { useMemo } from "react";
-import useRecentHiringActivity from "./hooks/useRecentActivity";
+import { useTeamStore } from "../../store/teamStore";
+import { useCandidateStore } from "../../store/candidateStore";
 
-const getActivityDate = (activity: { createdAt?: string; date: string }) => {
- const rawDate = activity.createdAt ?? activity.date;
- const parsedDate = new Date(rawDate);
-
- if (Number.isNaN(parsedDate.getTime())) {
- return null;
- }
-
- return parsedDate;
+type Activity = {
+  action: string;
+  date: string;
+  createdAt?: string;
+  recruiterName?: string;
 };
 
-const isActivityInLastSevenDays = (activityDate: Date, today: Date) => {
- const startOfToday = new Date(today);
- startOfToday.setHours(0, 0, 0, 0);
+const getActivityDate = (activity: Activity) => {
+  const rawDate = activity.createdAt ?? activity.date;
 
- const startOfRange = new Date(startOfToday);
- startOfRange.setDate(startOfToday.getDate() - 6);
+  if (!rawDate) return null;
 
- const normalizedActivityDate = new Date(activityDate);
- normalizedActivityDate.setHours(0, 0, 0, 0);
+  const parsedDate = new Date(rawDate);
 
- return (
- normalizedActivityDate >= startOfRange &&
- normalizedActivityDate <= startOfToday
- );
-};
+  if (Number.isNaN(parsedDate.getTime())) {
+    return null;
+  }
 
-const isActualInterviewActivity = (activity: { action: string }) => {
- const action = activity.action.toLowerCase();
- return action.includes("completed") && action.includes("interview");
+  return parsedDate;
 };
 
 const DashboardRecentHiringActivity = () => {
- const { activities } = useRecentHiringActivity();
+  const members = useTeamStore((state) => state.members);
+  const candidates = useCandidateStore((state) => state.candidates);
 
- const chartData = useMemo(() => {
- const today = new Date();
+  const candidateActivities = useMemo(() => {
+    const list: Activity[] = [];
 
- return Array.from({ length: 7 }, (_, index) => {
- const date = new Date(today);
+    candidates.forEach((candidate) => {
+      // 1. Interview History
+      if (candidate.interviewHistory && candidate.interviewHistory.length > 0) {
+        candidate.interviewHistory.forEach((interview) => {
+          if (interview.date) {
+            list.push({
+              action: `Scheduled ${interview.stage || ""} interview`,
+              date: interview.date,
+              createdAt: interview.date,
+            });
+          }
+        });
+      }
 
- date.setDate(today.getDate() - (6 - index));
+      // 2. Hires
+      if (candidate.status === "Hired") {
+        const hiredDate =
+          candidate.hiredAt || candidate.updatedAt || candidate.stageUpdatedAt;
+        if (hiredDate) {
+          list.push({
+            action: "Hired candidate",
+            date: hiredDate,
+            createdAt: hiredDate,
+          });
+        }
+      }
 
- const dateKey = date.toISOString().split("T")[0];
+      // 3. Offers
+      if (candidate.status === "Offer") {
+        const offerDate = candidate.stageUpdatedAt || candidate.updatedAt;
+        if (offerDate) {
+          list.push({
+            action: "Moved candidate to Offer",
+            date: offerDate,
+            createdAt: offerDate,
+          });
+        }
+      }
 
- const dayActivities = activities.filter((activity) => {
- const activityDate = getActivityDate(activity);
+      // 4. Interview stage status
+      if (candidate.status === "Interview" && candidate.stageUpdatedAt) {
+        list.push({
+          action: "Scheduled interview",
+          date: candidate.stageUpdatedAt,
+          createdAt: candidate.stageUpdatedAt,
+        });
+      }
+    });
 
- if (!activityDate) return false;
+    return list;
+  }, [candidates]);
 
- if (!isActivityInLastSevenDays(activityDate, today)) return false;
+  const allActivities = useMemo(() => {
+    const teamActivities = members.flatMap((member) =>
+      (member.recentActivity || []).map((activity) => ({
+        ...activity,
+        recruiterName:
+          activity.recruiterName?.trim() || member.fullName?.trim() || "Unknown",
+      }))
+    );
 
- return (
- activityDate.toISOString().split("T")[0] === dateKey
- );
- });
+    const extraCandidateActivities = candidateActivities.filter((candAct) => {
+      const candDate = candAct.createdAt || candAct.date;
+      if (!candDate) return false;
+      const candDateStr = new Date(candDate).toDateString();
+      const candActionLower = candAct.action.toLowerCase();
+      const candCategory = candActionLower.includes("hired")
+        ? "hire"
+        : candActionLower.includes("offer")
+        ? "offer"
+        : "interview";
 
- const interviews = dayActivities.filter((activity) =>
- isActualInterviewActivity(activity)
- ).length;
+      return !teamActivities.some((teamAct) => {
+        const teamDate = teamAct.createdAt || teamAct.date;
+        if (!teamDate) return false;
+        const teamDateStr = new Date(teamDate).toDateString();
+        const teamActionLower = teamAct.action.toLowerCase();
+        const teamCategory = teamActionLower.includes("hired")
+          ? "hire"
+          : teamActionLower.includes("offer")
+          ? "offer"
+          : "interview";
 
- const hires = dayActivities.filter((activity) =>
- activity.action.toLowerCase().includes("hired")
- ).length;
+        return teamDateStr === candDateStr && teamCategory === candCategory;
+      });
+    });
 
- const offers = dayActivities.filter((activity) =>
- activity.action.toLowerCase().includes("offer")
- ).length;
+    return [...teamActivities, ...extraCandidateActivities].sort(
+      (a, b) =>
+        new Date(b.createdAt || b.date).getTime() -
+        new Date(a.createdAt || a.date).getTime()
+    );
+  }, [members, candidateActivities]);
 
- return {
- date: dateKey,
- label: date.toLocaleDateString("en-US", {
- weekday: "short",
- }),
- interviews,
- hires,
- offers,
- };
- });
- }, [activities]);
+  const chartData = useMemo(() => {
+    const today = new Date();
 
- const totalActivity = chartData.reduce(
- (total, item) =>
- total + item.interviews + item.hires + item.offers,
- 0
- );
+    return Array.from({ length: 7 }, (_, index) => {
+      const date = new Date(today);
+      date.setDate(today.getDate() - (6 - index));
+
+      const dateKey = [
+        date.getFullYear(),
+        String(date.getMonth() + 1).padStart(2, "0"),
+        String(date.getDate()).padStart(2, "0"),
+      ].join("-");
+
+      const dayActivities = allActivities.filter((activity) => {
+        const activityDate = getActivityDate(activity);
+        if (!activityDate) return false;
+
+        return (
+          activityDate.getFullYear() === date.getFullYear() &&
+          activityDate.getMonth() === date.getMonth() &&
+          activityDate.getDate() === date.getDate()
+        );
+      });
+
+      const interviews = dayActivities.filter((activity) => {
+        const action = activity.action.toLowerCase();
+        return (
+          action.includes("interview") ||
+          action.includes("scheduled") ||
+          action.includes("rescheduled") ||
+          action.includes("completed")
+        );
+      }).length;
+
+      const hires = dayActivities.filter((activity) =>
+        activity.action.toLowerCase().includes("hired")
+      ).length;
+
+      const offers = dayActivities.filter((activity) =>
+        activity.action.toLowerCase().includes("offer")
+      ).length;
+
+      return {
+        date: dateKey,
+        label: date.toLocaleDateString("en-US", { weekday: "short" }),
+        interviews,
+        hires,
+        offers,
+      };
+    });
+  }, [allActivities]);
+
+  const totalActivity = useMemo(() => {
+    return chartData.reduce(
+      (total, item) => total + item.interviews + item.hires + item.offers,
+      0
+    );
+  }, [chartData]);
 
  const maxValue = Math.max(
  1,

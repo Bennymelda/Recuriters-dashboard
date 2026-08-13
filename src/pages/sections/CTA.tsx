@@ -5,7 +5,7 @@ const CTA = () => {
     return ( <>
     <section className="py-10 mb-20">
  <div className="max-w-container-max mx-auto text-center">
-<div className="dark:bg-[#ecfff3] bg-[#76cfae] rounded-[1.5rem] py-xl px-10 py-15 md:py-20 md:px-20 space-y-md relative overflow-hidden">
+<div className="dark:bg-[#ecfff3] bg-[#b1e0cf] rounded-[1.5rem] py-xl px-10 py-15 md:py-20 md:px-20 space-y-md relative overflow-hidden">
 
  {/* SVG Decorations */}
  <svg className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">

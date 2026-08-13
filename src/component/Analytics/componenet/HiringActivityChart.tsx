@@ -102,7 +102,33 @@ const HiringActivityAnalytics = () => {
       }))
     );
 
-    return [...teamActivities, ...candidateActivities].sort(
+    const extraCandidateActivities = candidateActivities.filter((candAct) => {
+      const candDate = candAct.createdAt || candAct.date;
+      if (!candDate) return false;
+      const candDateStr = new Date(candDate).toDateString();
+      const candActionLower = candAct.action.toLowerCase();
+      const candCategory = candActionLower.includes("hired")
+        ? "hire"
+        : candActionLower.includes("offer")
+        ? "offer"
+        : "interview";
+
+      return !teamActivities.some((teamAct) => {
+        const teamDate = teamAct.createdAt || teamAct.date;
+        if (!teamDate) return false;
+        const teamDateStr = new Date(teamDate).toDateString();
+        const teamActionLower = teamAct.action.toLowerCase();
+        const teamCategory = teamActionLower.includes("hired")
+          ? "hire"
+          : teamActionLower.includes("offer")
+          ? "offer"
+          : "interview";
+
+        return teamDateStr === candDateStr && teamCategory === candCategory;
+      });
+    });
+
+    return [...teamActivities, ...extraCandidateActivities].sort(
       (a, b) =>
         new Date(b.createdAt || b.date).getTime() -
         new Date(a.createdAt || a.date).getTime()

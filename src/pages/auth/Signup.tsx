@@ -8,6 +8,7 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import { useCompanyStore } from "../../store/companyStore";
 import { useAuthStore } from "../../store/authStore";
+import PasswordStrength from "./PasswordStrength";
 type FormErrors = {
  fullName: string;
  companyName: string;
@@ -674,6 +675,11 @@ dark:placeholder-white/70
  )}
  </button>
  </div>
+ <PasswordStrength
+ password={formData.password}
+/>
+
+
 <div className="flex items-center gap-2 mt-1.5">
    
 {errors.password && (
