@@ -466,7 +466,7 @@ const hasChanges =
  duration-300
  ${
  hasChanges
- ? "bg-[#408A71] text-white hover:bg-[#2f6d58]"
+ ? " bg-[#2f6d58] text-white dark:bg-[#B0E4CC] dark:text-black hover:bg-[#408A71]"
  : "cursor-not-allowed bg-zinc-200 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-500"
  }
  `}

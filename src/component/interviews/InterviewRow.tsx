@@ -194,7 +194,7 @@ const isOverdue =
  className="rounded-xl text-black cursor-pointer dark:tex
 t-white p-2 transition hover:bg-zinc-100 dark:hover:bg-zinc-700"
  >
- <MdMoreHoriz size={22} className=""/>
+ <MdMoreHoriz size={22} className="dark:text-white"/>
  </button>
 
  {openMenu && (

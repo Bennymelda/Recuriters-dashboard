@@ -69,15 +69,15 @@ const handleLogout = () => {
  object-cover
 
  ring-2
- ring-[hashtag#408A71]/20
+ ring-[#408A71]/20
 
  transition-all
  duration-300
 
- group-hover:ring-[hashtag#408A71]/50
+ group-hover:ring-[#408A71]/50
 
- dark:ring-[hashtag#B0E4CC]/20
- dark:group-hover:ring-[hashtag#B0E4CC]/50
+ dark:ring-[#B0E4CC]/20
+ dark:group-hover:ring-[#B0E4CC]/50
  "
 />
 
@@ -168,7 +168,7 @@ const handleLogout = () => {
  <div className="p-3 space-y-1">
 
  <Link
- to="/profile"
+ to="/settings"
  className="
  group
  flex
@@ -188,12 +188,12 @@ const handleLogout = () => {
  transition-all
  duration-200
 
- hover:bg-[hashtag#EEF8F3]
- hover:text-[hashtag#408A71]
+ hover:bg-[#EEF8F3]
+ hover:text-[#408A71]
 
  dark:text-zinc-300
  dark:hover:bg-zinc-800
- dark:hover:text-[hashtag#B0E4CC]
+ dark:hover:text-[#B0E4CC]
  "
  >
  <MdPerson
@@ -224,12 +224,12 @@ const handleLogout = () => {
  transition-all
  duration-200
 
- hover:bg-[hashtag#EEF8F3]
- hover:text-[hashtag#408A71]
+ hover:bg-[#EEF8F3]
+ hover:text-[#408A71]
 
  dark:text-zinc-300
  dark:hover:bg-zinc-800
- dark:hover:text-[hashtag#B0E4CC]
+ dark:hover:text-[#B0E4CC]
  "
  >
  <MdSettings

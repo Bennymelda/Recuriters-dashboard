@@ -39,7 +39,8 @@ dark:bg-zinc-900
  className="
  w-12 
  h-12 
- bg-[#aadaca] 
+ bg-[#cfe8e0]
+ dark:bg-[#aadaca] 
  rounded-lg 
  flex 
  items-center 
@@ -80,7 +81,8 @@ dark:bg-[#B0E4CC]
  className="
  w-12 
  h-12 
- bg-[#aadaca] 
+ bg-[#cfe8e0]
+ dark:bg-[#aadaca] 
  rounded-lg 
  flex 
  items-center 
@@ -123,7 +125,8 @@ dark:bg-zinc-900
  className="
  w-12 
  h-12 
- bg-[#aadaca] 
+ bg-[#cfe8e0]
+ dark:bg-[#aadaca] 
  rounded-lg 
  flex 
  items-center 
@@ -165,7 +168,8 @@ className="
  className="
  w-12 
  h-12 
- bg-[#aadaca] 
+ bg-[#cfe8e0]
+ dark:bg-[#aadaca] 
  rounded-lg 
  flex 
  items-center 

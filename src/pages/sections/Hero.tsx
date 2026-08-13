@@ -25,7 +25,7 @@ className="px-6 md:px-8 py-4 bg-white text-gray-800 mt-5 rounded-lg shadow-lg fo
 <div className="relative group">
 <div className="absolute -inset-4 bg-primary/5 rounded-3xl blur-3xl opacity-50"></div>
 <div className="relative glass-card rounded-2xl shadow-2xl p-sm border border-outline-variant/30 transform transition-all duration-700 hover:rotate-1">
-<img alt="Recruitment Dashboard" className="rounded-xl w-full" data-alt="A highly detailed and modern recruitment software dashboard displaying complex analytics charts, a clean candidate pipeline visualization, and a professional user interface. The UI features a crisp white background with indigo and slate accents. Floating UI elements like small circular progress charts and notification badges add depth and sophistication." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCxjwMzJ2iH8_geCQ8N_XAy2SxBMIQB3mn-_gw7c8MBQ8l8n3KuSRuMSQ32YhXooDOH1kBdpjjo9qmOnhnf1T4zEppaafZoJaqQYVsZ6Qpi5vsmLLlKoNk95gbRAxosg_5WgGHO14-N22x6jELefeZTDutm8vrCnfOZtVSZtkhoXBc3PeA4MJIqLBZKxO8EU3zcM4iaM0Qr1I9Va5FL7PEq39TscKcuZ1R3AQ37MDHXjE_ghm-30IMgB9EF6DRsixn5JE4AMasQ6HI"/>
+<img alt="Recruitment Dashboard" className="rounded-xl w-full object-cover h-full" data-alt="A highly detailed and modern recruitment software dashboard displaying complex analytics charts, a clean candidate pipeline visualization, and a professional user interface. The UI features a crisp white background with indigo and slate accents. Floating UI elements like small circular progress charts and notification badges add depth and sophistication." src="/graph.png"/>
 </div>
 </div>
 </div>

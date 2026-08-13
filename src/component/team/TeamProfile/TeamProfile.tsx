@@ -11,7 +11,7 @@ const TeamMemberProfilePage = () => {
  <section className="space-y-8 ">
 <TeamMemberStats />
 
-<div className="bg-white p-4 space-y-4 rounded-2xl">
+<div className="bg-white dark:bg-zinc-900 p-4 space-y-4 rounded-2xl">
 
 
  <TeamMemberHeader />

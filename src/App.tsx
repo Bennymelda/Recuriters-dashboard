@@ -21,6 +21,8 @@ import ProtectedRoute from './routes/ProtectedRoutes'
 import ForgotPassword from './pages/auth/Forgot'
 import SettingsPage from './component/Settings/settingPage'
 import Notifications from './pages/header/Notifcations'
+import AnalyticsPage from './component/Analytics/AnalyticsPage'
+import { div } from 'framer-motion/client'
 //import ToastContainer from './component/ui/ToastContainer'
 function App() {
   const { pathname } = useLocation();
@@ -29,6 +31,7 @@ function App() {
  window.scrollTo(0, 0);
  }, [pathname]);
   return (
+ 
     <Routes>
    
  <Route path="/" element={<Home />} />
@@ -48,7 +51,7 @@ function App() {
  <Route path="/interview" element={<InterviewsPage />} />
  <Route path="/team" element={<TeamPage />} />
  <Route path="/team/:memberId" element={<TeamMemberProfilePage />} />
-
+ <Route path="/Analytics" element={<AnalyticsPage />} />
 
 </Route>
 

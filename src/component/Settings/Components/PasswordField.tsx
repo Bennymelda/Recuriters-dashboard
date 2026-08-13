@@ -35,7 +35,7 @@ const PasswordField = ({
  py-3
  pr-12
  outline-none
- focus:border-[hashtag#408A71]
+ focus:border-[#408A71]
  dark:border-zinc-700
  dark:bg-zinc-800
  dark:text-white
@@ -50,7 +50,8 @@ const PasswordField = ({
  right-4
  top-1/2
  -translate-y-1/2
- text-zinc-500
+ text-[#285A48]
+ dark:text-[#B0E4CC]
  "
  >
  {show ? (

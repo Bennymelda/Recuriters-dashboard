@@ -75,6 +75,19 @@ readyForOffer?: boolean;
  date: string;
  content: string;
  }[];
+
+source:
+ | "LinkedIn"
+ | "Indeed"
+ | "Referral"
+ | "Company Website"
+ | "Job Board"
+ | "Glassdoor"
+ | "Twitter"
+ | "University"
+ | "Employee Referral"
+ | "Other";
+
 stageUpdatedAt: string;
  // Metadata
  createdAt: string;

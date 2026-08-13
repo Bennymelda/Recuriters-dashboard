@@ -390,47 +390,69 @@ import {
  CartesianGrid,
  Tooltip,
 } from "recharts";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import useRecentHiringActivity from "./hooks/useRecentActivity";
+
+const getActivityDate = (activity: { createdAt?: string; date: string }) => {
+ const rawDate = activity.createdAt ?? activity.date;
+ const parsedDate = new Date(rawDate);
+
+ if (Number.isNaN(parsedDate.getTime())) {
+ return null;
+ }
+
+ return parsedDate;
+};
+
+const isActivityInLastSevenDays = (activityDate: Date, today: Date) => {
+ const startOfToday = new Date(today);
+ startOfToday.setHours(0, 0, 0, 0);
+
+ const startOfRange = new Date(startOfToday);
+ startOfRange.setDate(startOfToday.getDate() - 6);
+
+ const normalizedActivityDate = new Date(activityDate);
+ normalizedActivityDate.setHours(0, 0, 0, 0);
+
+ return (
+ normalizedActivityDate >= startOfRange &&
+ normalizedActivityDate <= startOfToday
+ );
+};
+
+const isActualInterviewActivity = (activity: { action: string }) => {
+ const action = activity.action.toLowerCase();
+ return action.includes("completed") && action.includes("interview");
+};
 
 const DashboardRecentHiringActivity = () => {
  const { activities } = useRecentHiringActivity();
 
- const [range, setRange] = useState<"7d" | "30d">("30d");
-
  const chartData = useMemo(() => {
- const days = range === "7d" ? 7 : 30;
  const today = new Date();
 
- return Array.from({ length: days }, (_, index) => {
+ return Array.from({ length: 7 }, (_, index) => {
  const date = new Date(today);
 
- date.setDate(today.getDate() - (days - 1 - index));
+ date.setDate(today.getDate() - (6 - index));
 
  const dateKey = date.toISOString().split("T")[0];
 
  const dayActivities = activities.filter((activity) => {
- const activityDate = new Date(
- activity.createdAt ?? activity.date
- );
+ const activityDate = getActivityDate(activity);
 
- if (isNaN(activityDate.getTime())) return false;
+ if (!activityDate) return false;
+
+ if (!isActivityInLastSevenDays(activityDate, today)) return false;
 
  return (
  activityDate.toISOString().split("T")[0] === dateKey
  );
  });
 
- const interviews = dayActivities.filter((activity) => {
- const action = activity.action.toLowerCase();
-
- return (
- action.includes("interview") ||
- action.includes("scheduled") ||
- action.includes("rescheduled") ||
- action.includes("completed")
- );
- }).length;
+ const interviews = dayActivities.filter((activity) =>
+ isActualInterviewActivity(activity)
+ ).length;
 
  const hires = dayActivities.filter((activity) =>
  activity.action.toLowerCase().includes("hired")
@@ -442,36 +464,39 @@ const DashboardRecentHiringActivity = () => {
 
  return {
  date: dateKey,
- label:
- range === "7d"
- ? date.toLocaleDateString("en-US", {
+ label: date.toLocaleDateString("en-US", {
  weekday: "short",
- })
- : date.toLocaleDateString("en-US", {
- month: "short",
- day: "numeric",
  }),
  interviews,
  hires,
  offers,
- totalActivity: interviews + hires + offers,
  };
  });
- }, [activities, range]);
+ }, [activities]);
+
+ const totalActivity = chartData.reduce(
+ (total, item) =>
+ total + item.interviews + item.hires + item.offers,
+ 0
+ );
 
  const maxValue = Math.max(
  1,
- ...chartData.map((item) => item.totalActivity)
+ ...chartData.flatMap((item) => [
+ item.interviews,
+ item.hires,
+ item.offers,
+ ])
  );
 
  return (
  <section
  className="
- rounded-2xl
-
+ rounded-3xl
+ border border-zinc-200
  bg-white
  p-6
-
+ shadow-sm
  dark:border-zinc-800
  dark:bg-zinc-900
  "
@@ -484,17 +509,14 @@ const DashboardRecentHiringActivity = () => {
  </h2>
 
  <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
- Track your team's hiring activity over time.
+ Track your team's hiring activity over the last 7 days.
  </p>
  </div>
 
  {/* Range */}
- <select
- value={range}
- onChange={(e) =>
- setRange(e.target.value as "7d" | "30d")
- }
+ <div
  className="
+ shrink-0
  rounded-xl
  border border-zinc-200
  bg-white
@@ -503,17 +525,13 @@ const DashboardRecentHiringActivity = () => {
  text-sm
  font-medium
  text-zinc-700
- outline-none
- transition
- focus:border-[#408A71]
  dark:border-zinc-700
  dark:bg-zinc-800
  dark:text-zinc-200
  "
  >
- <option value="7d">7 Days</option>
- <option value="30d">30 Days</option>
- </select>
+ 7 Days
+ </div>
  </div>
 
  {/* Summary */}
@@ -523,30 +541,30 @@ const DashboardRecentHiringActivity = () => {
  </p>
 
  <p className="mt-1 text-3xl font-bold tracking-tight text-zinc-900 dark:text-white">
- {activities.length}
+ {totalActivity}
  </p>
  </div>
 
  {/* Chart */}
- <div className="mt-5 h-[300px] w-full">
+ <div className="mt-6 h-[300px] w-full">
  <ResponsiveContainer width="100%" height="100%">
  <LineChart
  data={chartData}
  margin={{
- top: 20,
+ top: 15,
  right: 10,
  left: -20,
  bottom: 5,
  }}
  >
- {/* Subtle horizontal grid */}
+ {/* Grid */}
  <CartesianGrid
  vertical={false}
  stroke="#E4E4E7"
  strokeDasharray="3 5"
  />
 
- {/* Bottom labels */}
+ {/* X Axis */}
  <XAxis
  dataKey="label"
  axisLine={false}
@@ -556,10 +574,9 @@ const DashboardRecentHiringActivity = () => {
  fill: "#A1A1AA",
  }}
  dy={10}
- interval={range === "30d" ? 3 : 0}
  />
 
- {/* Left numbers */}
+ {/* Y Axis */}
  <YAxis
  axisLine={false}
  tickLine={false}
@@ -571,7 +588,7 @@ const DashboardRecentHiringActivity = () => {
  }}
  />
 
- {/* Screenshot-style tooltip */}
+ {/* Tooltip */}
  <Tooltip
  cursor={{
  stroke: "#D4D4D8",
@@ -584,34 +601,31 @@ const DashboardRecentHiringActivity = () => {
  borderRadius: "12px",
  padding: "10px 14px",
  boxShadow:
- "0 10px 25px rgba(0, 0, 0, 0.18)",
+ "0 10px 30px rgba(0, 0, 0, 0.18)",
  }}
  labelStyle={{
  color: "#A1A1AA",
  fontSize: "11px",
- marginBottom: "4px",
+ marginBottom: "6px",
  }}
  itemStyle={{
  color: "#FFFFFF",
- fontSize: "13px",
+ fontSize: "12px",
  fontWeight: 600,
  }}
- formatter={(value, _name, props) => {
- const data = props.payload;
-
- return [
- `${value} activities`,
- "Total activity",
- ];
- }}
+ formatter={(value, name) => [
+ `${value} ${name}`,
+ "",
+ ]}
  />
 
- {/* Main smooth line */}
+ {/* Interviews */}
  <Line
  type="monotone"
- dataKey="totalActivity"
+ dataKey="interviews"
+ name="Interviews"
  stroke="#408A71"
- strokeWidth={3}
+ strokeWidth={2.5}
  dot={false}
  activeDot={{
  r: 5,
@@ -620,29 +634,64 @@ const DashboardRecentHiringActivity = () => {
  strokeWidth: 3,
  }}
  />
+
+ {/* Hires */}
+ <Line
+ type="monotone"
+ dataKey="hires"
+ name="Hires"
+ stroke="#3B82F6"
+ strokeWidth={2.5}
+ dot={false}
+ activeDot={{
+ r: 5,
+ fill: "#3B82F6",
+ stroke: "#FFFFFF",
+ strokeWidth: 3,
+ }}
+ />
+
+ {/* Offers */}
+ <Line
+ type="monotone"
+ dataKey="offers"
+ name="Offers"
+ stroke="#8B5CF6"
+ strokeWidth={2.5}
+ dot={false}
+ activeDot={{
+ r: 5,
+ fill: "#8B5CF6",
+ stroke: "#FFFFFF",
+ strokeWidth: 3,
+ }}
+ />
  </LineChart>
  </ResponsiveContainer>
  </div>
 
- {/* Activity breakdown */}
- <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-zinc-100 pt-4 dark:border-zinc-800">
+ {/* Legend */}
+ <div className="mt-4 flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
  <div className="flex items-center gap-2">
  <span className="h-2 w-2 rounded-full bg-[#408A71]" />
- <span className="text-xs text-zinc-500 dark:text-zinc-400">
+
+ <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
  Interviews
  </span>
  </div>
 
  <div className="flex items-center gap-2">
  <span className="h-2 w-2 rounded-full bg-blue-500" />
- <span className="text-xs text-zinc-500 dark:text-zinc-400">
+
+ <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
  Hires
  </span>
  </div>
 
  <div className="flex items-center gap-2">
  <span className="h-2 w-2 rounded-full bg-violet-500" />
- <span className="text-xs text-zinc-500 dark:text-zinc-400">
+
+ <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
  Offers
  </span>
  </div>

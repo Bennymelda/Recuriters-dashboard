@@ -11,7 +11,7 @@ export const Requirement = ({ met, text }: RequirementProps) => {
  className={`flex items-center gap-3 text-sm transition ${
  met
  ? "text-green-600 dark:text-green-400"
- : "text-zinc-500 dark:text-zinc-400"
+ : "text-zinc-500 dark:text-zinc-300"
  }`}
  >
  {met ? (

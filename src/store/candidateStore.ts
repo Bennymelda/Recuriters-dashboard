@@ -174,6 +174,7 @@ export const useCandidateStore = create<CandidateStore>((set, get) => ({
  ...candidate,
  ...updatedCandidate,
  updatedAt: new Date().toISOString(),
+ stageUpdateAt:new Date().toISOString(),
  }
  : candidate
  );

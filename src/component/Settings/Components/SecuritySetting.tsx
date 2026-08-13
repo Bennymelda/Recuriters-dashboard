@@ -143,7 +143,8 @@ const hasSpecialCharacter = /[!@#$%^&*(),.?":{}|<>]/.test(newPassword);
  className="
  rounded-2xl
  bg-[#285A48]
- dark:[#BOE4CC]
+ dark:bg-[#B0E4CC]
+ dark:text-black
  px-7
  py-3
  font-semibold
