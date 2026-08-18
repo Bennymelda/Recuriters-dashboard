@@ -114,7 +114,7 @@ const HiringActivityAnalytics = () => {
         : "interview";
 
       return !teamActivities.some((teamAct) => {
-        const teamDate = teamAct.createdAt || teamAct.date;
+        const teamDate = (teamAct as { createdAt?: string; date: string }).createdAt || teamAct.date;
         if (!teamDate) return false;
         const teamDateStr = new Date(teamDate).toDateString();
         const teamActionLower = teamAct.action.toLowerCase();
@@ -130,8 +130,8 @@ const HiringActivityAnalytics = () => {
 
     return [...teamActivities, ...extraCandidateActivities].sort(
       (a, b) =>
-        new Date(b.createdAt || b.date).getTime() -
-        new Date(a.createdAt || a.date).getTime()
+        new Date((b as { createdAt?: string; date: string }).createdAt || b.date).getTime() -
+        new Date((a as { createdAt?: string; date: string }).createdAt || a.date).getTime()
     );
   }, [members, candidateActivities]);
 
@@ -274,12 +274,14 @@ const HiringActivityAnalytics = () => {
  return (
  <section
  className="
- rounded-3xl
- border
- border-zinc-200
+ rounded-2xl
+[--chart-grid:#E4E4E7]
+[--chart-cursor:#D4D4D8]
+dark:[--chart-cursor:#3F3F46]
+dark:[--chart-grid:#27272A]
  bg-white
  p-6
- shadow-sm
+
 
  dark:border-zinc-800
  dark:bg-zinc-900
@@ -636,6 +638,8 @@ const HiringActivityAnalytics = () => {
  <div
  className="
  mt-8
+ outline-none
+ focus:outline-none
  h-[340px]
  w-full
  "
@@ -643,9 +647,12 @@ const HiringActivityAnalytics = () => {
  <ResponsiveContainer
  width="100%"
  height="100%"
+
  >
  <LineChart
  data={chartData}
+ accessibilityLayer={false}
+style={{outline:"none"}}
  margin={{
  top: 10,
  right: 10,
@@ -655,7 +662,7 @@ const HiringActivityAnalytics = () => {
  >
  <CartesianGrid
  vertical={false}
- stroke="#E4E4E7"
+ stroke="var(--chart-grid)"
  strokeDasharray="3 5"
  />
 
@@ -686,7 +693,7 @@ const HiringActivityAnalytics = () => {
 
  <Tooltip
  cursor={{
- stroke: "#D4D4D8",
+ stroke: "var(--chart-cursor)",
  strokeWidth: 1,
  strokeDasharray: "4 4",
  }}

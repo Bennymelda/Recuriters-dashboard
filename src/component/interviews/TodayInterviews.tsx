@@ -237,7 +237,7 @@ md:flex
  overflow-hidden
 
  rounded-xl
-
+cursor-pointer
  bg-[#285A48]
  px-5
  py-3

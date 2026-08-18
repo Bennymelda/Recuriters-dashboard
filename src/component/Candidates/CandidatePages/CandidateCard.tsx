@@ -41,7 +41,7 @@ const navigate = useNavigate()
  
  cursor-pointer
  w-full
- xl:grid
+ lg:grid
  grid-cols-[2.5fr_1.2fr_1.5fr_1.2fr_1fr_120px]
  items-center
  gap-4
@@ -144,19 +144,19 @@ const navigate = useNavigate()
 <section
  onClick={() => onView(candidate)}
  className="
- xl:hidden
+ lg:hidden
  cursor-pointer
 
- rounded-3xl
+ rounded-2xl
+shadow-sm
 
- border
  border-zinc-200
 
  bg-white
 
  p-5
 
- shadow-sm
+ 
 
  transition-all
  duration-300

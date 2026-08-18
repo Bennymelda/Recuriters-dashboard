@@ -49,10 +49,11 @@ const TeamInterviewSchedule = () => {
  <section
  className="
  rounded-3xl
- border
- border-zinc-200
+
  bg-white
- p-6
+ p-4
+ md:p-6
+ shadow-xs
 
  dark:border-zinc-700
  dark:bg-zinc-900
@@ -97,13 +98,13 @@ const TeamInterviewSchedule = () => {
  {interview.candidateName}
  </h3>
 
- <p className="mt-1 text-sm text-zinc-500">
+ <p className="mt-1 text-sm text-zinc-500 dark:text-gray-300">
  {interview.jobTitle}
  </p>
 
  <div className="mt-4 flex items-center justify-between">
 
- <div className="flex items-center gap-2 text-sm text-zinc-500">
+ <div className="flex dark:text-gray-300 items-center gap-2 text-sm text-zinc-500">
  <MdCalendarMonth />
  {formatJoinedDate(interview.interviewDate)}
  </div>
@@ -125,7 +126,7 @@ const TeamInterviewSchedule = () => {
 
  </div>
 
- <div className="mt-3 flex items-center gap-2 text-sm text-zinc-500">
+ <div className="mt-3 flex dark:text-gray-300 items-center gap-2 text-sm text-zinc-500">
 
  {interview.interviewType === "Virtual" ? (
  <MdVideocam />

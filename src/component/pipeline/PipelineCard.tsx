@@ -231,6 +231,7 @@ dark:ring-zinc-900
  p-2
  transition
  hover:bg-zinc-100
+ cursor-pointer
  dark:hover:bg-zinc-700
  "
  >
@@ -264,7 +265,7 @@ dark:ring-zinc-900
  navigate(`/candidates/${candidate.id}`);
  setOpenMenu(false);
  }}
- className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm hover:bg-zinc-100 dark:hover:bg-zinc-700"
+ className="flex cursor-pointer w-full items-center gap-3 rounded-xl px-3 py-3 text-sm hover:bg-zinc-100 dark:hover:bg-zinc-700"
 >
  <MdPerson size={18} />
  View Profile
@@ -275,7 +276,7 @@ dark:ring-zinc-900
  setOpenMenu(false);
  setOpenMoveModal(true);
  }}
- className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm hover:bg-zinc-100 dark:hover:bg-zinc-700"
+ className="flex cursor-pointer w-full items-center gap-3 rounded-xl px-3 py-3 text-sm hover:bg-zinc-100 dark:hover:bg-zinc-700"
 >
  <MdSwapHoriz size={18} />
  Move Stage
@@ -294,7 +295,7 @@ dark:ring-zinc-900
  setOpenInterviewModal(true);
  }
  }}
- className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm hover:bg-zinc-100 dark:hover:bg-zinc-700"
+ className="flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-3 text-sm hover:bg-zinc-100 dark:hover:bg-zinc-700"
  >
  <MdEvent size={18} />
  {hasScheduledInterview ? "Manage Interview" : "Schedule Interview"}
@@ -309,7 +310,7 @@ dark:ring-zinc-900
  setOpenMenu(false);
  setOpenRejectModal(true);
 }}
- className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm text-red-600 transition hover:bg-red-50 dark:hover:bg-red-500/10"
+ className="flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-3 text-sm text-red-600 transition hover:bg-red-50 dark:hover:bg-red-500/10"
 >
  <MdClose size={18} />
  Reject Candidate

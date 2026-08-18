@@ -22,7 +22,7 @@ const NotificationCard = ({
  p-5
  text-left
  transition
-
+cursor-pointer
  ${
  !notification.read
  ? "bg-[#EEF8F3] border-[#408A71]/30"

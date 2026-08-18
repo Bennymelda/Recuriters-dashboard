@@ -32,10 +32,10 @@ const candidates = useCandidateStore(
  <section
  className="
  rounded-3xl
- border
- border-zinc-200
+
  bg-white
- p-6
+ p-4
+ md:p-6
 
  dark:border-zinc-700
  dark:bg-zinc-900
@@ -97,7 +97,7 @@ return(
  {job.title}
  </h3>
 
- <p className="mt-1 text-sm text-zinc-500">
+ <p className="mt-1 text-sm dark:text-gray-300 text-zinc-500">
  {job.department}
  </p>
 
@@ -125,7 +125,7 @@ return(
  {job.status}
  </span>
 
- <p className="mt-2 text-sm text-zinc-500">
+ <p className="mt-2 text-sm text-zinc-500 dark:text-gray-300">
  {applicantsCount} Applicants
  </p>
 

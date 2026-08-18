@@ -45,7 +45,7 @@ const CandidateTabs = ({
  relative
  pb-4
  pt-2
-
+cursor-pointer
  text-sm
  font-medium
 

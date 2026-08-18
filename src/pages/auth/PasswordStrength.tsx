@@ -47,11 +47,11 @@ const PasswordStrength = ({ password }: Props) => {
  rounded-2xl
  border
  border-zinc-200
- bg-zinc-50
+
  p-4
 
  dark:border-zinc-700
- dark:bg-zinc-800
+ dark:bg-zinc-900
  "
  >
  <p className="mb-3 text-sm font-semibold text-zinc-700 dark:text-zinc-200">
@@ -73,7 +73,7 @@ const PasswordStrength = ({ password }: Props) => {
  <span
  className={`text-sm ${
  item.passed
- ? "text-green-600 dark:text-green-400"
+ ? "text-green-700 dark:text-green-600"
  : "text-zinc-500 dark:text-zinc-400"
  }`}
  >

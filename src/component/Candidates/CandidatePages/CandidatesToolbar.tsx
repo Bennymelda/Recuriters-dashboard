@@ -73,7 +73,7 @@ const CandidatesToolbar = ({
  <div className="mt-12 flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
 <p className="font-semibold dark:text-white mb-4">Filter Candidate</p>
  {/* Filters */}
- <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+ <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
 
 
 

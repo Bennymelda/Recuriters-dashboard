@@ -8,7 +8,7 @@ import { IoGitNetworkSharp } from "react-icons/io5";
 
 const Features = () => {
     return ( <>
-    <section id="features" className="py-5 mt-15 max-w-container-max mx-auto px-gutter">
+    <section id="features" className="py-5  lg:mt-15 max-w-container-max mx-auto px-gutter">
 <div className="text-center max-w-2xl mx-auto mb-10">
 <h2 className="md:text-4xl mb-2 text-2xl font-bold text-gray-900 mb-sm dark:text-white">Everything you need to hire the best</h2>
 <p className="font-body-md text-gray-700 md:text-lg dark:text-gray-300">Say goodbye to spreadsheets. CareerFlow provides a centralized platform for your entire hiring lifecycle.</p>
@@ -240,7 +240,7 @@ className="
  className="
  p-4 
  bg-white 
- dark:bg-zinc-800
+ dark:bg-zinc-900
  rounded-xl 
  shadow 
  border border-transparent

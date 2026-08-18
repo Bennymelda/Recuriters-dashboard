@@ -117,7 +117,7 @@ whitespace-nowrap
  dark:text-zinc-900
  dark:shadow-[#B0E4CC]/20
  dark:hover:bg-[#9DD8BE]
-
+cursor-pointer
  sm:w-auto
  "
  >

@@ -15,7 +15,7 @@ const FormFooter = ({
  type="button"
  onClick={onCancel}
  disabled={loading}
- className="rounded-xl w-full border border-zinc-300 px-6 py-3 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800 md:w-auto"
+ className="rounded-xl cursor-pointer w-full border border-zinc-300 px-6 py-3 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800 md:w-auto"
  >
  Cancel
  </button>
@@ -23,7 +23,7 @@ const FormFooter = ({
  <button
  type="submit"
  disabled={loading}
- className="rounded-xl w-full md:w-auto  dark:bg-[#B0E4CC] dark:text-black bg-[#285A48] px-6 py-3 text-sm font-semibold text-white transition hover:bg-teal-700 disabled:cursor-not-allowed disabled:opacity-50"
+ className="rounded-xl w-full cursor-pointer md:w-auto  dark:bg-[#B0E4CC] dark:text-black bg-[#285A48] px-6 py-3 text-sm font-semibold text-white transition hover:bg-teal-700 disabled:cursor-not-allowed disabled:opacity-50"
  >
  {loading
  ? mode === "create"

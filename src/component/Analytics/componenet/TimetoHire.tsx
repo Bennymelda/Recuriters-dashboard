@@ -116,13 +116,13 @@ console.table(
  return (
  <section
  className="
- rounded-3xl
- border
- border-zinc-200
+ rounded-2xl
+ 
  bg-white
  p-6
- shadow-sm
 
+[--chart-grid:#E4E4E7]
+dark:[--chart-grid:#27272A]
  dark:border-zinc-800
  dark:bg-zinc-900
  "
@@ -365,6 +365,7 @@ console.table(
  >
  <BarChart
  data={chartData}
+ accessibilityLayer={false}
  margin={{
  top: 10,
  right: 10,
@@ -375,7 +376,7 @@ console.table(
  <CartesianGrid
  strokeDasharray="3 5"
  vertical={false}
- stroke="#E4E4E7"
+ stroke="var(--chart-grid)"
  />
 
  <XAxis
@@ -423,7 +424,7 @@ console.table(
 
  <Bar
  dataKey="days"
- fill="#408A71"
+ fill="#3B82F6"
  radius={[8, 8, 0, 0]}
  barSize={32}
  />

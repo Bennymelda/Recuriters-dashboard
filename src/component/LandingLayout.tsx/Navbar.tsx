@@ -54,6 +54,8 @@ return (
  Contact
  </a>
 
+ 
+
 </div>
 
 
@@ -131,7 +133,7 @@ md:hidden
 absolute top-full left-0 right-0
 
 bg-white/95 dark:bg-white/5  backdrop-blur-md
-
+z-200
 border-b border-gray-100 dark:border-white/10 
 
 overflow-hidden
@@ -183,11 +185,14 @@ href="#features"
 >
  Contact
 </a>
+<ThemeToggle />
+
 <Link to="/signup" className="mt-2 px-5 py-2.5 bg-[#285A48] dark:text-black dark:bg-[#B0E4CC] text-white  rounded-lg font-semibold transition-all duration-300 active:scale-95">
 
 Get Started
 
 </Link>
+
 
 </div>
 

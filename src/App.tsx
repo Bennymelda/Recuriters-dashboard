@@ -22,7 +22,6 @@ import ForgotPassword from './pages/auth/Forgot'
 import SettingsPage from './component/Settings/settingPage'
 import Notifications from './pages/header/Notifcations'
 import AnalyticsPage from './component/Analytics/AnalyticsPage'
-import { div } from 'framer-motion/client'
 //import ToastContainer from './component/ui/ToastContainer'
 function App() {
   const { pathname } = useLocation();

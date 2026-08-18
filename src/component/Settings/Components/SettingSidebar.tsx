@@ -80,7 +80,7 @@ const SettingsSidebar = ({
  >
  {/* Heading */}
  <div className="mb-8 flex items-center gap-2">
-    <div  >
+    <div className="cursor-pointer" >
     <Link to="/dashboard">
 <MdArrowBack size={20} className="bg-gary-600 dark:text-gray-300"/>
 </Link>
@@ -108,6 +108,7 @@ const SettingsSidebar = ({
  className={`
  flex
  w-full
+ cursor-pointer
  items-center
  gap-3
  rounded-2xl
@@ -116,7 +117,7 @@ const SettingsSidebar = ({
  text-left
  transition-all
  duration-200
-
+cursor-pointer
  ${
  active
  ? "bg-[#408A71] text-white shadow-sm"
@@ -162,7 +163,7 @@ const SettingsSidebar = ({
  text-left
  transition-all
  duration-200
-
+cursor-pointer
  ${
  active
  ? "bg-[#408A71] text-white shadow-sm"

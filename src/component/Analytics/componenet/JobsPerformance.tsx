@@ -44,12 +44,10 @@ const JobsPerformance = () => {
  return (
  <section
  className="
- rounded-3xl
- border
- border-zinc-200
+ rounded-2xl
+ 
  bg-white
  p-6
- shadow-sm
 
  dark:border-zinc-800
  dark:bg-zinc-900

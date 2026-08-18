@@ -3,7 +3,7 @@ import { Link } from "react-router";
 
 const CTA = () => {
     return ( <>
-    <section className="py-10 mb-20">
+    <section className="py-10 lg:mb-20">
  <div className="max-w-container-max mx-auto text-center">
 <div className="dark:bg-[#ecfff3] bg-[#b1e0cf] rounded-[1.5rem] py-xl px-10 py-15 md:py-20 md:px-20 space-y-md relative overflow-hidden">
 
@@ -34,7 +34,7 @@ const CTA = () => {
  </p>
 
  <div className="pt-5 mt-10 relative z-10">
- <Link to="/signup"
+ <Link to="/login"
  className="
  px-8 py-6
  bg-[#285A48]

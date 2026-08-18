@@ -10,6 +10,7 @@ const ThemeToggle = () => {
  className="
  flex
  w-full
+ cursor-pointer
  items-center
  justify-between
  rounded-xl

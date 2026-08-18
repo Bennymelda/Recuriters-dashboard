@@ -52,16 +52,9 @@ const [editingNote, setEditingNote] = useState<Candidate["notes"][number] | null
 const updateNote = useCandidateStore((state) => state.updateNote);
 const deleteNote = useCandidateStore((state) => state.deleteNote);
 
-const handleDeleteNote = (
- noteId: string
-) => {
- const confirmed = window.confirm(
- "Are you sure you want to delete this note?"
- );
-
- if (!confirmed) return;
-
- deleteNote(candidate.id, noteId);
+const [noteToDelete, setNoteToDelete] = useState<string | null>(null);
+const handleDeleteNote = (noteId: string) => {
+ setNoteToDelete(noteId);
 };
 
 const handleEditNote = (
@@ -104,6 +97,7 @@ const handleEditNote = (
  flex
  items-center
  gap-2
+ curdor-pointer
 
  rounded-2xl
 w-full
@@ -227,6 +221,7 @@ justify-center
  dark:text-zinc-400
  dark:hover:bg-zinc-800
  dark:hover:text-white
+ cursor-pointer
  "
  >
  <MdMoreVert size={20} />
@@ -271,6 +266,7 @@ justify-center
  gap-3
 
  px-4
+ cursor-pointer
  py-3
 
  text-sm
@@ -296,6 +292,7 @@ justify-center
  setActiveMenu(null);
  }}
  className="
+ cursor-pointer
  flex
  w-full
  items-center
@@ -346,6 +343,109 @@ justify-center
 
  )}
 
+
+{noteToDelete && (
+ <div
+ className="
+ fixed
+ inset-0
+ z-50
+ flex
+ items-center
+ justify-center
+ bg-black/40
+ px-4
+ backdrop-blur-sm
+ "
+ >
+ <div
+ className="
+ w-full
+ max-w-md
+ rounded-2xl
+ bg-white
+ p-6
+ shadow-2xl
+
+ dark:bg-zinc-900
+ "
+ >
+ {/* Header */}
+ <div>
+ <h2
+ className="
+ text-lg
+ font-bold
+ text-zinc-900
+ dark:text-white
+ "
+ >
+ Delete note?
+ </h2>
+
+ <p
+ className="
+ mt-2
+ text-sm
+ leading-6
+ text-zinc-500
+ dark:text-zinc-400
+ "
+ >
+ Are you sure you want to delete this note?
+ This action cannot be undone.
+ </p>
+ </div>
+
+ {/* Actions */}
+ <div className="mt-6 flex justify-end gap-3">
+ <button
+ type="button"
+ onClick={() => setNoteToDelete(null)}
+ className="
+ rounded-xl
+ border
+ border-zinc-200
+ px-4
+ py-2.5
+ text-sm
+ font-semibold
+ text-zinc-700
+ transition
+ hover:bg-zinc-50
+
+ dark:border-zinc-700
+ dark:text-zinc-200
+ dark:hover:bg-zinc-800
+ "
+ >
+ Cancel
+ </button>
+
+ <button
+ type="button"
+ onClick={() => {
+ deleteNote(candidate.id, noteToDelete);
+ setNoteToDelete(null);
+ }}
+ className="
+ rounded-xl
+ bg-red-500
+ px-4
+ py-2.5
+ text-sm
+ font-semibold
+ text-white
+ transition
+ hover:bg-red-600
+ "
+ >
+ Delete
+ </button>
+ </div>
+ </div>
+ </div>
+)}
 
 <AddNoteModal
  open={openModal}

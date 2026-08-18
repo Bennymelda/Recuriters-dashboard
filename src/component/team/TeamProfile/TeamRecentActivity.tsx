@@ -103,11 +103,11 @@ const TeamRecentActivity = () => {
  {activity.action}
  </h3>
 
- <p className="mt-1 text-sm text-zinc-500">
+ <p className="mt-1 text-sm text-zinc-500 dark:text-gray-300">
  {activity.target}
  </p>
 
- <p className="mt-2 text-xs text-zinc-400">
+ <p className="mt-2 text-xs text-zinc-400 ">
  {new Date(activity.date).toLocaleString()}
  </p>
 

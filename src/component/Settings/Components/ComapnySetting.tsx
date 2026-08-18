@@ -75,12 +75,12 @@ const fileInputRef = useRef<HTMLInputElement>(null);
  {/* Header */}
 
 
-<div className="rounded-[32px] border border-zinc-100 bg-white p-4 md:p-8  dark:border-zinc-800 dark:bg-zinc-900">
+<div className="rounded-[32px] bg-white p-4 md:p-8  dark:border-zinc-800 dark:bg-zinc-900">
 
  <div className="flex flex-col gap-4 md:gap-8 lg:flex-row lg:items-center lg:justify-between">
 
  {/* Left */}
- <div className="flex items-center gap-4">
+ <div className="flex flex-col md:flex-row items-center gap-5">
 
  <input
  ref={fileInputRef}
@@ -89,6 +89,7 @@ const fileInputRef = useRef<HTMLInputElement>(null);
  accept="image/*"
  onChange={handleLogoUpload}
  />
+
 
  {/* Clickable Logo */}
  <div
@@ -316,7 +317,7 @@ const fileInputRef = useRef<HTMLInputElement>(null);
  py-3
  font-semibold
  transition
-
+cursor-pointer
  ${
  hasChanges
  ? "bg-[#285A48] text-white hover:bg-[#2f6d58]"

@@ -6,10 +6,12 @@ const DashboardRecentApplications = () => {
  return (
  <section
  className="
- rounded-3xl
+ rounded-2xl
 
  bg-white
- p-6
+ py-4
+ px-4
+ md:p-6
 
 
  dark:border-zinc-700
@@ -38,10 +40,8 @@ const DashboardRecentApplications = () => {
  flex
  items-center
  justify-between
- rounded-2xl
- border
- border-zinc-100
- p-4
+
+ md:p-4
  transition
  hover:shadow-sm
 

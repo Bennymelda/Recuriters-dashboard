@@ -161,7 +161,7 @@ return (
  <td className="relative px-6 py-5 absolute text-right">
  <button
  onClick={() => setOpenMenu(!openMenu)}
- className="rounded-xl p-2 transition dark:text-gray-200 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+ className="rounded-xl cursor-pointer p-2 transition dark:text-gray-200 hover:bg-zinc-100 dark:hover:bg-zinc-800"
  >
  <MdMoreHoriz size={22} />
  </button>
@@ -189,7 +189,7 @@ return (
  selectMember(member.id);
  navigate(`/team/${member.id}`);
  }}
- className="flex w-full dark:text-white rounded-xl px-3 py-3 text-sm hover:bg-zinc-100 dark:hover:bg-zinc-800"
+ className="flex cursor-pointer w-full dark:text-white rounded-xl px-3 py-3 text-sm hover:bg-zinc-100 dark:hover:bg-zinc-800"
  >
  View Profile
  </button>
@@ -199,7 +199,7 @@ return (
  setOpenMenu(false);
  setOpenEditModal(true);
  }}
- className="flex w-full dark:text-white rounded-xl px-3 py-3 text-sm hover:bg-zinc-100 dark:hover:bg-zinc-800"
+ className="flex cursor-pointer w-full dark:text-white rounded-xl px-3 py-3 text-sm hover:bg-zinc-100 dark:hover:bg-zinc-800"
  >
  Edit Member
  </button>
@@ -210,7 +210,7 @@ return (
  setOpenMenu(false);
  setOpenAssignModal(true);
  }}
- className="flex w-full dark:text-white rounded-xl px-3 py-3 text-sm hover:bg-zinc-100 dark:hover:bg-zinc-800"
+ className="flex cursor-pointer w-full dark:text-white rounded-xl px-3 py-3 text-sm hover:bg-zinc-100 dark:hover:bg-zinc-800"
  >
  Assign Jobs
  </button>
@@ -222,7 +222,7 @@ return (
  setOpenMenu(false);
  setOpenDeleteModal(true);
  }}
- className="flex w-full dark:text-red-700 rounded-xl px-3 py-3 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10"
+ className="flex w-full dark:text-red-700 rounded-xl px-3 py-3 text-sm text-red-600 hover:bg-red-50 cursor-pointer dark:hover:bg-red-500/10"
  >
  Remove Member
  </button>
@@ -236,16 +236,15 @@ return (
 <div
  className="
  xl:hidden
+relative
+ rounded-2xl
 
- rounded-3xl
- border
- border-zinc-200
 
  bg-white
 
  p-4
 
- shadow-sm
+shadow-sm
 
  dark:border-zinc-700
  dark:bg-zinc-900
@@ -289,7 +288,7 @@ return (
 
  <button
  onClick={() => setOpenMenu(!openMenu)}
- className="rounded-xl p-2 hover:bg-zinc-100 dark:text-white dark:hover:bg-zinc-800"
+ className="rounded-xl cursor-pointer p-2 hover:bg-zinc-100 dark:text-white dark:hover:bg-zinc-800"
  >
  <MdMoreHoriz size={22} />
  </button>
@@ -371,7 +370,7 @@ return (
  text-white
 
  transition
-
+cursor-pointer
  hover:bg-[#35745E]
  "
  >
@@ -391,7 +390,11 @@ return (
  border-zinc-200
 
  bg-white
-
+right-6
+ top-7
+ z-30
+ absolute
+ w-56
  p-2
 
  shadow-xl
@@ -407,7 +410,7 @@ return (
  selectMember(member.id);
  navigate(`/team/${member.id}`);
  }}
- className="flex w-full dark:text-white rounded-xl px-3 py-3 text-sm hover:bg-zinc-100 dark:hover:bg-zinc-800"
+ className="flex cursor-pointer w-full dark:text-white rounded-xl px-3 py-3 text-sm hover:bg-zinc-100 dark:hover:bg-zinc-800"
  >
  View Profile
  </button>
@@ -417,7 +420,7 @@ return (
  setOpenMenu(false);
  setOpenEditModal(true);
  }}
- className="flex w-full dark:text-white rounded-xl px-3 py-3 text-sm hover:bg-zinc-100 dark:hover:bg-zinc-800"
+ className="cursor-pointer flex w-full dark:text-white rounded-xl px-3 py-3 text-sm hover:bg-zinc-100 dark:hover:bg-zinc-800"
  >
  Edit Member
  </button>
@@ -428,7 +431,7 @@ return (
  setOpenMenu(false);
  setOpenAssignModal(true);
  }}
- className="flex w-full dark:text-white rounded-xl px-3 py-3 text-sm hover:bg-zinc-100 dark:hover:bg-zinc-800"
+ className="flex cursor-pointer w-full dark:text-white rounded-xl px-3 py-3 text-sm hover:bg-zinc-100 dark:hover:bg-zinc-800"
  >
  Assign Jobs
  </button>
@@ -441,7 +444,7 @@ return (
  setOpenDeleteModal(true);
 
  }}
- className="flex w-full dark:text-red-700 rounded-xl px-3 py-3 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10"
+ className="cursor-pointer flex w-full dark:text-red-700 rounded-xl px-3 py-3 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10"
  >
  Remove Member
  </button>

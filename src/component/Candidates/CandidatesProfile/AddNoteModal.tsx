@@ -63,7 +63,7 @@ useEffect(() => {
  {isEditing ? "Edit Recruiter Note" : "Add Recruiter Note"}
 </h2>
 
- <button onClick={onClose} className="dark:text-white text-black">
+ <button onClick={onClose} className="cursor-pointer dark:text-white text-black">
  <MdClose size={22} />
  </button>
 
@@ -81,14 +81,14 @@ useEffect(() => {
 
  <button
  onClick={handleClose}
- className="rounded-xl border dark:bg-white font-semibold shadow border-zinc-300 px-5 py-2"
+ className="rounded-xl border cursor-pointer dark:bg-white font-semibold shadow border-zinc-300 px-5 py-2"
  >
  Cancel
  </button>
 
  <button
  onClick={handleSave}
- className="rounded-xl bg-[#285A48] dark:bg-[#B0E4CC] px-5 py-2 font-semibold text-white hover:bg-teal-700 dark:text-black"
+ className="rounded-xl bg-[#285A48] cursor-pointer dark:bg-[#B0E4CC] px-5 py-2 font-semibold text-white hover:bg-teal-700 dark:text-black"
 >
  {isEditing ? "Save Changes" : "Save Note"}
 </button>

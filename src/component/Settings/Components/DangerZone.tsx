@@ -179,6 +179,7 @@ onClick={handleExportData}
  className="
  rounded-2xl
  border
+ cursor-pointer
  border-[#285A48]
  px-6
  py-3
@@ -258,6 +259,7 @@ onClick={handleExportData}
  font-semibold
  text-white
  transition
+ cursor-pointer
  hover:bg-amber-600
  "
  onClick={() => setOpenClearModal(true)}
@@ -328,6 +330,7 @@ onClick={handleExportData}
  bg-red-600
  px-6
  py-3
+ cursor-pointer
  font-semibold
  text-white
  transition

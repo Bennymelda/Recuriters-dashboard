@@ -71,11 +71,11 @@ const TeamMemberInfo = () => {
 return (
  <section
  className="
- rounded-3xl
- border
- border-zinc-200
+ rounded-2xl
+
  bg-white
- p-6
+ p-4
+ md:p-6
 
  dark:border-zinc-700
  dark:bg-zinc-900

@@ -59,9 +59,10 @@ const DashboardPipelineOverview = () => {
  <div className="mt-6 flex justify-center">
  <div className="relative h-[250px] w-[250px]">
  <ResponsiveContainer width="100%" height="100%">
- <PieChart>
+ <PieChart accessibilityLayer={false}>
  <Pie
  data={chartData}
+ 
  dataKey="count"
  nameKey="stage"
  cx="50%"

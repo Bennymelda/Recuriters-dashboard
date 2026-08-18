@@ -11,13 +11,20 @@ const AnalyticsPage = () => {
  <AnalyticsHeader />
 <AnalyticsStats />
 
-<div className="grid grid-cols-2">
+<div className="
+ grid
+ grid-cols-1
+ items-stretch
+ gap-6
+ xl:grid-cols-2
+ xl:grid-cols-[minmax(0,1.7fr)_minmax(320px,1fr)]
+ ">
  
  <HiringActivityChart />
  <RecruitmentFunnel />
 </div>
 
-<div className="grid grid-cols-2">
+<div className="grid gid-cols-1 lg:grid-cols-2 gap-5">
 
  <TimeToHire />
   <HiringSources />

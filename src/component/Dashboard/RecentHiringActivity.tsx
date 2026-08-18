@@ -495,7 +495,7 @@ const DashboardRecentHiringActivity = () => {
         : "interview";
 
       return !teamActivities.some((teamAct) => {
-        const teamDate = teamAct.createdAt || teamAct.date;
+        const teamDate = (teamAct as { createdAt?: string; date: string }).createdAt || teamAct.date;
         if (!teamDate) return false;
         const teamDateStr = new Date(teamDate).toDateString();
         const teamActionLower = teamAct.action.toLowerCase();
@@ -511,8 +511,8 @@ const DashboardRecentHiringActivity = () => {
 
     return [...teamActivities, ...extraCandidateActivities].sort(
       (a, b) =>
-        new Date(b.createdAt || b.date).getTime() -
-        new Date(a.createdAt || a.date).getTime()
+        new Date((b as { createdAt?: string; date: string }).createdAt || b.date).getTime() -
+        new Date((a as { createdAt?: string; date: string }).createdAt || a.date).getTime()
     );
   }, [members, candidateActivities]);
 
@@ -587,11 +587,14 @@ const DashboardRecentHiringActivity = () => {
  return (
  <section
  className="
- rounded-3xl
-
+ rounded-2xl
+ [--chart-grid:#E4E4E7]
+ [--chart-cursor:#D4D4D8]
+dark:[--chart-cursor:#3F3F46]
+ dark:[--chart-grid:#202023]
  bg-white
  p-6
- shadow-sm
+
  dark:border-zinc-800
  dark:bg-zinc-900
  "
@@ -641,10 +644,12 @@ const DashboardRecentHiringActivity = () => {
  </div>
 
  {/* Chart */}
- <div className="mt-6 h-[300px] w-full">
+ <div className="mt-6 h-[300px] w-full outline-none focus:outline-none">
  <ResponsiveContainer width="100%" height="100%">
  <LineChart
  data={chartData}
+ style={{outline:"none"}}
+ accessibilityLayer={false}
  margin={{
  top: 15,
  right: 10,
@@ -655,7 +660,7 @@ const DashboardRecentHiringActivity = () => {
  {/* Grid */}
  <CartesianGrid
  vertical={false}
- stroke="#E4E4E7"
+ stroke="var(--chart-grid)"
  strokeDasharray="3 5"
  />
 
@@ -686,7 +691,7 @@ const DashboardRecentHiringActivity = () => {
  {/* Tooltip */}
  <Tooltip
  cursor={{
- stroke: "#D4D4D8",
+ stroke: "var(--chart-cursor)",
  strokeWidth: 1,
  strokeDasharray: "4 4",
  }}

@@ -59,6 +59,7 @@ return (
  className="
  rounded-xl
  p-2
+ cursor-pointer
  text-zinc-700
  transition
  hover:bg-zinc-100

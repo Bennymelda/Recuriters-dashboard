@@ -274,16 +274,15 @@ t-white p-2 transition hover:bg-zinc-100 dark:hover:bg-zinc-700"
  xl:hidden
 
 w-full
- rounded-3xl
+ rounded-2xl
 relative
- border
- border-zinc-200
+
 
  bg-white
 
  p-5
 
- shadow-sm
+
 
  transition-all
  duration-300
@@ -340,7 +339,7 @@ relative
 
  <button
  onClick={() => setOpenMenu(!openMenu)}
- className="rounded-xl p-2 text-black dark:text-white  hover:bg-zinc-100 dark:hover:bg-zinc-800"
+ className="rounded-xl cursor-pointer p-2 text-black dark:text-white  hover:bg-zinc-100 dark:hover:bg-zinc-800"
  >
  <MdMoreHoriz size={22} />
  </button>
@@ -432,7 +431,7 @@ relative
  font-semibold
 
  text-emerald-700
-
+cursor-pointer
  dark:bg-emerald-500/20
  dark:text-emerald-300
  "
@@ -447,7 +446,7 @@ relative
  }}
  className="
  rounded-xl
-
+cursor-pointer
  bg-red-200
 
  py-3
@@ -488,7 +487,7 @@ relative
 
  {/* Mobile Menu */}
  {openMenu && (
- <div className="mt-4 border-t text-gray-800 dark:text-white  absolute top-10 right-2 z-10 bg-white dark:bg-zinc-800 border dark:border-zinc-700 rounded-sm shadow-sm border-zinc-200 pt-4  space-y-2">
+ <div className="mt-4 border-t text-gray-800 dark:text-white  absolute top-10 right-2 z-10 bg-white dark:bg-zinc-800 border dark:border-zinc-800 rounded-sm shadow-sm border-zinc-200 pt-4  space-y-2">
 
  <button
  onClick={() =>
@@ -496,7 +495,7 @@ relative
  state: { tab: "interviews" },
  })
  }
- className="flex w-full items-center gap-3 rounded-xl px-4 py-3 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+ className="flex cursor-pointer w-full items-center gap-3 rounded-xl px-4 py-3 hover:bg-zinc-100 dark:hover:bg-zinc-800"
  >
  <MdHistory size={18} />
  View Interview History
@@ -507,7 +506,7 @@ relative
  setOpenMenu(false);
  setOpenRescheduleModal(true);
  }}
- className="flex w-full items-center gap-3 rounded-xl px-4 py-3 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+ className="flex cursor-pointer w-full items-center gap-3 rounded-xl px-4 py-3 hover:bg-zinc-100 dark:hover:bg-zinc-800"
  >
  <MdEditCalendar size={18} />
  Reschedule
@@ -515,7 +514,7 @@ relative
 
  <button
  onClick={() => setShowCancelModal(true)}
- className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-500/10"
+ className="flex cursor-pointer w-full items-center gap-3 rounded-xl px-4 py-3 text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-500/10"
  >
  ❌ Cancel Interview
  </button>

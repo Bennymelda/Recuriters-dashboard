@@ -51,7 +51,7 @@ const DashboardStats = () => {
         },
         {
             title: "Interviews Today",
-            output: "interviews scheduled ",
+            output: "Today interviews ",
             value: interviewsToday,
             icon: <MdEvent size={26} />,
             num:'15%',
@@ -78,27 +78,27 @@ const DashboardStats = () => {
         },
     ];
 
-   return (
+  return (
  <section
  className="
  mb-10
 
  flex
+ w-full
  gap-4
  overflow-x-auto
  pb-3
 
- sm:grid
- sm:grid-cols-2
- sm:gap-5
- sm:overflow-visible
- sm:pb-0
-
- xl:grid-cols-5
-
  scrollbar-thin
  scrollbar-thumb-zinc-300
+ scrollbar-track-transparent
  dark:scrollbar-thumb-zinc-700
+
+ xl:grid
+ xl:grid-cols-5
+ xl:gap-5
+ xl:overflow-visible
+ xl:pb-0
  "
  >
  {stats.map((stat) => (
@@ -124,8 +124,8 @@ const DashboardStats = () => {
 
  dark:bg-zinc-900
 
- sm:min-w-0
- sm:shrink
+ xl:min-w-0
+ xl:shrink
  "
  >
  {/* Top */}
@@ -149,6 +149,7 @@ const DashboardStats = () => {
  bg-gray-100
  px-2
  py-1
+
  dark:bg-zinc-800
  dark:text-white
  "
@@ -158,17 +159,40 @@ const DashboardStats = () => {
  </div>
 
  {/* Title */}
- <p className="mt-5 font-semibold text-zinc-800 dark:text-gray-200">
+ <p
+ className="
+ mt-5
+ font-semibold
+ text-zinc-800
+ dark:text-gray-200
+ "
+ >
  {stat.title}
  </p>
 
  {/* Value */}
- <p className="mt-5 text-xl font-bold text-zinc-900 dark:text-gray-300">
+ <p
+ className="
+ mt-5
+ text-xl
+ font-bold
+ text-zinc-900
+ dark:text-gray-300
+ "
+ >
  {stat.value}
  </p>
 
  {/* Bottom */}
- <div className="mt-5 flex items-center justify-between gap-3">
+ <div
+ className="
+ mt-5
+ flex
+ items-center
+ justify-between
+ gap-3
+ "
+ >
  <div
  className="
  flex
@@ -180,11 +204,13 @@ const DashboardStats = () => {
  py-1
  text-xs
  text-green-700
+
  dark:bg-green-500/15
  dark:text-green-400
  "
  >
  <AiOutlineRise />
+
  <p className="text-xs">
  {stat.num}
  </p>

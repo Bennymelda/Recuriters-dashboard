@@ -79,7 +79,7 @@ const hasChanges =
 
  {/* Avatar */}
 
- <div className="rounded-[32px] border border-zinc-100 bg-white p-4  md:p-8 dark:border-zinc-800 dark:bg-zinc-900">
+ <div className="  bg-white md:p-6 dark:border-zinc-800 dark:bg-zinc-900">
  <div className="flex flex-col  gap-4 md:gap-8 lg:flex-row lg:items-center lg:justify-between">
 
  {/* Left */}
@@ -459,6 +459,7 @@ const hasChanges =
  disabled={!hasChanges}
  className={`
  rounded-2xl
+ cursor-pointer
  px-7
  py-3
  font-semibold

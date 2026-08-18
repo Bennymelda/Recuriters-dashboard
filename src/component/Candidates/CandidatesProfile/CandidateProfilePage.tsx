@@ -112,14 +112,14 @@ useEffect(() => {
 
 </div>
 
-<div className="flex flex-col gap-6 lg-flex-row xl:items-start xl:flex-row justify-between ">
+<div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:flex-row justify-between ">
     <div>
         <div className="flex-1">
 <CandidateProfileHeader  />
         </div>
 
     </div>
-    <div className="w-full  xl:w-[400px]">
+    <div className="w-full  lg:w-[400px]">
 <CandidateContact candidate={candidate} />
     </div>
  

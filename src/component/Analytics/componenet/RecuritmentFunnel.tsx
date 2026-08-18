@@ -51,11 +51,13 @@ const RecruitmentFunnel = () => {
  return (
  <section
  className="
- rounded-3xl
- border border-zinc-200
+ rounded-2xl
+
  bg-white
+ [--chart-grid:#E4E4E7]
+dark:[--chart-grid:#27272A]
  p-6
- shadow-sm
+
  dark:border-zinc-800
  dark:bg-zinc-900
  "
@@ -96,6 +98,7 @@ const RecruitmentFunnel = () => {
  <ResponsiveContainer width="100%" height="100%">
  <BarChart
  data={funnelData}
+ accessibilityLayer={false}
  margin={{
  top: 10,
  right: 10,
@@ -107,7 +110,7 @@ const RecruitmentFunnel = () => {
  <CartesianGrid
  vertical={false}
  strokeDasharray="3 5"
- stroke="#E4E4E7"
+stroke="var(--chart-grid)"
  className="dark:opacity-20"
  />
 
@@ -118,7 +121,7 @@ const RecruitmentFunnel = () => {
  tickLine={false}
  tick={{
  fontSize: 11,
- fill: "#71717A",
+ fill: "#8e8e97",
  }}
  dy={10}
  />
@@ -162,6 +165,7 @@ const RecruitmentFunnel = () => {
 
  {/* Bars */}
  <Bar
+ 
  dataKey="candidates"
  fill="#408A71"
  radius={[8, 8, 0, 0]}

@@ -104,7 +104,7 @@ const InterviewsToolbar = ({
  dark:bg-[#B0E4CC]
  dark:text-black
  dark:hover:bg-[#9FD8BF]
-
+cursor-pointer
  sm:w-auto
  "
  >

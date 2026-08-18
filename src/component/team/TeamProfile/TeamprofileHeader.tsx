@@ -33,7 +33,7 @@ const [openAssignModal, setOpenAssignModal] = useState(false);
  {/* Back navigation */}
  <div className="mb-5">
  <button
- onClick​={() => navigate("/team")}
+ onClick={() => navigate("/team")}
  className="
  group
  inline-flex
@@ -52,6 +52,7 @@ const [openAssignModal, setOpenAssignModal] = useState(false);
  hover:shadow-sm
  dark:text-zinc-400
  dark:hover:bg-zinc-900
+ cursor-pointer
  dark:hover:text-white
  "
  >
@@ -73,8 +74,8 @@ const [openAssignModal, setOpenAssignModal] = useState(false);
  className="
  relative
  overflow-hidden
- rounded-3xl
- border
+ rounded-xl
+ border-b
  border-zinc-200
  bg-white
  
@@ -318,6 +319,7 @@ const [openAssignModal, setOpenAssignModal] = useState(false);
  dark:bg-zinc-800
  dark:text-zinc-200
  dark:hover:border-zinc-600
+ cursor-pointer
  "
  >
  <MdEdit size={18} />
@@ -347,6 +349,7 @@ const [openAssignModal, setOpenAssignModal] = useState(false);
  hover:bg-[#35745E]
  hover:shadow-md
  sm:flex-none
+ cursor-pointer
  "
  >
  <MdWork size={18} />

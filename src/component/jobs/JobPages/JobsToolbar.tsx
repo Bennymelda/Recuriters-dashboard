@@ -79,7 +79,7 @@ const JobsToolbar = ({
  <div className="mt-10 md:mt-12 mb-5 flex flex-col gap-4 rounded-xl border border-slate-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
 <p className="font-semibold dark:text-white text-lg">Filter Jobs</p>
  {/* Filters */}
- <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+ <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
   <CustomSelect
  placeholder="All Status"
  value={status}

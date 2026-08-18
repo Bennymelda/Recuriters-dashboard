@@ -69,14 +69,14 @@ return (
  <div className="flex gap-2">
  <button
  onClick={() => setCurrentMonth(new Date(year, month - 1, 1))}
- className="rounded-xl border border-zinc-300 px-4 py-2 text-sm dark:text-white hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-800"
+ className="rounded-xl cursor-pointer border border-zinc-300 px-4 py-2 text-sm dark:text-white hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-800"
  >
  <MdNavigateBefore size={18}/>
  </button>
 
  <button
  onClick={() => setCurrentMonth(new Date(year, month + 1, 1))}
- className="rounded-xl border border-zinc-300 px-4 py-2 text-sm dark:text-white hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-800"
+ className="rounded-xl cursor-pointer border border-zinc-300 px-4 py-2 text-sm dark:text-white hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-800"
  >
  <MdNavigateNext size={18}/>
  </button>

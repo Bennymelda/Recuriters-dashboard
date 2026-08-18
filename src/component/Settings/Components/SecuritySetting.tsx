@@ -146,6 +146,7 @@ const hasSpecialCharacter = /[!@#$%^&*(),.?":{}|<>]/.test(newPassword);
  dark:bg-[#B0E4CC]
  dark:text-black
  px-7
+ cursor-pointer
  py-3
  font-semibold
  text-white

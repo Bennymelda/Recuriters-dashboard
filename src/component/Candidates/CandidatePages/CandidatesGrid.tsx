@@ -36,7 +36,7 @@ const CandidatesGrid = ({
 
  return (
  <div
- className={`mt-2 grid dark:bg-zinc-900 bg-white py-4 gap-4  ${
+ className={`mt-2 grid dark:bg-zinc-900 xl:bg-white py-4 gap-4  ${
  view === "grid"
  ? "grid-cols-1 "
  : "grid-cols-1 "

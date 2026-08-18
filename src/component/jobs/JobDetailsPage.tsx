@@ -66,7 +66,7 @@ const applicantsCount = candidates.filter(
 
  <button
  onClick={() => navigate("/jobs")}
- className="mt-6 rounded-xl bg-teal-600 px-5 py-3 text-white"
+ className="mt-6 cursor-pointer rounded-xl bg-teal-600 px-5 py-3 text-white"
  >
  Back to Jobs
  </button>
@@ -111,7 +111,7 @@ const applicantsCount = candidates.filter(
  hover:border-[#408A71]/30
  hover:bg-[#EEF8F3]
  hover:text-[#408A71]
-
+cursor-pointer
  dark:border-zinc-700
  dark:bg-zinc-900
  dark:text-zinc-300
@@ -121,7 +121,7 @@ const applicantsCount = candidates.filter(
  >
  <MdArrowBack
  size={18}
- className="transition-transform group-hover:-translate-x-1"
+ className="cursor-pointer transition-transform group-hover:-translate-x-1"
  />
 
  Back
@@ -239,20 +239,20 @@ showToast({
 
 <div className=" grid grid-cols-2 gap-4 md:grid-cols-2 xl:grid-cols-4 mt-10">
         
-        <div className="bg-[#f6fffc] dark:bg-[#3f3e3e] rounded-lg p-5">
+        <div className="bg-[#f6fffc] dark:bg-zinc-800 rounded-lg p-5">
             <p className="text-md mb-1 text-gray-800 dark:text-gray-200 font-semibold">Employment Type</p>
             <p className="text-[#285A48] dark:text-[#B0E4CC] font-bold">{job.employmentType}</p>
         </div>
-        <div className="bg-[#f6fffc] dark:bg-[#3f3e3e] rounded-xl p-5">
+        <div className="bg-[#f6fffc] dark:bg-zinc-800 rounded-xl p-5">
             <p className="text-md mb-1 text-gray-800 font-semibold dark:text-gray-200 " >Offer Salary</p>
             <p  className="text-[#285A48] font-bold dark:text-[#B0E4CC]">{job.salary}</p>
         </div>
-        <div className="bg-[#f6fffc] dark:bg-[#3f3e3e] rounded-xl p-5">
+        <div className="bg-[#f6fffc] dark:bg-zinc-800 rounded-xl p-5">
             <p  className="text-md mb-1 text-gray-800 font-semibold dark:text-gray-200">Experience</p>
             <p className="text-[#285A48] font-bold dark:text-[#B0E4CC]">{job.experience}</p>
         </div>
 
-        <div className="bg-[#f6fffc] dark:bg-[#3f3e3e]  rounded-xl p-5">
+        <div className="bg-[#f6fffc] dark:bg-zinc-800  rounded-xl p-5">
             <p className="text-md mb-1 text-gray-800 font-semibold dark:text-gray-200">Work Level</p>
             <p className="text-[#285A48] font-bold dark:text-[#B0E4CC]">{job.experienceLevel} level</p>
         </div>

@@ -88,7 +88,7 @@ darkIcon:'#FFFFFF',
  employmentType: "Part-time",
  experienceLevel: "Senior",
  status: "Active",
-  experience:"Minimum of 1 year",
+  experience:" 1 year",
  description:
  "We are seeking an experienced Backend Engineer to help build and scale the core infrastructure powering our recruitment platform. In this role, you will design, develop, and maintain secure, high-performance backend services that support thousands of users and millions of API requests. You'll collaborate closely with frontend engineers, product managers, DevOps engineers, and designers to deliver reliable features while ensuring scalability, security, and maintainability. The ideal candidate has a strong understanding of distributed systems, database optimization, API design, and cloud-based architectures.",
 
@@ -238,7 +238,7 @@ darkIcon:'#FFFFFF',
  employmentType: "Part-time",
  experienceLevel: "Senior",
  status: "Active",
- experience:"Minimum of 1 years",
+ experience:"1 years",
  description:
  "We are looking for an experienced DevOps Engineer to join our engineering team and help build, automate, and maintain the infrastructure that powers our recruitment platform. You will play a critical role in ensuring our applications remain secure, scalable, and highly available while improving deployment efficiency through modern DevOps practices. Working closely with software engineers, security teams, and product stakeholders, you'll optimize cloud infrastructure, automate workflows, monitor system health, and drive operational excellence across the organization.",
 

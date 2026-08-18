@@ -68,7 +68,7 @@ const canManageTeam = user?.role === "Admin";
  rounded-2xl
 w-fit
  bg-[#285A48]
-
+cursor-pointer
  px-6
  py-3
 

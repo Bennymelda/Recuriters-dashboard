@@ -136,7 +136,7 @@ const closeMobileSidebar = () => {
  className="
  hidden
  lg:flex
-
+cursor-pointer
  rounded-lg
  p-2
 
@@ -163,7 +163,7 @@ const closeMobileSidebar = () => {
  className="
  rounded-lg
  p-2
-
+cursor-pointer
  text-[#285A48]
 
  transition

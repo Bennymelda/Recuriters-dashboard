@@ -31,7 +31,7 @@ const unreadCount = useNotificationStore(
  hover:-translate-y-0.5
  hover:border-[#408A71]/30
  hover:bg-[#EEF8F3]
-
+cursor-pointer
  
  dark:hover:border-[#B0E4CC]/30
  dark:hover:bg-zinc-700

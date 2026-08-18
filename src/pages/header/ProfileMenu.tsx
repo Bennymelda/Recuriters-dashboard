@@ -38,7 +38,7 @@ const handleLogout = () => {
  gap-3
 
  rounded-2xl
-
+cursor-pointer
  px-3
  py-2
 
@@ -252,7 +252,7 @@ const handleLogout = () => {
  w-full
  items-center
  gap-3
-
+cursor-pointer
  rounded-2xl
 
  px-4

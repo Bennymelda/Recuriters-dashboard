@@ -109,6 +109,7 @@ const DashboardUpcomingInterviews = () => {
  bg-[#EEF8F3]
  px-3
  py-1
+ whitespace-nowrap
  text-right
 flex flex-row
 items-center

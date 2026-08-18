@@ -88,16 +88,17 @@ const HeaderSearch = () => {
  const showResults =
  isFocused && query.trim().length > 0;
 
- return (
- <div className="relative w-full max-w-xl">
+return (
+ <div className="relative w-full   max-w-none sm:max-w-xl md:max-w-2xl">
  {/* Search input */}
- <div className="relative">
+ <div className="relative w-full ">
  <MdSearch
  size={20}
  className="
  absolute
  left-4
  top-1/2
+ z-10
  -translate-y-1/2
  text-zinc-400
  dark:text-zinc-500
@@ -112,6 +113,7 @@ const HeaderSearch = () => {
  placeholder="Search jobs, candidates, applications..."
  className="
  w-full
+ min-w-0
  rounded-2xl
  border
  border-zinc-200
@@ -127,22 +129,22 @@ const HeaderSearch = () => {
  transition-all
  duration-300
 
- hover:border-[hashtag#408A71]/40
+ hover:border-[#408A71]/40
 
- focus:border-[hashtag#408A71]
+ focus:border-#408A71]
  focus:shadow-md
  focus:ring-2
- focus:ring-[hashtag#B0E4CC]/30
+ focus:ring-[#B0E4CC]/30
 
  dark:border-zinc-700
  dark:bg-zinc-800
  dark:text-zinc-100
  dark:placeholder:text-zinc-500
 
- dark:hover:border-[hashtag#B0E4CC]/40
+ dark:hover:border-[#B0E4CC]/40
 
- dark:focus:border-[hashtag#B0E4CC]
- dark:focus:ring-[hashtag#408A71]/20
+ dark:focus:border-[#B0E4CC]
+ dark:focus:ring-[#408A71]/20
  "
  />
 
@@ -150,7 +152,7 @@ const HeaderSearch = () => {
  {query && (
  <button
  type="button"
- onClick​={handleClear}
+ onClick={handleClear}
  className="
  absolute
  right-3
@@ -164,6 +166,7 @@ const HeaderSearch = () => {
  hover:text-zinc-700
  dark:hover:bg-zinc-700
  dark:hover:text-zinc-200
+ cursor-pointer
  "
  >
  <MdClose size={18} />
@@ -177,9 +180,10 @@ const HeaderSearch = () => {
  {/* Click outside */}
  <div
  className="fixed inset-0 z-40"
- onClick​={() => setIsFocused(false)}
+ onClick={() => setIsFocused(false)}
  />
 
+ {/* Results dropdown */}
  <div
  className="
  absolute
@@ -187,6 +191,11 @@ const HeaderSearch = () => {
  right-0
  top-[calc(100%+10px)]
  z-50
+
+ w-full
+ min-w-0
+ max-w-full
+
  overflow-hidden
  rounded-2xl
  border
@@ -196,6 +205,8 @@ const HeaderSearch = () => {
 
  dark:border-zinc-700
  dark:bg-zinc-900
+
+ sm:max-w-xl
  "
  >
  {!hasResults ? (
@@ -228,7 +239,20 @@ const HeaderSearch = () => {
  </p>
  </div>
  ) : (
- <div className="max-h-[420px] overflow-y-auto p-2">
+ <div
+ className="
+ max-h-[min(420px,calc(100vh-140px))]
+ overflow-y-auto
+ overscroll-contain
+ p-2
+
+ scrollbar-none
+ "
+ style={{
+ scrollbarWidth: "none",
+ msOverflowStyle: "none",
+ }}
+ >
  {/* Jobs */}
  {searchResults.jobs.length > 0 && (
  <div>
@@ -251,10 +275,11 @@ const HeaderSearch = () => {
  <button
  key={job.id}
  type="button"
- onClick​={() => handleJobClick(job.id)}
+ onClick={() => handleJobClick(job.id)}
  className="
  flex
  w-full
+ min-w-0
  items-center
  gap-3
  rounded-xl
@@ -277,27 +302,59 @@ const HeaderSearch = () => {
  items-center
  justify-center
  rounded-xl
- bg-[hashtag#EEF8F3]
- text-[hashtag#408A71]
+ bg-[#EEF8F3]
+ text-[#408A71]
 
- dark:bg-[hashtag#408A71]/15
- dark:text-[hashtag#B0E4CC]
+ dark:bg-[#408A71]/15
+ dark:text-[#B0E4CC]
  "
  >
  <MdWorkOutline size={20} />
  </div>
 
  <div className="min-w-0 flex-1">
- <p className="truncate text-sm font-semibold text-zinc-900 dark:text-white">
+ <p
+ className="
+ truncate
+ text-sm
+ font-semibold
+ text-zinc-900
+ dark:text-white
+ "
+ >
  {job.title}
  </p>
 
- <p className="mt-0.5 truncate text-xs text-zinc-500 dark:text-zinc-400">
+ <p
+ className="
+ mt-0.5
+ truncate
+ text-xs
+ text-zinc-500
+ dark:text-zinc-400
+ "
+ >
  {job.department} • {job.location}
  </p>
  </div>
 
- <span className="rounded-full bg-zinc-100 px-2 py-1 text-[10px] font-semibold text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400">
+ <span
+ className="
+ hidden
+ shrink-0
+ rounded-full
+ bg-zinc-100
+ px-2
+ py-1
+ text-[10px]
+ font-semibold
+ text-zinc-600
+ dark:bg-zinc-800
+ dark:text-zinc-400
+
+ xs:inline-flex
+ "
+ >
  Job
  </span>
  </button>
@@ -327,12 +384,13 @@ const HeaderSearch = () => {
  <button
  key={candidate.id}
  type="button"
- onClick​={() =>
+ onClick={() =>
  handleCandidateClick(candidate.id)
  }
  className="
  flex
  w-full
+ min-w-0
  items-center
  gap-3
  rounded-xl
@@ -380,17 +438,49 @@ const HeaderSearch = () => {
  )}
 
  <div className="min-w-0 flex-1">
- <p className="truncate text-sm font-semibold text-zinc-900 dark:text-white">
+ <p
+ className="
+ truncate
+ text-sm
+ font-semibold
+ text-zinc-900
+ dark:text-white
+ "
+ >
  {candidate.fullName}
  </p>
 
- <p className="mt-0.5 truncate text-xs text-zinc-500 dark:text-zinc-400">
+ <p
+ className="
+ mt-0.5
+ truncate
+ text-xs
+ text-zinc-500
+ dark:text-zinc-400
+ "
+ >
  {candidate.appliedRole} •{" "}
  {candidate.status}
  </p>
  </div>
 
- <span className="rounded-full bg-zinc-100 px-2 py-1 text-[10px] font-semibold text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400">
+ <span
+ className="
+ hidden
+ shrink-0
+ rounded-full
+ bg-zinc-100
+ px-2
+ py-1
+ text-[10px]
+ font-semibold
+ text-zinc-600
+ dark:bg-zinc-800
+ dark:text-zinc-400
+
+ xs:inline-flex
+ "
+ >
  Candidate
  </span>
  </button>
@@ -403,7 +493,7 @@ const HeaderSearch = () => {
  </>
  )}
  </div>
- );
+);
 };
 
 export default HeaderSearch;

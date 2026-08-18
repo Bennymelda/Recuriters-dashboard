@@ -140,6 +140,7 @@ const hasScheduledInterview = candidate.interviewHistory.some(
  dark:text-[#B0E4CC]
  dark:hover:bg-[#408A71]
  dark:hover:text-white
+ cursor-pointer
  "
  >
  <span className="flex items-center gap-3">
@@ -168,6 +169,7 @@ const hasScheduledInterview = candidate.interviewHistory.some(
  border
  border-teal-200
  px-4
+ cursor-pointer
  py-3
  text-sm
  font-semibold
@@ -206,6 +208,7 @@ const hasScheduledInterview = candidate.interviewHistory.some(
  dark:text-zinc-300
  dark:hover:bg-red-900/20
  dark:hover:text-red-400
+ cursor-pointer
  "
  >
  <MdClose size={20} />

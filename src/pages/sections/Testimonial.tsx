@@ -42,7 +42,7 @@ const Testimonial = () => {
  {/* GRID (desktop) + SCROLL (mobile) */}
  <div
  className="
- flex gap-4 overflow-x-auto md:grid md:grid-cols-2 lg:grid-cols-3
+ flex gap-4 overflow-x-auto lg:grid  lg:grid-cols-3
  snap-x snap-mandatory scroll-smooth scrollbar-none
  pb-4
  "
@@ -51,7 +51,7 @@ const Testimonial = () => {
  <div
  key={index}
  className="
- min-w-[85%] md:min-w-0 snap-center
+ min-w-[85%] lg:min-w-0 snap-center
  bg-white dark:bg-zinc-800 px-6
  py-8 rounded-xl
  shadow-sm 
@@ -68,7 +68,7 @@ const Testimonial = () => {
  </div>
 
  {/* Text */}
- <p className="italic md:text-md dark:text-gray-300 mb-4">
+ <p className="italic line-clamp-3 md:text-md lg:text-md dark:text-gray-300 mb-4">
  "{item.text}"
  </p>
 

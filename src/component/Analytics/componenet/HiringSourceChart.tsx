@@ -67,12 +67,11 @@ const HiringSources = () => {
     <section
       className="
         flex flex-col justify-between
-        rounded-3xl
-        border
-        border-zinc-200
+        rounded-2xl
+   
         bg-white
         p-6
-        shadow-sm
+        
         dark:border-zinc-800
         dark:bg-zinc-900
       "
@@ -96,7 +95,7 @@ const HiringSources = () => {
           {/* Donut Chart with Center Total Display */}
           <div className="relative h-[220px] w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
+              <PieChart accessibilityLayer={false}>
                 <Pie
                   data={sourceData}
                   dataKey="candidates"

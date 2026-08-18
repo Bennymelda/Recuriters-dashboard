@@ -76,20 +76,26 @@ const AnalyticsStats = () => {
  return (
  <section
  className="
- grid
- grid-cols-1
+ flex
+ w-full
  gap-4
- sm:grid-cols-2
+ overflow-x-auto
+ pb-2
+ scrollbar-none
+
+ xl:grid
  xl:grid-cols-5
+ xl:overflow-visible
+ xl:pb-0
  "
  >
  {stats.map((stat) => (
  <div
  key={stat.label}
  className="
- rounded-3xl
- border
- border-zinc-200
+ min-w-[250px]
+ shrink-0
+ rounded-2xl
  bg-white
  p-5
  shadow-sm
@@ -100,6 +106,20 @@ const AnalyticsStats = () => {
 
  dark:border-zinc-800
  dark:bg-zinc-900
+
+ xl:min-w-0
+ "
+ >
+ <div
+ className="
+ flex
+ flex-row
+ items-center
+ justify-between
+
+ md:flex-col
+ md:items-start
+ md:gap-2
  "
  >
  <div className="flex items-start justify-between">
@@ -118,7 +138,6 @@ const AnalyticsStats = () => {
  </div>
  </div>
 
- <div className="mt-5">
  <p
  className="
  text-sm
@@ -129,7 +148,9 @@ const AnalyticsStats = () => {
  >
  {stat.label}
  </p>
+ </div>
 
+ <div className="mt-5">
  <h3
  className="
  mt-1
@@ -157,7 +178,7 @@ const AnalyticsStats = () => {
  </div>
  ))}
  </section>
- );
+);
 };
 
 export default AnalyticsStats;

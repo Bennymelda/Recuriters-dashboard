@@ -84,10 +84,10 @@ scrollbar-none
  overflow-x-auto
  pb-2
 
- lg:grid
- lg:grid-cols-3
+ xl:grid
+xl:grid-cols-3
  xl:grid-cols-5
- lg:overflow-visible
+ xl:overflow-visible
  "
 >
  {stats.map((stat) => (

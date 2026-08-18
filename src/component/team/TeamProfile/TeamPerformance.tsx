@@ -114,11 +114,11 @@ const workload =
  <section
  className="
  rounded-3xl
- border
- border-zinc-200
- bg-white
- p-6
 
+ bg-white
+ p-4
+ md:p-6
+shadow-xs
  dark:border-zinc-700
  dark:bg-zinc-900
  "
@@ -168,7 +168,7 @@ const workload =
  </div>
 </div>
 
- <p className="mt-4 text-sm text-zinc-500">
+ <p className="mt-4 text-sm text-zinc-500 dark:text-gray-300">
  Performance Score
  </p>
 
@@ -180,7 +180,7 @@ const workload =
 
  <div className="mb-2 flex justify-between text-sm">
 
- <span className="text-zinc-500">
+ <span className="text-zinc-500 dark:text-gray-300">
  Overall Performance
  </span>
 

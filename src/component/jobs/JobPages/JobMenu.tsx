@@ -36,7 +36,7 @@ const canCreateJobs =
 </div>
  <button
  onClick={onView}
- className="flex w-full items-center gap-3 p-3 md:px-4 md:py-3 text-left text-xs md:text-sm text-zinc-700 transition hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
+ className="flex cursor-pointer w-full items-center gap-3 p-3 md:px-4 md:py-3 text-left text-xs md:text-sm text-zinc-700 transition hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
  >
  <MdVisibility size={20} />
  View Details
@@ -44,7 +44,7 @@ const canCreateJobs =
 { canCreateJobs && (
  <button
  onClick={onEdit}
- className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm text-zinc-700 transition hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
+ className="flex cursor-pointer  w-full items-center gap-3 px-4 py-3 text-left text-sm text-zinc-700 transition hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
  >
  <MdEdit size={18} />
  Edit Job
@@ -54,7 +54,7 @@ const canCreateJobs =
 { canCreateJobs && (
  <button
  onClick={onDuplicate}
- className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm text-zinc-700 transition hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
+ className="flex cursor-pointer w-full items-center gap-3 px-4 py-3 text-left text-sm text-zinc-700 transition hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
  >
  <MdContentCopy size={20} />
  Duplicate Job
@@ -64,7 +64,7 @@ const canCreateJobs =
 { canCreateJobs && (
  <button
  onClick={onDelete}
- className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm text-red-600 transition hover:bg-red-50 dark:hover:bg-red-900/20"
+ className="flex cursor-pointer w-full items-center gap-3 px-4 py-3 text-left text-sm text-red-600 transition hover:bg-red-50 dark:hover:bg-red-900/20"
  >
  <MdDeleteOutline size={20} />
  Delete Job
