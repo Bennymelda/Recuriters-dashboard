@@ -1,13 +1,13 @@
 import "dotenv/config";
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 
-const resendApiKey = process.env.RESEND_API_KEY;
-
-if (!resendApiKey) {
- throw new Error("RESEND_API_KEY is required to send invitation emails.");
-}
-
-const resend = new Resend(resendApiKey);
+const transporter = nodemailer.createTransport({
+ service: "gmail",
+ auth: {
+ user: process.env.EMAIL_USER,
+ pass: process.env.EMAIL_APP_PASSWORD,
+ },
+});
 
 export const sendInvitationEmail = async ({
  email,
@@ -24,8 +24,8 @@ export const sendInvitationEmail = async ({
 }) => {
  const invitationLink = `http://localhost:5173/accept-invitation/${invitationId}`;
 
- const { data, error } = await resend.emails.send({
- from: "RecruiterPro <onboarding@resend.dev>",
+ const result = await transporter.sendMail({
+ from: `"${companyName}" <${process.env.EMAIL_USER}>`,
  to: email,
  subject: `You're invited to join ${companyName}`,
  html: `
@@ -46,7 +46,7 @@ export const sendInvitationEmail = async ({
  style="
  display:inline-block;
  padding:12px 20px;
- background:#285A48;
+ background:hashtag#285A48;
  color:white;
  text-decoration:none;
  border-radius:8px;
@@ -62,9 +62,5 @@ export const sendInvitationEmail = async ({
  `,
  });
 
- if (error) {
- throw new Error(error.message);
- }
-
- return data;
+ return result;
 };

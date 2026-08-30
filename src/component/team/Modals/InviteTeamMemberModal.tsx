@@ -48,18 +48,21 @@ const handleSubmit = async (
  setError("Please select a role.");
  return;
  }
-if (!company?.id) {
+
+ if (!company?.id) {
  setError("Company information could not be found.");
  return;
-}
-const invitationId = createInvitation({
+ }
+
+ try {
+ const invitationId = createInvitation({
  fullName: fullName.trim(),
  email: email.trim(),
  role,
  companyId: company.id,
-});
+ });
 
-const response = await fetch(
+ const response = await fetch(
  "http://localhost:5000/api/invitations/send",
  {
  method: "POST",
@@ -74,38 +77,34 @@ const response = await fetch(
  invitationId,
  }),
  }
-);
+ );
 
-const result = await response.json();
+ const result = await response.json();
 
-if (!response.ok) {
+ if (!response.ok) {
  setError(
  result.message ||
  "Failed to send invitation email."
  );
  return;
-}
+ }
 
-console.log("Invitation email sent:", result);
+ console.log("Invitation email sent:", result);
 
-
-console.log("Invitation data:", {
- fullName: fullName.trim(),
- email: email.trim(),
- role,
- 
- companyId: company.id,
-});
-console.log("company:", company)
-
-
- // Reset form
  setFullName("");
  setEmail("");
  setRole("");
 
  onClose();
- };
+
+ } catch (error) {
+ console.error("Failed to send invitation:", error);
+
+ setError(
+ "Unable to send the invitation. Please try again."
+ );
+ }
+};
 
  const handleClose = () => {
  setFullName("");

@@ -27,6 +27,7 @@ import AnalyticsPage from './component/Analytics/AnalyticsPage'
 import CompleteProfile from './pages/auth/Onboarding'
 import AcceptInvitation from './component/team/AcceptInvitaton'
 import JobApplicationForm from './component/jobs/JobPages/JobApplicationForm'
+import HiringManagerDashboard from './hiring-manager/HiringManagerDahboard'
 //import ToastContainer from './component/ui/ToastContainer'
 function App() {
   const { pathname } = useLocation();
@@ -56,7 +57,15 @@ function App() {
  <Route path="/team" element={<TeamPage />} />
  <Route path="/team/:memberId" element={<TeamMemberProfilePage />} />
  <Route path="/Analytics" element={<AnalyticsPage />} />
-// ...existing code...
+
+
+
+
+<Route
+ path="/hiring-manager"
+ element={<HiringManagerDashboard />}
+/>
+
 
 
 </Route>

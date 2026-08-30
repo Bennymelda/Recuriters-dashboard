@@ -37,11 +37,13 @@ const [status, setStatus] =
 const [salary, setSalary] = useState("");
 const [description, setDescription] = useState("");
 const { addJob} = useJobStore();
+const [isSubmitting, setIsSubmitting] = useState(false);
+
 
 const handleSubmit = async (e: React.FormEvent) => {
  e.preventDefault();
 
-
+ if (isSubmitting) return;
 
  if (!title.trim()) {
  showToast({
@@ -49,62 +51,60 @@ const handleSubmit = async (e: React.FormEvent) => {
  title: "Job title required",
  message: "Please enter a job title.",
  });
-
  return;
-}
+ }
 
-if (!department.trim()) {
+ if (!department.trim()) {
  showToast({
  type: "warning",
  title: "Department required",
  message: "Please select a department.",
  });
-
  return;
-}
+ }
 
-if (!location.trim()) {
+ if (!location.trim()) {
  showToast({
  type: "warning",
  title: "Location required",
  message: "Please enter a location.",
  });
-
  return;
-}
+ }
 
-if (!description.trim()) {
+ if (!description.trim()) {
  showToast({
  type: "warning",
  title: "Description required",
  message: "Please provide a job description.",
  });
-
  return;
-}
+ }
 
-if (!company?.id) {
+ if (!company?.id) {
  showToast({
  type: "warning",
  title: "Company not found",
  message: "Unable to create this job without company information.",
  });
-
  return;
-}
+ }
 
- const jobData= {
+ setIsSubmitting(true);
+
+ try {
+ const jobData = {
  id: crypto.randomUUID(),
-    name: title,
-    icon: "work",
-    iconColor: "#408A71",
+ name: title,
+ icon: "work",
+ iconColor: "hashtag#408A71",
  title,
- companyId:company.id,
+ companyId: company.id,
  department,
  location,
  employmentType,
-    experienceLevel,
-    experience: experienceLevel,
+ experienceLevel,
+ experience: experienceLevel,
  status,
  description,
  responsibilities,
@@ -117,12 +117,13 @@ if (!company?.id) {
  };
 
  await addJob(jobData);
-showToast({
+
+ showToast({
  type: "success",
  title: "Job Created",
  message: `${title} has been created successfully.`,
-});
- // Reset form
+ });
+
  setTitle("");
  setDepartment("");
  setLocation("");
@@ -135,7 +136,19 @@ showToast({
  setRequirements([]);
  setBenefits([]);
  setSkills([]);
+
  onClose();
+ } catch (error) {
+ console.error("Failed to create job:", error);
+
+ showToast({
+ type: "error",
+ title: "Job creation failed",
+ message: "We couldn't create the job. Please try again.",
+ });
+ } finally {
+ setIsSubmitting(false);
+ }
 };
 
 
@@ -192,6 +205,7 @@ showToast({
  mode={mode}
  loading={false}
  onCancel={onClose}
+   isSubmitting={isSubmitting}
 />
 </form>
     </> );
