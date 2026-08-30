@@ -57,17 +57,7 @@ function App() {
  <Route path="/team/:memberId" element={<TeamMemberProfilePage />} />
  <Route path="/Analytics" element={<AnalyticsPage />} />
 // ...existing code...
-<Route
-  path="/jobs/:jobId/apply"
-  element={<JobApplicationForm />}
-/>
 
-// if you want to keep the old route temporarily:
-<Route
-  path="/apply/:jobId"
-  element={<JobApplicationPage />}
-/>
-// ...existing code...
 
 </Route>
 
@@ -105,7 +95,17 @@ function App() {
  path="/accept-invitation/:invitationId"
  element={<AcceptInvitation />}
 />
+<Route
+  path="/jobs/:jobId/apply"
+  element={<JobApplicationForm />}
+/>
 
+// if you want to keep the old route temporarily:
+<Route
+  path="/apply/:jobId"
+  element={<JobApplicationPage />}
+/>
+// ...existing code...
  </Routes>
 
   )
