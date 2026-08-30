@@ -535,7 +535,7 @@ darkIcon: "#F24E1E",
 },
 {
  id: "job_8",
- companyId:'9',
+ companyId: '9',
  title: "Technical Recruiter",
  department: "Human Resources",
  location: "Hybrid",
