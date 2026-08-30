@@ -8,82 +8,153 @@ import {
  MdAccessTime,
 } from "react-icons/md";
 
-import { formatLastActive } from "../../../utils/formatLastActive";
 import { useTeamStore } from "../../../store/teamStore";
+
+import { formatLastActive } from "../../../utils/formatLastActive";
 import { formatJoinedDate } from "../../../utils/formatJoinedDate";
+
 const TeamMemberInfo = () => {
+ // ---------------------------------------------
+ // Selected member
+ // ---------------------------------------------
+
  const selectedMemberId = useTeamStore(
  (state) => state.selectedMemberId
  );
 
  const member = useTeamStore((state) =>
  state.members.find(
- (member) => member.id === selectedMemberId
+ (teamMember) =>
+ teamMember.id === selectedMemberId
  )
  );
+
+ // ---------------------------------------------
+ // Refresh relative last-active text
+ // ---------------------------------------------
+
  const [, setTick] = useState(0);
 
  useEffect(() => {
-  const interval = window.setInterval(() => {
-   setTick((prev) => prev + 1);
-  }, 30000);
+ const interval = window.setInterval(() => {
+ setTick((previous) => previous + 1);
+ }, 30000);
 
-  return () => window.clearInterval(interval);
+ return () =>
+ window.clearInterval(interval);
  }, []);
 
- if (!member) return null;
+ // ---------------------------------------------
+ // No selected member
+ // ---------------------------------------------
+
+ if (!member) {
+ return null;
+ }
+
+ // ---------------------------------------------
+ // Last active
+ // ---------------------------------------------
+
+ const lastActive =
+ member.membershipStatus === "Pending"
+ ? "Not joined"
+ : member.lastActive
+ ? formatLastActive(member.lastActive)
+ : "Never active";
+
+ // ---------------------------------------------
+ // Personal information
+ // ---------------------------------------------
 
  const info = [
  {
  label: "Email",
- value: member.email,
+ value: member.email || "N/A",
  icon: <MdEmail size={20} />,
  },
+
  {
  label: "Phone",
- value: member.phone,
+ value: member.phone || "N/A",
  icon: <MdPhone size={20} />,
  },
+
  {
  label: "Department",
- value: member.department,
+ value: member.department || "Not assigned",
  icon: <MdBusiness size={20} />,
  },
+
  {
  label: "Role",
- value: member.role,
+ value: member.role || "Not assigned",
  icon: <MdWork size={20} />,
  },
+
  {
  label: "Joined",
  value: member.joinedAt
  ? formatJoinedDate(member.joinedAt)
+ : member.membershipStatus === "Pending"
+ ? "Not joined"
  : "N/A",
  icon: <MdCalendarToday size={20} />,
-},
+ },
+
  {
  label: "Last Active",
- value: formatLastActive(member.lastActive),
+ value: lastActive,
  icon: <MdAccessTime size={20} />,
  },
  ];
 
-return (
+ // ---------------------------------------------
+ // Render
+ // ---------------------------------------------
+
+ return (
  <section
  className="
  rounded-2xl
-
  bg-white
  p-4
  md:p-6
-
- dark:border-zinc-700
  dark:bg-zinc-900
  "
  >
- <h2 className="mb-6 text-xl font-semibold text-zinc-900 dark:text-white">
+ {/* --------------------------------------- */}
+ {/* Header */}
+ {/* --------------------------------------- */}
+
+ <div className="mb-6">
+ <h2
+ className="
+ text-xl
+ font-semibold
+ text-zinc-900
+ dark:text-white
+ "
+ >
  Personal Information
  </h2>
+
+ <p
+ className="
+ mt-1
+ text-sm
+ text-zinc-500
+ dark:text-zinc-400
+ "
+ >
+ Contact and employment information for{" "}
+ {member.fullName}.
+ </p>
+ </div>
+
+ {/* --------------------------------------- */}
+ {/* Information */}
+ {/* --------------------------------------- */}
 
  <div className="grid gap-5 md:grid-cols-2">
  {info.map((item) => (
@@ -99,28 +170,48 @@ return (
  dark:bg-zinc-800
  "
  >
+ {/* Icon */}
+
  <div
  className="
  flex
  h-11
  w-11
+ shrink-0
  items-center
  justify-center
  rounded-xl
- bg-[#EEF8F3]
- text-[#408A71]
- dark:bg-[#408A71]/20
+ bg-[hashtag#EEF8F3]
+ text-[hashtag#408A71]
+ dark:bg-[hashtag#408A71]/20
+ dark:text-[hashtag#B0E4CC]
  "
  >
  {item.icon}
  </div>
 
- <div>
- <p className="text-sm text-zinc-500 dark:text-zinc-400">
+ {/* Information */}
+
+ <div className="min-w-0">
+ <p
+ className="
+ text-sm
+ text-zinc-500
+ dark:text-zinc-400
+ "
+ >
  {item.label}
  </p>
 
- <p className="mt-1 font-semibold text-zinc-900 dark:text-white">
+ <p
+ className="
+ mt-1
+ break-words
+ font-semibold
+ text-zinc-900
+ dark:text-white
+ "
+ >
  {item.value}
  </p>
  </div>

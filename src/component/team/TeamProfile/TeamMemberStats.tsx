@@ -4,111 +4,176 @@ import {
  MdEvent,
  MdTrendingUp,
 } from "react-icons/md";
+
 import { useCandidateStore } from "../../../store/candidateStore";
 import { useTeamStore } from "../../../store/teamStore";
+
 const TeamMemberStats = () => {
+ // ---------------------------------------------
+ // Selected member
+ // ---------------------------------------------
+
  const selectedMemberId = useTeamStore(
  (state) => state.selectedMemberId
  );
-const candidates = useCandidateStore(
- (state) => state.candidates
-);
+
+ // ---------------------------------------------
+ // Team member
+ // ---------------------------------------------
+
  const member = useTeamStore((state) =>
  state.members.find(
- (member) => member.id === selectedMemberId
+ (teamMember) =>
+ teamMember.id === selectedMemberId
  )
+ );
+
+ // ---------------------------------------------
+ // Candidates
+ // ---------------------------------------------
+
+ const candidates = useCandidateStore(
+ (state) => state.candidates
  );
 
  if (!member) return null;
- const assignedJobIds = Array.isArray(member.assignedJobIds)
+
+ // ---------------------------------------------
+ // Assigned jobs
+ // ---------------------------------------------
+
+ const assignedJobIds = Array.isArray(
+ member.assignedJobIds
+ )
  ? member.assignedJobIds
- : Array.isArray(member.assignedJobs)
- ? member.assignedJobs
  : [];
-console.log("Assigned jobs:", assignedJobIds);
 
-console.log(
- "Matching candidates:",
- candidates.filter(candidate =>
- assignedJobIds.includes(candidate.jobId)
- )
-);
  const normalizedAssignedJobIds = new Set(
- assignedJobIds.map((jobId) => jobId.trim().toLowerCase())
+ assignedJobIds
+ .map((jobId) =>
+ jobId.trim().toLowerCase()
+ )
+ .filter(Boolean)
  );
 
- const interviews = candidates.flatMap((candidate) =>
- candidate.interviewHistory.filter(
- (interview) => interview.interviewerId === member.id
- )
-);
- const interviewsCount = interviews.length;
+ // ---------------------------------------------
+ // Active candidates
+ // ---------------------------------------------
 
-const hiresCount = candidates.filter(
+ const activeCandidateStatuses = [
+ "Applied",
+ "Screening",
+ "Interview",
+ "Offer",
+ ];
+
+ const activeCandidatesCount =
+ candidates.filter((candidate) => {
+ const candidateJobId =
+ candidate.jobId
+ ?.trim()
+ .toLowerCase();
+
+ return (
+ Boolean(candidateJobId) &&
+ normalizedAssignedJobIds.has(
+ candidateJobId
+ ) &&
+ activeCandidateStatuses.includes(
+ candidate.status
+ )
+ );
+ }).length;
+
+ // ---------------------------------------------
+ // Interviews
+ // ---------------------------------------------
+
+ const interviews = candidates.flatMap(
  (candidate) =>
- candidate.status === "Hired" &&
- candidate.interviewHistory.some(
- (interview) => interview.interviewerId === member.id
+ candidate.interviewHistory.filter(
+ (interview) =>
+ interview.interviewerId ===
+ member.id
  )
-).length;
-const activeCandidatesCount = candidates.filter((candidate) => {
- const normalizedCandidateJobId = candidate.jobId?.trim().toLowerCase();
- const normalizedStatus = candidate.status?.trim();
-
- return (
-  Boolean(normalizedCandidateJobId) &&
-  normalizedAssignedJobIds.has(normalizedCandidateJobId) &&
-  ["Applied", "Screening", "Interview", "Offer"].includes(normalizedStatus ?? "")
  );
-}).length;
 
-const activeCandidates = candidates.filter((candidate) => {
- const normalizedCandidateJobId = candidate.jobId?.trim().toLowerCase();
+ const interviewsCount =
+ interviews.length;
 
- return (
- Boolean(normalizedCandidateJobId) &&
- normalizedAssignedJobIds.has(normalizedCandidateJobId) &&
- ["Applied", "Screening", "Interview", "Offer"].includes(candidate.status)
- );
-});
+ // ---------------------------------------------
+ // Successful hires
+ // ---------------------------------------------
+ //
+ // IMPORTANT:
+ // We currently don't have hiredById on Candidate.
+ //
+ // Therefore we cannot reliably say that this
+ // particular team member hired the candidate.
+ //
+ // We use the member's existing successfulHires
+ // value for now.
+ //
+ // Later, when Candidate gets hiredById, this
+ // should be calculated directly from candidates.
+ // ---------------------------------------------
 
-console.log("Active candidates:", activeCandidates);
+ const hiresCount =
+ member.successfulHires ?? 0;
+
+ // ---------------------------------------------
+ // Stats
+ // ---------------------------------------------
 
  const stats = [
  {
  title: "Assigned Jobs",
+
  value: assignedJobIds.length,
+
  icon: <MdWork size={28} />,
+
  color:
  "bg-blue-100 text-blue-600 dark:bg-blue-500/20 dark:text-blue-300",
  },
 
  {
  title: "Active Candidates",
+
  value: activeCandidatesCount,
+
  icon: <MdPeople size={28} />,
+
  color:
  "bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-300",
  },
 
  {
  title: "Interviews",
+
  value: interviewsCount,
+
  icon: <MdEvent size={28} />,
+
  color:
  "bg-amber-100 text-amber-600 dark:bg-amber-500/20 dark:text-amber-300",
  },
 
  {
  title: "Successful Hires",
+
  value: hiresCount,
+
  icon: <MdTrendingUp size={28} />,
+
  color:
  "bg-purple-100 text-purple-600 dark:bg-purple-500/20 dark:text-purple-300",
  },
-];
+ ];
 
-
+ // ---------------------------------------------
+ // Render
+ // ---------------------------------------------
 
  return (
  <section className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
@@ -130,25 +195,47 @@ console.log("Active candidates:", activeCandidates);
  "
  >
  <div className="flex items-center justify-between">
+ {/* Stat information */}
 
  <div>
-
- <p className="text-sm text-zinc-500 dark:text-zinc-400">
+ <p
+ className="
+ text-sm
+ text-zinc-500
+ dark:text-zinc-400
+ "
+ >
  {stat.title}
  </p>
 
- <h2 className="mt-3 text-3xl font-bold text-zinc-900 dark:text-white">
+ <h2
+ className="
+ mt-3
+ text-3xl
+ font-bold
+ text-zinc-900
+ dark:text-white
+ "
+ >
  {stat.value}
  </h2>
-
  </div>
 
+ {/* Icon */}
+
  <div
- className={`flex h-14 w-14 items-center justify-center rounded-2xl ${stat.color}`}
+ className={`
+ flex
+ h-14
+ w-14
+ items-center
+ justify-center
+ rounded-2xl
+ ${stat.color}
+ `}
  >
  {stat.icon}
  </div>
-
  </div>
  </div>
  ))}

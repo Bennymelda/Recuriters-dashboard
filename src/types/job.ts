@@ -5,7 +5,7 @@ export interface Job {
   name: string;
  icon: string;
  iconColor:string;
-
+companyId: string;
  title: string;
  darkIcon?:string;
  department: string;

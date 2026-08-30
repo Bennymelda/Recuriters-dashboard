@@ -2,17 +2,27 @@
 import { jobs as initialJobs } from "../data/jobs";
 import type { Job } from "../types/job";
 
+import {
+  collection,
+  doc,
+  setDoc,
+  getDocs,
+  updateDoc,
+  deleteDoc,
+} from "firebase/firestore";
+
+import { db } from "../firebase";
 const STORAGE_KEY = "careerflow-jobs";
 
 interface JobStore {
   jobs: Job[];
-
   setJobs: (jobs: Job[]) => void;
-  addJob: (job: Job) => void;
-  updateJob: (id: string, updatedJob: Partial<Job>) => void;
-  deleteJob: (id: string) => void;
+  fetchJobs: () => Promise<void>;
+  addJob: (job: Job) => Promise<void>;
+  updateJob: (id: string, updatedJob: Partial<Job>) => Promise<void>;
+  deleteJob: (id: string) => Promise<void>;
   duplicateJob: (id: string) => void;
-clearJobs: () => void;
+  clearJobs: () => void;
   getActiveJobs: () => Job[];
   getFilteredJobs: (filters: {
     status?: string;
@@ -54,33 +64,71 @@ export const useJobStore = create<JobStore>((set, get) => ({
     set({ jobs });
   },
 
-  addJob: (job) =>
-    set((state) => {
-      const nextJobs = [...state.jobs, job];
-      persistJobs(nextJobs);
-      return { jobs: nextJobs };
-    }),
+  fetchJobs: async () => {
+    try {
+      const snapshot = await getDocs(collection(db, "jobs"));
+      const jobs = snapshot.docs.map((docSnap) => ({
+        ...(docSnap.data() as Job),
+        id: docSnap.id,
+      }));
 
-  updateJob: (id, updatedJob) =>
-    set((state) => {
-      const nextJobs = state.jobs.map((job) =>
-        job.id === id ? { ...job, ...updatedJob } : job
-      );
-      persistJobs(nextJobs);
-      return { jobs: nextJobs };
-    }),
+      persistJobs(jobs);
+      set({ jobs });
+    } catch (error) {
+      console.error("Failed to fetch jobs:", error);
+    }
+  },
 
-  deleteJob: (id) =>
-    set((state) => {
-      const nextJobs = state.jobs.filter((job) => job.id !== id);
-      persistJobs(nextJobs);
-      return { jobs: nextJobs };
-    }),
+  addJob: async (job) => {
+    try {
+      await setDoc(doc(db, "jobs", job.id), job);
 
-  duplicateJob: (id) =>
+      set((state) => {
+        const nextJobs = [...state.jobs, job];
+        persistJobs(nextJobs);
+        return { jobs: nextJobs };
+      });
+    } catch (error) {
+      console.error("Failed to save job to Firebase:", error);
+      throw error;
+    }
+  },
+
+  updateJob: async (id, updatedJob) => {
+    try {
+      await updateDoc(doc(db, "jobs", id), updatedJob as Record<string, unknown>);
+
+      set((state) => {
+        const nextJobs = state.jobs.map((job) =>
+          job.id === id ? { ...job, ...updatedJob } : job
+        );
+        persistJobs(nextJobs);
+        return { jobs: nextJobs };
+      });
+    } catch (error) {
+      console.error("Failed to update job:", error);
+      throw error;
+    }
+  },
+
+  deleteJob: async (id) => {
+    try {
+      await deleteDoc(doc(db, "jobs", id));
+
+      set((state) => {
+        const nextJobs = state.jobs.filter((job) => job.id !== id);
+        persistJobs(nextJobs);
+        return { jobs: nextJobs };
+      });
+    } catch (error) {
+      console.error("Failed to delete job:", error);
+      throw error;
+    }
+  },
+
+  duplicateJob: (id) => {
     set((state) => {
       const job = state.jobs.find((job) => job.id === id);
-
       if (!job) return state;
 
       const duplicatedJob: Job = {
@@ -94,7 +142,8 @@ export const useJobStore = create<JobStore>((set, get) => ({
       const nextJobs = [...state.jobs, duplicatedJob];
       persistJobs(nextJobs);
       return { jobs: nextJobs };
-    }),
+    });
+  },
 
   getActiveJobs: () => {
     return get().jobs.filter((job) => job.status === "Active");
@@ -119,15 +168,11 @@ export const useJobStore = create<JobStore>((set, get) => ({
     });
   },
 
-  clearJobs: () =>
- set(() => {
- localStorage.removeItem(STORAGE_KEY);
+  clearJobs: () => {
+    if (typeof window !== "undefined") {
+      window.localStorage.removeItem(STORAGE_KEY);
+    }
 
- return {
- jobs: [],
- 
- };
- }),
-
-
+    set(() => ({ jobs: [] }));
+  },
 }));

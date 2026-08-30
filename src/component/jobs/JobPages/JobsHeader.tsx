@@ -153,6 +153,7 @@ dark:bg-[#B0E4CC]
  hover:bg-[#408A71]
  hover:shadow-xl
 cursor-pointer
+whitespace-nowrap
  active:scale-95
  "
  >

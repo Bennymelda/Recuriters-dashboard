@@ -125,7 +125,7 @@ const upcomingInterviews = filteredInterviews
  setInterviewer={setInterviewer}
  />
 
- <div className="flex flex-col xl:flex-row xl:justify-between items-start gap-6 ">
+ <div className="flex flex-col lg:flex-row lg:justify-between  gap-6 ">
  
  <InterviewCalendar />
 

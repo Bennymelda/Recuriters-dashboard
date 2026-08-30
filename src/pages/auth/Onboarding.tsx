@@ -1,234 +1,374 @@
+import { useRef, useState } from "react";
+import { MdCameraAlt } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
-import {
- MdBusiness,
- MdPeople,
-} from "react-icons/md";
-
 import { useAuthStore } from "../../store/authStore";
 
-
-const SelectRole = () => {
-
+const CompleteProfile = () => {
  const navigate = useNavigate();
 
- const setRole = useAuthStore(
- (state) => state.setRole
+ const user = useAuthStore((state) => state.user);
+ const updateProfile = useAuthStore(
+ (state) => state.updateProfile
  );
 
+ const fileInputRef = useRef<HTMLInputElement>(null);
 
- const handleRoleSelect = (
- role: "Admin" | "Recruiter"
+ const [fullName, setFullName] = useState(
+ user?.fullName ?? ""
+ );
+
+ const [phoneNumber, setPhoneNumber] = useState(
+ user?.phoneNumber ?? ""
+ );
+
+ const [jobTitle, setJobTitle] = useState(
+ user?.jobTitle ?? ""
+ );
+
+ const [department, setDepartment] = useState(
+ user?.department ?? ""
+ );
+
+ const [bio, setBio] = useState(
+ user?.bio ?? ""
+ );
+
+ const [avatar, setAvatar] = useState(
+ user?.avatar ?? ""
+ );
+
+ if (!user) {
+ navigate("/login");
+ return null;
+ }
+
+ const handleImageChange = (
+ e: React.ChangeEvent<HTMLInputElement>
  ) => {
+ const file = e.target.files?.[0];
 
- setRole(role);
+ if (!file) return;
 
- navigate("/dashboard");
+ const reader = new FileReader();
 
+ reader.onloadend = () => {
+ setAvatar(reader.result as string);
  };
 
+ reader.readAsDataURL(file);
+ };
+
+ const handleComplete = () => {
+ updateProfile({
+ fullName: fullName.trim() || user.fullName,
+ companyName: user.companyName,
+ phoneNumber: phoneNumber.trim(),
+ jobTitle: jobTitle.trim(),
+ department: department.trim(),
+ bio: bio.trim(),
+ location: user.location ?? "",
+ timeZone: user.timeZone ?? "",
+ avatar,
+ });
+
+ navigate("/dashboard");
+ };
+
+ const handleSkip = () => {
+ navigate("/dashboard");
+ };
 
  return (
- <div
- className="
- flex
- min-h-screen
- items-center
- justify-center
- bg-white
- px-4
-shadow-sm
- dark:bg-zinc-950
- "
- >
+ <div className="min-h-screen bg-zinc-50 px-4 py-10 dark:bg-zinc-950">
+ <div className="mx-auto w-full max-w-2xl">
 
- <div
- className="
- w-full
- max-w-3xl
- rounded-3xl
- border
- border-zinc-100
- bg-white
- px-10
- py-10
- shadow-md
-
- dark:border-zinc-800
- dark:bg-zinc-900
- "
- >
-
+ {/* Header */}
  <div className="mb-8 text-center">
-
- <h1
- className="
- text-3xl
- font-bold
- text-zinc-900
- dark:text-white
- "
- >
- How will you use RecruitFlow?
+ <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-white">
+ Complete your profile
  </h1>
 
-
- <p
- className="
- mt-2
- text-zinc-500
- dark:text-gray-300
- "
- >
- Choose your role to personalize your experience.
+ <p className="mt-2 text-sm leading-6 text-zinc-500 dark:text-zinc-400">
+ Add a few details to personalize your profile.
+ You can always update this later from Settings.
  </p>
-
  </div>
 
+ {/* Card */}
+ <div className="rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm md:p-8 dark:border-zinc-800 dark:bg-zinc-900">
 
+ {/* Avatar */}
+ <div className="mb-8 flex flex-col items-center">
 
- <div
- className="
- grid
- gap-6
- md:grid-cols-2
- "
- >
+ <input
+ ref={fileInputRef}
+ type="file"
+ accept="image/*"
+ hidden
+ onChange​={handleImageChange}
+ />
 
  <button
- onClick={() => handleRoleSelect("Admin")}
- className="
- rounded-3xl
- border
- border-zinc-200
- p-6
- text-left
- transition
- hover:-translate-y-1
- hover:border-[#408A71]
- hover:shadow-lg
-
- dark:border-zinc-700
- "
+ type="button"
+ onClick​={() =>
+ fileInputRef.current?.click()
+ }
+ className="group relative cursor-pointer"
  >
-
- <div
+ <img
+ src={
+ avatar ||
+ `https://ui-avatars.com/api/?name=${encodeURIComponent(
+ fullName || user.fullName
+ )}&background=285A48&color=fff`
+ }
+ alt={fullName || user.fullName}
  className="
- mb-4
+ h-28
+ w-28
+ rounded-full
+ border-4
+ border-white
+ object-cover
+ shadow-md
+ ring-2
+ ring-[hashtag#408A71]/20
+ transition
+ group-hover:brightness-75
+ dark:border-zinc-900
+ "
+ />
+
+ <span
+ className="
+ absolute
+ bottom-1
+ right-1
  flex
- h-14
- w-14
+ h-9
+ w-9
  items-center
  justify-center
- rounded-2xl
- bg-[#EEF8F3]
- text-[#408A71]
+ rounded-full
+ border-2
+ border-white
+ bg-[hashtag#285A48]
+ text-white
+ dark:border-zinc-900
+ dark:bg-[hashtag#B0E4CC]
+ dark:text-zinc-900
  "
  >
- <MdBusiness size={28}/>
- </div>
-
-
- <h2
- className="
- text-xl
- font-bold
- text-zinc-900
- dark:text-white
- "
- >
- Create a hiring team
- </h2>
-
-
- <p
- className="
- mt-2
- text-sm
- text-zinc-500
- dark:text-gray-300
- "
- >
- Admin or Hiring Manager. Manage jobs,
- recruiters, and the hiring process.
- </p>
-
-
+ <MdCameraAlt size={18} />
+ </span>
  </button>
 
+ <p className="mt-3 text-sm text-zinc-500 dark:text-zinc-400">
+ Profile photo is optional
+ </p>
+ </div>
 
+ {/* Form */}
+ <div className="grid gap-5 md:grid-cols-2">
 
+ {/* Full Name */}
+ <div>
+ <label className="mb-2 block text-sm font-semibold text-zinc-800 dark:text-zinc-200">
+ Full Name
+ </label>
+
+ <input
+ value={fullName}
+ onChange​={(e) =>
+ setFullName(e.target.value)
+ }
+ placeholder="Your full name"
+ className="
+ w-full
+ rounded-2xl
+ border
+ border-zinc-200
+ px-4
+ py-3
+ outline-none
+ focus:border-[hashtag#408A71]
+ dark:border-zinc-700
+ dark:bg-zinc-800
+ dark:text-white
+ "
+ />
+ </div>
+
+ {/* Phone */}
+ <div>
+ <label className="mb-2 block text-sm font-semibold text-zinc-800 dark:text-zinc-200">
+ Phone Number
+ </label>
+
+ <input
+ value={phoneNumber}
+ onChange​={(e) =>
+ setPhoneNumber(e.target.value)
+ }
+ placeholder="+234 801 234 5678"
+ className="
+ w-full
+ rounded-2xl
+ border
+ border-zinc-200
+ px-4
+ py-3
+ outline-none
+ focus:border-[hashtag#408A71]
+ dark:border-zinc-700
+ dark:bg-zinc-800
+ dark:text-white
+ "
+ />
+ </div>
+
+ {/* Job Title */}
+ <div>
+ <label className="mb-2 block text-sm font-semibold text-zinc-800 dark:text-zinc-200">
+ Job Title
+ </label>
+
+ <input
+ value={jobTitle}
+ onChange​={(e) =>
+ setJobTitle(e.target.value)
+ }
+ placeholder="e.g. Senior Recruiter"
+ className="
+ w-full
+ rounded-2xl
+ border
+ border-zinc-200
+ px-4
+ py-3
+ outline-none
+ focus:border-[hashtag#408A71]
+ dark:border-zinc-700
+ dark:bg-zinc-800
+ dark:text-white
+ "
+ />
+ </div>
+
+ {/* Department */}
+ <div>
+ <label className="mb-2 block text-sm font-semibold text-zinc-800 dark:text-zinc-200">
+ Department
+ </label>
+
+ <input
+ value={department}
+ onChange​={(e) =>
+ setDepartment(e.target.value)
+ }
+ placeholder="e.g. Human Resources"
+ className="
+ w-full
+ rounded-2xl
+ border
+ border-zinc-200
+ px-4
+ py-3
+ outline-none
+ focus:border-[hashtag#408A71]
+ dark:border-zinc-700
+ dark:bg-zinc-800
+ dark:text-white
+ "
+ />
+ </div>
+
+ {/* Bio */}
+ <div className="md:col-span-2">
+ <label className="mb-2 block text-sm font-semibold text-zinc-800 dark:text-zinc-200">
+ About You
+ </label>
+
+ <textarea
+ rows={4}
+ value={bio}
+ onChange​={(e) =>
+ setBio(e.target.value)
+ }
+ placeholder="Tell your team a little about yourself..."
+ className="
+ w-full
+ resize-none
+ rounded-2xl
+ border
+ border-zinc-200
+ px-4
+ py-3
+ outline-none
+ focus:border-[hashtag#408A71]
+ dark:border-zinc-700
+ dark:bg-zinc-800
+ dark:text-white
+ "
+ />
+ </div>
+ </div>
+
+ {/* Actions */}
+ <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
 
  <button
- onClick={() => handleRoleSelect("Recruiter")}
+ type="button"
+ onClick​={handleSkip}
  className="
- rounded-3xl
+ rounded-2xl
  border
  border-zinc-200
- p-6
- text-left
- transition
- hover:-translate-y-1
- hover:border-[#408A71]
- hover:shadow-lg
-
- dark:border-zinc-700
- "
- >
-
- <div
- className="
- mb-4
- flex
- h-14
- w-14
- items-center
- justify-center
- rounded-2xl
- bg-blue-50
- text-blue-600
- "
- >
- <MdPeople size={28}/>
- </div>
-
-
- <h2
- className="
- text-xl
- font-bold
- text-zinc-900
- dark:text-white
- "
- >
- Join a recruitment team
- </h2>
-
-
- <p
- className="
- mt-2
+ px-6
+ py-3
  text-sm
- dark:text-gray-300
- text-zinc-500
+ font-semibold
+ text-zinc-600
+ transition
+ hover:bg-zinc-100
+ dark:border-zinc-700
+ dark:text-zinc-300
+ dark:hover:bg-zinc-800
  "
  >
- Recruiter. Manage candidates,
- interviews, and hiring tasks.
- </p>
-
-
+ Skip for now
  </button>
 
+ <button
+ type="button"
+ onClick​={handleComplete}
+ className="
+ rounded-2xl
+ bg-[hashtag#285A48]
+ px-6
+ py-3
+ text-sm
+ font-semibold
+ text-white
+ transition
+ hover:bg-[hashtag#35745E]
+ dark:bg-[hashtag#B0E4CC]
+ dark:text-zinc-900
+ dark:hover:bg-[hashtag#89D9B4]
+ "
+ >
+ Complete Profile
+ </button>
 
  </div>
-
-
  </div>
 
+ <p className="mt-5 text-center text-xs text-zinc-400">
+ You can update these details anytime from Settings.
+ </p>
+ </div>
  </div>
  );
 };
 
-
-export default SelectRole;
-
+export default CompleteProfile;

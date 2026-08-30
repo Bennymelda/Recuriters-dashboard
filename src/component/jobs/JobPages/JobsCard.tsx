@@ -47,10 +47,7 @@ const truncateText = (text: string, limit: number) => {
 };
 const Icon =
  companyIcons[job.icon as keyof typeof companyIcons];
-  console.log(companyIcons);
-console.log(job.icon);
-console.log(companyIcons[job.icon as keyof typeof companyIcons]);
- return (
+return (
     <>
  <div className="
  group relative rounded-2xl border border-zinc-200

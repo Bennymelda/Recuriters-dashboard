@@ -21,8 +21,12 @@ interface CompanyStore {
  updateCompany: (
  company: Partial<Company>
  ) => void;
+
  resetCompany: () => void;
- initializeCompany: (company: Company) => void;
+
+ initializeCompany: (
+ company: Company
+ ) => void;
 }
 
 const loadCompany = (): Company => {
@@ -30,18 +34,28 @@ const loadCompany = (): Company => {
  return defaultCompany;
  }
 
- const stored = localStorage.getItem(STORAGE_KEY);
+ const stored = localStorage.getItem(
+ STORAGE_KEY
+ );
 
  if (!stored) {
  return defaultCompany;
  }
 
+ try {
  return JSON.parse(stored);
+ } catch {
+ return defaultCompany;
+ }
 };
 
-export const useCompanyStore = create<CompanyStore>(
- (set) => ({
+export const useCompanyStore =
+ create<CompanyStore>((set) => ({
  company: loadCompany(),
+
+ // ---------------------------------------------
+ // UPDATE COMPANY
+ // ---------------------------------------------
 
  updateCompany: (data) =>
  set((state) => {
@@ -60,9 +74,11 @@ export const useCompanyStore = create<CompanyStore>(
  };
  }),
 
+ // ---------------------------------------------
+ // INITIALIZE COMPANY
+ // ---------------------------------------------
 
-
-initializeCompany: (company) =>
+ initializeCompany: (company) =>
  set(() => {
  localStorage.setItem(
  STORAGE_KEY,
@@ -74,27 +90,28 @@ initializeCompany: (company) =>
  };
  }),
 
+ // ---------------------------------------------
+ // RESET COMPANY
+ // ---------------------------------------------
 
- 
  resetCompany: () =>
- set((state) => {
- localStorage.removeItem("company");
+ set(() => {
+ localStorage.removeItem(
+ STORAGE_KEY
+ );
 
  return {
-    ...state,
  company: {
-    id:"",
+ id: "",
  companyName: "",
+ logo: "",
  industry: "",
-
  companySize: "",
  website: "",
  email: "",
  phone: "",
  address: "",
- logo: "",
  },
  };
  }),
- })
-);
+ }));

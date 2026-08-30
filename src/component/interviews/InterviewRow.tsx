@@ -41,7 +41,7 @@ const isOverdue =
 
  return (
     <>
- <tr className="hidden xl:table-row bg-white dark:bg-zinc-900 border-b border-zinc-200 last:border-none dark:border-zinc-700">
+ <tr className="hidden lg:table-row bg-white dark:bg-zinc-900 border-b border-zinc-200 last:border-none dark:border-zinc-700">
  {/* Candidate */}
  <td className="px-6 py-5">
  <div className="flex items-center gap-2">
@@ -271,7 +271,7 @@ t-white p-2 transition hover:bg-zinc-100 dark:hover:bg-zinc-700"
 
  <section
  className="
- xl:hidden
+ lg:hidden
 
 w-full
  rounded-2xl

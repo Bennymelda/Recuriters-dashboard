@@ -22,21 +22,21 @@ const InterviewsTable = ({
  className="
  mb-10
  rounded-3xl
- xl:border
+ lg:border
  border-zinc-200
- xl:bg-white
+ lg:bg-white
  shadow-sm
  border-0
  dark:border-zinc-700
  dark:bg-zinc-900
- xl:dark:bg-zinc-800
-
+ lg:dark:bg-zinc-800
+scrollbar-hide 
  overflow-visible
  "
  >
- <div className="overflow-x-auto overflow-y-visible">
+ <div className="overflow-x-auto  overflow-y-visible">
  <table className="w-full">
- <thead className="hidden xl:table-header-group border-b border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900/50">
+ <thead className="hidden lg:table-header-group border-b border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900/50">
  <tr>
  <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-300">
  Candidate
@@ -68,7 +68,7 @@ const InterviewsTable = ({
  </tr>
  </thead>
 
- <tbody className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:table-row-group xl:gap-0">
+ <tbody className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:table-row-group lg:gap-0">
  {interviews.map(({ candidate, interview }) => (
  <InterviewRow
  key={interview.id}

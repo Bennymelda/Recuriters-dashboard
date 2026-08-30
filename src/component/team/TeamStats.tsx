@@ -45,7 +45,7 @@ const candidates = useCandidateStore((state) => state.candidates);
  title: "Online",
   num:"5.6%",
  value: members.filter(
- (member) => member.status === "Online"
+ (member) => member.presenceStatus === "Online"
  ).length,
  icon: <MdCircle size={24} />,
  color:
@@ -55,7 +55,7 @@ const candidates = useCandidateStore((state) => state.candidates);
      num:"4.6%",
  title: "Assigned Jobs",
  value: members.reduce(
- (total, member) => total + member.assignedJobs.length,
+ (total, member) => total + member.assignedJobIds.length,
  0
  ),
  icon: <MdWork size={28} />,

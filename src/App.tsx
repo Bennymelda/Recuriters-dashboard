@@ -1,6 +1,8 @@
 
 import { useEffect } from 'react'
+
 import './index.css'
+import JobApplicationPage from './component/jobs/JobPages/JobApplicationPage'
 import Home from './pages/Home'
 import { Route, Routes } from 'react-router-dom'
 import JobPage from './component/jobs/JobPage'
@@ -22,6 +24,9 @@ import ForgotPassword from './pages/auth/Forgot'
 import SettingsPage from './component/Settings/settingPage'
 import Notifications from './pages/header/Notifcations'
 import AnalyticsPage from './component/Analytics/AnalyticsPage'
+import CompleteProfile from './pages/auth/Onboarding'
+import AcceptInvitation from './component/team/AcceptInvitaton'
+import JobApplicationForm from './component/jobs/JobPages/JobApplicationForm'
 //import ToastContainer from './component/ui/ToastContainer'
 function App() {
   const { pathname } = useLocation();
@@ -51,6 +56,18 @@ function App() {
  <Route path="/team" element={<TeamPage />} />
  <Route path="/team/:memberId" element={<TeamMemberProfilePage />} />
  <Route path="/Analytics" element={<AnalyticsPage />} />
+// ...existing code...
+<Route
+  path="/jobs/:jobId/apply"
+  element={<JobApplicationForm />}
+/>
+
+// if you want to keep the old route temporarily:
+<Route
+  path="/apply/:jobId"
+  element={<JobApplicationPage />}
+/>
+// ...existing code...
 
 </Route>
 
@@ -58,6 +75,10 @@ function App() {
  <Route 
  path="/select-role"
  element={<SelectRole />}
+/>
+<Route
+ path="/complete-profile"
+ element={<CompleteProfile />}
 />
 <Route 
  path="/signup"
@@ -80,7 +101,10 @@ function App() {
  element={<Notifications />}
 />
 
-
+<Route
+ path="/accept-invitation/:invitationId"
+ element={<AcceptInvitation />}
+/>
 
  </Routes>
 

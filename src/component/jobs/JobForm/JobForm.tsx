@@ -9,6 +9,7 @@ import type { Job } from "../../../types/job";
 import { useJobStore } from "../../../store/jobStore";
 
 import { useToastStore } from "../../toast/toastStore";
+import { useCompanyStore } from "../../../store/companyStore";
 interface JobFormProps {
  mode: "create" | "edit";
  onClose: () => void;
@@ -25,7 +26,9 @@ const [department, setDepartment] = useState("");
 const [location, setLocation] = useState("");
 const [employmentType, setEmploymentType] =
  useState<Job["employmentType"]>("Full-time");
-
+const company = useCompanyStore(
+ (state) => state.company
+);
 const [experienceLevel, setExperienceLevel] =
  useState<Job["experienceLevel"]>("Junior");
 
@@ -35,8 +38,10 @@ const [salary, setSalary] = useState("");
 const [description, setDescription] = useState("");
 const { addJob} = useJobStore();
 
-const handleSubmit = (e: React.FormEvent) => {
+const handleSubmit = async (e: React.FormEvent) => {
  e.preventDefault();
+
+
 
  if (!title.trim()) {
  showToast({
@@ -77,12 +82,24 @@ if (!description.trim()) {
 
  return;
 }
+
+if (!company?.id) {
+ showToast({
+ type: "warning",
+ title: "Company not found",
+ message: "Unable to create this job without company information.",
+ });
+
+ return;
+}
+
  const jobData= {
  id: crypto.randomUUID(),
     name: title,
     icon: "work",
     iconColor: "#408A71",
  title,
+ companyId:company.id,
  department,
  location,
  employmentType,
@@ -99,9 +116,8 @@ if (!description.trim()) {
  createdAt: new Date().toISOString(),
  };
 
- addJob(jobData);
-console.log(localStorage.getItem("careerflow-jobs"));
- showToast({
+ await addJob(jobData);
+showToast({
  type: "success",
  title: "Job Created",
  message: `${title} has been created successfully.`,

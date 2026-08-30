@@ -95,7 +95,7 @@ const TodaysInterviews = ({
  dark:text-zinc-300
  "
  >
- Enjoy the quiet day 😊
+ Enjoy the quiet day 
  </div>
 </div>
  ) : (

@@ -19,7 +19,8 @@ const TeamPage = () => {
    const matchesRole = !filters.role || member.role === filters.role;
    const matchesDepartment =
     !filters.department || member.department === filters.department;
-   const matchesStatus = !filters.status || member.status === filters.status;
+    const matchesStatus =
+     !filters.status || member.presenceStatus === filters.status;
 
    return matchesRole && matchesDepartment && matchesStatus;
   });

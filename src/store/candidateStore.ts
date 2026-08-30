@@ -82,6 +82,8 @@ updateCandidateStatus: (
  selectCandidate: (id: string) => void;
 clearCandidates: () => void;
  clearSelectedCandidate: () => void;
+addCandidate: (candidate: Candidate) => void;
+
 
  getCandidateById: (id: string) => Candidate | undefined;
 addNote: (
@@ -177,6 +179,22 @@ export const useCandidateStore = create<CandidateStore>((set, get) => ({
  });
  persistCandidates(candidates);
  },
+
+addCandidate: (candidate) =>
+ set((state) => {
+ const newCandidates = [
+ ...state.candidates,
+ candidate,
+ ];
+
+ persistCandidates(newCandidates);
+
+ return {
+ candidates: newCandidates,
+ isLoading: false,
+ };
+ }),
+
 
  updateCandidate: (id, updatedCandidate) =>
  set((state) => {

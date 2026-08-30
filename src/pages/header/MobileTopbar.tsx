@@ -56,13 +56,19 @@ const MobileTopBar = ({ onOpenSidebar }: MobileTopBarProps) => {
  </button>
 
  <div className="flex items-center gap-3">
-
+{/*
  <img
  src={company.logo || RecruitFlowLogo}
  alt="Company Logo"
  className="h-10 w-10 rounded-xl object-cover"
  />
+*/}
 
+<img
+ src={company.logo }
+ alt="Company Logo"
+ className="h-10 w-10 rounded-xl object-cover"
+ />
  <div>
 
  <h1 className="text-lg font-bold text-zinc-900 dark:text-white">

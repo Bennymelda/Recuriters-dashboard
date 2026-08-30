@@ -55,6 +55,8 @@ const applicantsCount = candidates.filter(
  (candidate) => candidate.jobId === job.id
 ).length;
 
+const jobLink = `${window.location.origin}/apply/${job.id}`;
+
  if (!job) {
  return (
  <div className="flex h-[70vh] flex-col items-center justify-center">
@@ -149,7 +151,6 @@ cursor-pointer
 <div  className="bg-white px-6 py-4 dark:bg-zinc-900">
 <div>
 
-    <div></div>
     <p className="font-bold text-xl dark:text-gray-200 "> Preview</p>
 
     
@@ -172,6 +173,7 @@ cursor-pointer
  </button>
     )}
  </Tooltip>
+
  
             </div>
            
@@ -236,11 +238,20 @@ showToast({
    
 </div>
 
-
-<div className=" grid grid-cols-2 gap-4 md:grid-cols-2 xl:grid-cols-4 mt-10">
+ <button
+ onClick={async () => {
+ await navigator.clipboard.writeText(jobLink);
+ alert("Job link copied!");
+ }}
+ className="rounded-xl bg-[#285A48] px-5 py-3 font-semibold text-white"
+>
+ Copy Job Link
+</button>
+<div className=" grid grid-cols-2 gap-4 md:grid-cols-2 lg:grid-cols-4 mt-10">
         
         <div className="bg-[#f6fffc] dark:bg-zinc-800 rounded-lg p-5">
             <p className="text-md mb-1 text-gray-800 dark:text-gray-200 font-semibold">Employment Type</p>
+            
             <p className="text-[#285A48] dark:text-[#B0E4CC] font-bold">{job.employmentType}</p>
         </div>
         <div className="bg-[#f6fffc] dark:bg-zinc-800 rounded-xl p-5">

@@ -42,7 +42,7 @@ animate-fade
  border-dashed
  border-zinc-300
 
- bg-zinc-50
+ bg-white
 px-4
  md:px-6
  py-10
@@ -119,7 +119,7 @@ return(
  Upcoming Interviews
  </h2>
 
- <div className="flex flex-col gap-4">
+ <div className="flex flex-col gap-2">
  {interviews.map(({ candidate, interview }) => (
  <div
  key={interview.id}
@@ -145,7 +145,7 @@ return(
  {/* Desktop */}
  <div className="hidden md:flex items-center justify-between gap-4">
 
- <div className="flex items-center gap-3">
+ <div className="flex items-center gap-2">
  <img
  src={
  candidate.avatar ||
@@ -166,16 +166,16 @@ return(
  </div>
  </div>
 
- <span className="rounded-full bg-purple-100 px-3 py-1 text-xs font-semibold text-purple-700 dark:bg-purple-500/20 dark:text-purple-300">
+ <span className="rounded-full bg-purple-100 px-2 py-1 text-xs font-semibold text-purple-700 dark:bg-purple-500/20 dark:text-purple-300">
  {interview.stage}
  </span>
 
- <div className="flex items-center gap-3">
- <p className="text-sm font-semibold dark:text-gray-200">
+ <div className="flex items-center gap-2">
+ <p className="text-sm font-semibold whitespace-nowrap dark:text-gray-200">
  {formatDate(interview.date)}
  </p>
 
- <p className="text-sm font-semibold dark:text-gray-200">
+ <p className="text-sm whitespace-nowrap font-normal dark:text-gray-200">
  {formatTime(interview.date)}
  </p>
  </div>

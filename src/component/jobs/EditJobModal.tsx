@@ -9,6 +9,7 @@ import type { Job } from "../../types/job";
 import { useJobStore } from "../../store/jobStore";
 
 import { useToastStore } from "../toast/toastStore";
+import { useCompanyStore } from "../../store/companyStore";
 interface JobFormProps {
  mode: "create" | "edit";
  onClose: () => void;
@@ -43,7 +44,9 @@ const [skills, setSkills] =
  useState(job?.skills ?? []);
 const { addJob, updateJob } = useJobStore();
 const [, forceUpdate] = useState(0);
-
+const company = useCompanyStore(
+ (state) => state.company
+);
 useEffect(() => {
  const interval = setInterval(() => {
  forceUpdate((prev) => prev + 1);
@@ -61,6 +64,7 @@ const handleSubmit = (e: React.FormEvent) => {
  icon: "work",
  iconColor: "#408A71",
  title,
+ companyId: company.id,
  department,
  location,
  employmentType,

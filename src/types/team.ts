@@ -1,36 +1,22 @@
+
+
 export type TeamRole =
  | "Admin"
  | "Recruiter"
  | "Hiring Manager"
  | "HR Manager";
 
+export type TeamMembershipStatus =
+ | "Pending"
+ | "Active"
+ | "Inactive";
 
-export type TeamStatus =
+export type TeamPresenceStatus =
  | "Online"
  | "Away"
  | "Offline";
 
-export interface TeamActivity {
- id: string;
- recruiterName: string;
- action: string;
- target: string;
- secondaryTarget?: string;
- date: string;
- category?: "interview" | "pipeline" | "job" | "team" | "candidate";
-}
-export interface TeamMember {
- id: string;
-
- // Personal Info
- fullName: string;
- avatar?: string;
- email: string;
- phone: string;
-
- role: TeamRole | "";
-
- department:
+export type TeamDepartment =
  | "Engineering"
  | "Design"
  | "Marketing"
@@ -40,26 +26,131 @@ export interface TeamMember {
  | "Operations"
  | "";
 
+export type TeamActivityCategory =
+ | "interview"
+ | "pipeline"
+ | "job"
+ | "team"
+ | "candidate";
 
- // Status
- status: TeamStatus;
+export interface TeamActivity {
+ id: string;
 
+ recruiterName: string;
+
+ action: string;
+
+ target: string;
+
+ secondaryTarget?: string;
+
+ date: string;
+
+ category?: TeamActivityCategory;
+}
+
+export interface TeamInvitation {
+ id: string;
+
+ companyId: string;
+
+ fullName: string;
+
+ email: string;
+
+ role: TeamRole;
+
+ status: "Pending" | "Accepted" | "Expired";
+companyName:string;
+ invitedAt: string;
+
+ acceptedAt?: string;
+}
+
+export interface TeamMember {
+ id: string;
+ companyId: string;
+ invitationId?:string
+
+ // --------------------------------
+ // Personal / Profile Information
+ // --------------------------------
+
+ fullName: string;
+
+ email: string;
+
+ phone?: string;
+
+ avatar?: string;
+
+ // --------------------------------
+ // Organization
+ // --------------------------------
+
+ role: TeamRole | "";
+
+ department: TeamDepartment;
+
+
+companyName: string;
+
+ // --------------------------------
+ // Membership
+ // --------------------------------
+
+ membershipStatus: TeamMembershipStatus;
+
+ // --------------------------------
+ // Presence
+ // --------------------------------
+
+ presenceStatus: TeamPresenceStatus;
+
+ lastActive?: string;
+
+ // --------------------------------
+ // Job Assignments
+ // --------------------------------
+
+ assignedJobIds: string[];
+
+ // --------------------------------
  // Performance
+ // --------------------------------
 
- assignedJobs: string[];
-assignedJobIds: string[];
-//activeCandidates: number;
+ candidatesHandled: number;
+
  interviewsThisWeek: number;
- hires: number;
- averageHiringDays: number;
 
+ offersMade: number;
 
  successfulHires: number;
-performanceScore: number;
 
+ averageHiringDays: number;
+
+ performanceScore: number;
+
+ // --------------------------------
  // Activity
+ // --------------------------------
+
  recentActivity: TeamActivity[];
-lastActive: string;
- createdAt: string;
+
+ // --------------------------------
+ // Invitation
+ // --------------------------------
+
+ invitedAt?: string;
+
+ // --------------------------------
+ // Membership Dates
+ // --------------------------------
+
  joinedAt?: string;
+
+ createdAt: string;
 }
+
+
+

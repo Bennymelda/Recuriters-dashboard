@@ -9,6 +9,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { useCompanyStore } from "../../store/companyStore";
 import { useAuthStore } from "../../store/authStore";
 import PasswordStrength from "./PasswordStrength";
+import { useSearchParams } from "react-router-dom";
+import { useTeamStore } from "../../store/teamStore";
+
+
 type FormErrors = {
  fullName: string;
  companyName: string;
@@ -53,8 +57,23 @@ const [errors, setErrors] = useState<FormErrors>({
 const [showPassword, setShowPassword] = useState(false);
 const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+const [searchParams] = useSearchParams();
 
+const invitationId =
+ searchParams.get("invitationId");
 
+const getInvitation = useTeamStore(
+ (state) => state.getInvitation
+);
+
+const acceptInvitation = useTeamStore(
+ (state) => state.acceptInvitation
+);
+const invitation = invitationId
+ ? getInvitation(invitationId)
+ : undefined;
+
+const isInvitedUser = Boolean(invitationId);
  const handleChange = (
  e: React.ChangeEvent<HTMLInputElement>
 ) => {
@@ -71,7 +90,6 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
  });
 };
 
-
 const handleSubmit = (e: React.FormEvent) => {
  e.preventDefault();
 
@@ -80,61 +98,177 @@ const handleSubmit = (e: React.FormEvent) => {
  companyName: "",
  email: "",
  password: "",
- confirmPassword:"",
+ confirmPassword: "",
  };
 
  if (!formData.fullName.trim()) {
  newErrors.fullName = "Full name is required";
  }
 
- if (!formData.companyName.trim()) {
- newErrors.companyName = "Company name is required";
- }
-
  if (!formData.email.trim()) {
  newErrors.email = "Work email is required";
  }
 
+ if (!isInvitedUser && !formData.companyName.trim()) {
+ newErrors.companyName =
+ "Company name is required";
+ }
+
  if (!formData.password.trim()) {
  newErrors.password = "Password is required";
-} else if (formData.password.length < 12) {
- newErrors.password = "Password must be at least 12 characters";
-}
-
-if (!formData.confirmPassword.trim()) {
- newErrors.confirmPassword = "Please confirm your password";
-} else if (formData.password !== formData.confirmPassword) {
- newErrors.confirmPassword = "Passwords do not match";
-}if (!formData.password.trim()) {
- newErrors.password = "Password is required";
  } else if (formData.password.length < 12) {
- newErrors.password = "Password must be at least 12 characters";
+ newErrors.password =
+ "Password must be at least 12 characters";
+ }
+
+ if (!formData.confirmPassword.trim()) {
+ newErrors.confirmPassword =
+ "Please confirm your password";
+ } else if (
+ formData.password !== formData.confirmPassword
+ ) {
+ newErrors.confirmPassword =
+ "Passwords do not match";
  }
 
  setErrors(newErrors);
 
- // Stop here if there is any error
- if (Object.values(newErrors).some((error) => error !== "")) {
+ if (
+ Object.values(newErrors).some(
+ (error) => error !== ""
+ )
+ ) {
  return;
  }
 
- signup(formData);
+ /*
+ * -----------------------------------------
+ * INVITED USER
+ * -----------------------------------------
+ */
+
+ if (isInvitedUser) {
+ if (!invitation) {
+ setErrors({
+ ...newErrors,
+ email: "This invitation is invalid or has expired.",
+ });
+
+ return;
+ }
+
+ if (invitation.status !== "Pending") {
+ setErrors({
+ ...newErrors,
+ email:
+ "This invitation has already been accepted.",
+ });
+
+ return;
+ }
+
+ /*
+ * The invited user's email must match
+ * the email used for the invitation.
+ */
+ if (
+ formData.email.trim().toLowerCase() !==
+ invitation.email.toLowerCase()
+ ) {
+ setErrors({
+ ...newErrors,
+ email:
+ "Please use the email address this invitation was sent to.",
+ });
+
+ return;
+ }
+
+ const result = signup({
+ fullName: formData.fullName.trim(),
+ email: invitation.email,
+ password: formData.password,
+
+ /*
+ * IMPORTANT:
+ * Sarah is joining an existing company.
+ */
+ companyId: invitation.companyId,
+
+ companyName: invitation.companyName,
+
+ /*
+ * Her role comes from the invitation.
+ */
+ role: invitation.role,
+
+ invitationId: invitation.id,
+ });
+
+ if (!result.success) {
+ setErrors({
+ ...newErrors,
+ email: result.message,
+ });
+
+ return;
+ }
+
+ /*
+ * Activate the existing team membership.
+ */
+ acceptInvitation(invitation.id);
+
+ navigate("/complete-profile");
+
+ return;
+ }
+
+ /*
+ * -----------------------------------------
+ * NORMAL SIGNUP
+ * -----------------------------------------
+ */
+
+ const result = signup({
+ fullName: formData.fullName.trim(),
+ email: formData.email.trim(),
+ password: formData.password,
+ companyName: formData.companyName.trim(),
+ role: "Admin",
+ });
+
+ if (!result.success) {
+ setErrors({
+ ...newErrors,
+ email: result.message,
+ });
+
+ return;
+ }
+
+ const createdUser =
+ useAuthStore.getState().user;
 
  initializeCompany({
- id: crypto.randomUUID(),
- companyName: formData.companyName,
+ id:
+ createdUser?.companyId ??
+ crypto.randomUUID(),
+
+ companyName:
+ formData.companyName.trim(),
+
  logo: "",
  industry: "",
  companySize: "",
  website: "",
- email: formData.email,
+ email: formData.email.trim(),
  phone: "",
  address: "",
  });
 
- navigate("/select-role");
+ navigate("/complete-profile");
 };
-
 
  
 
@@ -440,7 +574,8 @@ dark:placeholder-white/70
  )}
 </div>
 
-
+{!isInvitedUser && (
+  <>
  <input
  name="companyName"
  value={formData.companyName}
@@ -467,7 +602,8 @@ dark:placeholder-white/70
  {errors.companyName}
  </p>
  )}
-
+</>
+)}
 <div>
  <input
  name="email"
@@ -664,7 +800,11 @@ mt-4
  </form>
           
            <div className=" flex items-center text-sm gap-2 justify-center mt-5">
-    <p className="text-sm dark:text-white">Already have an account? </p> <Link to="/login" className="font-bold  text-[#285A48]
+    <p className="text-sm dark:text-white">Already have an account? </p> <Link to={
+ invitationId
+ ? `/login?invitationId=${invitationId}`
+ : "/login"
+ } className="font-bold  text-[#285A48]
  dark:text-[#B0E4CC]">sign in</Link>
 </div>
           </div>

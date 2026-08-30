@@ -1,20 +1,32 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import {
+ useNavigate,
+ useSearchParams,
+} from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useAuthStore } from "../../store/authStore";
 import { MdVisibility, MdVisibilityOff } from "react-icons/md";
-
+import { useTeamStore } from "../../store/teamStore";
 
 const Login = () => {
 
  const navigate = useNavigate();
+const [searchParams] = useSearchParams();
 
+const invitationId =
+ searchParams.get("invitationId"); 
  const login = useAuthStore(
  (state) => state.login
  );
 const [error, setError] = useState("");
 
+const getInvitation = useTeamStore(
+ (state) => state.getInvitation
+);
 
+const acceptInvitation = useTeamStore(
+ (state) => state.acceptInvitation
+);
 
  const [formData, setFormData] = useState({
  email: "",
@@ -43,15 +55,45 @@ const [error, setError] = useState("");
 
 const result = login(formData);
 
-
 if (!result.success) {
  setError(result.message);
  return;
 }
 
+if (invitationId) {
+ const invitation = getInvitation(invitationId);
+
+ if (!invitation) {
+ setError(
+ "This invitation could not be found."
+ );
+ return;
+ }
+
+ if (invitation.status !== "Pending") {
+ setError(
+ "This invitation is no longer available."
+ );
+ return;
+ }
+
+ if (
+ formData.email.trim().toLowerCase() !==
+ invitation.email.toLowerCase()
+ ) {
+ setError(
+ "Please use the email address this invitation was sent to."
+ );
+ return;
+ }
+
+ acceptInvitation(invitationId);
+
+ navigate("/dashboard");
+ return;
+}
 
 navigate("/dashboard");
-
  };
 
 const [showPassword, setShowPassword] = useState(false);

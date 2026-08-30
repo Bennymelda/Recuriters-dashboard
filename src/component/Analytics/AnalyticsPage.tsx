@@ -16,8 +16,8 @@ const AnalyticsPage = () => {
  grid-cols-1
  items-stretch
  gap-6
- xl:grid-cols-2
- xl:grid-cols-[minmax(0,1.7fr)_minmax(320px,1fr)]
+ lg:grid-cols-2
+ lg:grid-cols-[minmax(0,1.7fr)_minmax(320px,1fr)]
  ">
  
  <HiringActivityChart />
