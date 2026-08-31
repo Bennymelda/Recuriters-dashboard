@@ -1,7 +1,12 @@
-import { useState } from "react";
+
+
+import { useEffect, useState } from "react";
 import { useCandidateStore } from "../../../store/candidateStore";
-import { useJobStore } from "../../../store/jobStore";
 import { useParams } from "react-router-dom";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../../../firebase";
+import type { Job } from "../../../types/job";
+
 export default function JobApplicationForm(){
  const { jobId } = useParams();
 
@@ -17,7 +22,6 @@ export default function JobApplicationForm(){
     const [coverLetter, setCoverLetter] = useState("");
     const [cv, setCv] = useState<File | null>(null);
     const [location, setLocation] = useState("");
-     const jobs = useJobStore((state) => state.jobs);
     
     const [isSubmitting, setIsSubmitting] = useState(false);
     const uploadCV = async (file: File) => {
@@ -47,10 +51,48 @@ export default function JobApplicationForm(){
     };
 
     
+const [job, setJob] = useState<Job | null>(null);
+const [loadingJob, setLoadingJob] = useState(true);
 
- const job = jobs.find(
- (job) => job.id === jobId
+useEffect(() => {
+ const fetchJob = async () => {
+ if (!jobId) {
+ setLoadingJob(false);
+ return;
+ }
+
+ try {
+ const jobRef = doc(db, "jobs", jobId);
+ const jobSnap = await getDoc(jobRef);
+
+ if (jobSnap.exists()) {
+ setJob({
+ ...(jobSnap.data() as Job),
+ id: jobSnap.id,
+ });
+ } else {
+ setJob(null);
+ }
+ } catch (error) {
+ console.error("Failed to fetch job:", error);
+ setJob(null);
+ } finally {
+ setLoadingJob(false);
+ }
+ };
+
+ fetchJob();
+}, [jobId]);
+
+if (loadingJob) {
+ return (
+ <div className="flex min-h-screen items-center justify-center">
+ <p className="text-sm text-zinc-500">
+ Loading job...
+ </p>
+ </div>
  );
+}
 
  if (!job) {
  return (

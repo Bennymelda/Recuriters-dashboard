@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { MdCameraAlt } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/authStore";
+import { useTeamStore } from "../../store/teamStore";
 
 const CompleteProfile = () => {
  const navigate = useNavigate();
@@ -9,6 +10,10 @@ const CompleteProfile = () => {
  const user = useAuthStore((state) => state.user);
  const updateProfile = useAuthStore(
  (state) => state.updateProfile
+ );
+ 
+ const updateTeamMemberPhone = useTeamStore(
+ (state) => state.updateTeamMemberPhone
  );
 
  const fileInputRef = useRef<HTMLInputElement>(null);
@@ -58,7 +63,7 @@ const CompleteProfile = () => {
  reader.readAsDataURL(file);
  };
 
- const handleComplete = () => {
+ const handleComplete = async () => {
  updateProfile({
  fullName: fullName.trim() || user.fullName,
  companyName: user.companyName,
@@ -70,6 +75,18 @@ const CompleteProfile = () => {
  timeZone: user.timeZone ?? "",
  avatar,
  });
+
+ // Sync phone number to team member in Firestore
+ try {
+ await updateTeamMemberPhone(
+ user.companyId,
+ user.id,
+ phoneNumber.trim()
+ );
+ } catch (error) {
+ console.error("Failed to sync phone number to team member:", error);
+ // Continue anyway - this is not critical
+ }
 
  navigate("/dashboard");
  };

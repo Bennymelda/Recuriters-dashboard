@@ -130,7 +130,7 @@ const handleAccept = async () => {
  </h1>
 
  <p className="mt-3 text-sm text-zinc-500 dark:text-zinc-400">
- This invitation may have expired or does not exist.
+ This invitation have been used.
  </p>
  </div>
  </div>
