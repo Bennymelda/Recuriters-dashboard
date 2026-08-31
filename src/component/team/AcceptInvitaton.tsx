@@ -10,7 +10,7 @@ const AcceptInvitation = () => {
  const { invitationId } = useParams<{
  invitationId: string;
  }>();
-
+console.log("Invitation ID from URL:", invitationId);
 const [invitation, setInvitation] =
  useState<TeamInvitation | null>(null);
 

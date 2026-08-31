@@ -55,7 +55,7 @@ const handleSubmit = async (
  }
 
  try {
- const invitationId = createInvitation({
+ const invitationId = await createInvitation({
  fullName: fullName.trim(),
  email: email.trim(),
  role,
