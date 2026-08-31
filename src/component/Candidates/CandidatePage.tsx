@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CandidatesHeader from "./CandidatePages/CandidatesHeader";
 import CandidatesToolbar from "./CandidatePages/CandidatesToolbar";
 import CandidateStats from "./CandidatePages/CandidateStats";
@@ -10,9 +10,15 @@ import CandidateProfileSidebar from "./CandidateProfileSidebar";
 import CandidatePageSkeleton from "./CandidateSkeleton/SkeletonPage";
 
 const CandidatePage = () => {
- const candidates = useCandidateStore((state) => state.candidates);
- const isLoading = useCandidateStore((state) => state.isLoading);
+const candidates = useCandidateStore((state) => state.candidates);
+const isLoading = useCandidateStore((state) => state.isLoading);
+const fetchCandidates = useCandidateStore(
+ (state) => state.fetchCandidates
+);
 
+useEffect(() => {
+ fetchCandidates();
+}, [fetchCandidates]);
  const [status, setStatus] = useState("All");
  const [role, setRole] = useState("All");
  const [experience, setExperience] = useState("All");

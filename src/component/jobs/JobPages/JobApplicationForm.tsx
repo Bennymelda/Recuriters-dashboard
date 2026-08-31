@@ -239,7 +239,7 @@ console.log("CV upload finished. URL:", resumeUrl);
  updatedAt: now,
  };
 
- addCandidate(newCandidate);
+ await addCandidate(newCandidate);
 
  alert(
  "Your application has been submitted successfully!"
@@ -251,8 +251,10 @@ console.log("CV upload finished. URL:", resumeUrl);
  alert(
  "We couldn't upload your CV. Please try again."
  );
+ }finally{
+   setIsSubmitting(false)
  }
-};
+}
 
     return(<>
     

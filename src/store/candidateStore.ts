@@ -1,7 +1,15 @@
 import { create } from "zustand";
 import { candidates as initialCandidates } from "../data/candidates";
 import type { Candidate, InterviewHistoryItem, InterviewStage } from "../types/candidate";
+import {
+ collection,
+ doc,
+ setDoc,
+ getDocs,
 
+} from "firebase/firestore";
+
+import { db } from "../firebase";
 const STORAGE_KEY = "careerflow-candidates";
 const STORAGE_VERSION = 3;
 
@@ -68,6 +76,8 @@ interface CandidateStore {
  isLoading: boolean;
  setLoading: (isLoading: boolean) => void;
  setCandidates: (candidates: Candidate[]) => void;
+fetchCandidates: () => Promise<void>;
+
 
  updateCandidate: (
  id: string,
@@ -82,7 +92,7 @@ updateCandidateStatus: (
  selectCandidate: (id: string) => void;
 clearCandidates: () => void;
  clearSelectedCandidate: () => void;
-addCandidate: (candidate: Candidate) => void;
+addCandidate: (candidate: Candidate) => Promise<void>;
 
 
  getCandidateById: (id: string) => Candidate | undefined;
@@ -171,6 +181,34 @@ export const useCandidateStore = create<CandidateStore>((set, get) => ({
  isLoading: false,
 
  setLoading: (isLoading) => set({ isLoading }),
+fetchCandidates: async () => {
+ set({ isLoading: true });
+
+ try {
+ const snapshot = await getDocs(
+ collection(db, "candidates")
+ );
+
+ const candidates = snapshot.docs.map((docSnap) => ({
+ ...(docSnap.data() as Candidate),
+ id: docSnap.id,
+ }));
+
+ persistCandidates(candidates);
+
+ set({
+ candidates,
+ isLoading: false,
+ });
+ } catch (error) {
+ console.error(
+ "Failed to fetch candidates from Firebase:",
+ error
+ );
+
+ set({ isLoading: false });
+ }
+},
 
  setCandidates: (candidates) => {
  set({
@@ -180,7 +218,14 @@ export const useCandidateStore = create<CandidateStore>((set, get) => ({
  persistCandidates(candidates);
  },
 
-addCandidate: (candidate) =>
+
+addCandidate: async (candidate) => {
+ try {
+ await setDoc(
+ doc(db, "candidates", candidate.id),
+ candidate
+ );
+
  set((state) => {
  const newCandidates = [
  ...state.candidates,
@@ -193,7 +238,17 @@ addCandidate: (candidate) =>
  candidates: newCandidates,
  isLoading: false,
  };
- }),
+ });
+ } catch (error) {
+ console.error(
+ "Failed to save candidate to Firebase:",
+ error
+ );
+
+ throw error;
+ }
+},
+
 
 
  updateCandidate: (id, updatedCandidate) =>
