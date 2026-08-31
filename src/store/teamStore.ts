@@ -10,6 +10,8 @@ import {
 
  setDoc,
  
+ getDoc,
+ updateDoc,
 } from "firebase/firestore";
 
 import { db } from "../firebase";
@@ -34,6 +36,12 @@ interface TeamStore {
 
  getInvitation: (invitationId: string) => TeamInvitation | undefined;
 createInvitation: (data: InviteMemberData) => Promise<string>;
+ 
+ // Firestore-based invitation operations
+ fetchInvitationFromFirestore: (invitationId: string) => Promise<TeamInvitation | null>;
+ acceptInvitationInFirestore: (invitationId: string) => Promise<void>;
+ createTeamMemberInFirestore: (member: TeamMember) => Promise<void>;
+ 
  // Members
  // -----------------------------
 
@@ -573,6 +581,53 @@ acceptInvitation: (invitationId) =>
  (invitation) => invitation.id === invitationId
  ),
 
+ // Fetch invitation from Firestore
+ fetchInvitationFromFirestore: async (invitationId: string): Promise<TeamInvitation | null> => {
+ try {
+ const invitationRef = doc(db, "invitations", invitationId);
+ const invitationSnap = await getDoc(invitationRef);
+ 
+ if (invitationSnap.exists()) {
+ return invitationSnap.data() as TeamInvitation;
+ }
+ 
+ return null;
+ } catch (error) {
+ console.error("Error fetching invitation from Firestore:", error);
+ return null;
+ }
+ },
+
+ // Accept invitation in Firestore and create/update team member
+ acceptInvitationInFirestore: async (invitationId: string): Promise<void> => {
+ try {
+ const now = new Date().toISOString();
+ 
+ // Update invitation status to "Accepted"
+ const invitationRef = doc(db, "invitations", invitationId);
+ await updateDoc(invitationRef, {
+ status: "Accepted",
+ acceptedAt: now,
+ });
+ } catch (error) {
+ console.error("Error accepting invitation in Firestore:", error);
+ throw error;
+ }
+ },
+
+ // Create a new team member record in Firestore
+ createTeamMemberInFirestore: async (member: TeamMember): Promise<void> => {
+ try {
+ const memberRef = doc(db, "teamMembers", member.id);
+ await setDoc(memberRef, {
+ ...member,
+ membershipStatus: "Active",
+ });
+ } catch (error) {
+ console.error("Error creating team member in Firestore:", error);
+ throw error;
+ }
+ },
 
  createInvitation:async ({
  fullName,

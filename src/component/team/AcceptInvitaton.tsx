@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 //import { useTeamStore } from "../../store/teamStore";
 import { useState,useEffect } from "react";
-import { doc, getDoc, updateDoc} from "firebase/firestore";
+import { doc, getDoc} from "firebase/firestore";
 
 import { db } from "../../firebase";
 
@@ -92,28 +92,21 @@ const handleAccept = async () => {
  }
 
  try {
- const invitationRef = doc(
- db,
- "invitations",
- invitation.id
- );
-
- await updateDoc(invitationRef, {
- status: "Accepted",
- acceptedAt: new Date().toISOString(),
- });
-
+ // Don't update status here - just validate and redirect.
+ // The status will be updated only after the user successfully signs up.
+ // This prevents the issue where Signup checks for "Pending" status.
+ 
  navigate(
  `/signup?invitationId=${invitation.id}`
  );
  } catch (error) {
  console.error(
- "Error accepting invitation:",
+ "Error processing invitation:",
  error
  );
 
  setError(
- "Unable to accept this invitation. Please try again."
+ "Unable to process this invitation. Please try again."
  );
  }
 };

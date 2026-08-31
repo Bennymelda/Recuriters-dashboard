@@ -99,6 +99,12 @@ useEffect(() => {
 
  const invitationSnap =
  await getDoc(invitationRef);
+console.log("Signup invitation ID:", invitationId);
+console.log(
+ "Firestore invitation exists:",
+ invitationSnap.exists()
+);
+
 
  if (invitationSnap.exists()) {
  setInvitation(
@@ -128,6 +134,15 @@ useEffect(() => {
 const acceptInvitation = useTeamStore(
  (state) => state.acceptInvitation
 );
+
+const acceptInvitationInFirestore = useTeamStore(
+ (state) => state.acceptInvitationInFirestore
+);
+
+const createTeamMemberInFirestore = useTeamStore(
+ (state) => state.createTeamMemberInFirestore
+);
+
 const isInvitedUser = Boolean(invitationId);
 
 
@@ -158,7 +173,7 @@ if (invitationId && invitationLoading) {
  );
 }
 
-const handleSubmit = (e: React.FormEvent) => {
+const handleSubmit = async (e: React.FormEvent) => {
  e.preventDefault();
 
  const newErrors = {
@@ -282,8 +297,50 @@ const handleSubmit = (e: React.FormEvent) => {
  return;
  }
 
+ try {
+ const currentUser = useAuthStore.getState().user;
+ 
+ // Accept the invitation in Firestore
+ await acceptInvitationInFirestore(invitation.id);
+ 
+ // Create/update team member in Firestore with "Active" status
+ await createTeamMemberInFirestore({
+ id: currentUser?.id ?? crypto.randomUUID(),
+ companyId: invitation.companyId,
+ invitationId: invitation.id,
+ fullName: currentUser?.fullName ?? invitation.fullName,
+ email: currentUser?.email ?? invitation.email,
+ phone: currentUser?.phoneNumber ?? "",
+ avatar: currentUser?.avatar ?? "",
+ companyName: invitation.companyName,
+ role: invitation.role,
+ department: "",
+ membershipStatus: "Active",
+ presenceStatus: "Online",
+ lastActive: new Date().toISOString(),
+ assignedJobIds: [],
+ candidatesHandled: 0,
+ interviewsThisWeek: 0,
+ offersMade: 0,
+ successfulHires: 0,
+ averageHiringDays: 0,
+ performanceScore: 0,
+ recentActivity: [],
+ invitedAt: invitation.invitedAt,
+ joinedAt: new Date().toISOString(),
+ createdAt: new Date().toISOString(),
+ });
+ } catch (error) {
+ console.error("Error processing invitation:", error);
+ setErrors({
+ ...newErrors,
+ email: "Failed to process your invitation. Please try again.",
+ });
+ return;
+ }
+
  /*
- * Activate the existing team membership.
+ * Activate the existing team membership in Zustand (cache).
  */
  acceptInvitation(invitation.id);
 

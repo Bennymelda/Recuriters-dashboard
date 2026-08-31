@@ -105,12 +105,12 @@ const CompleteProfile = () => {
  type="file"
  accept="image/*"
  hidden
- onChange​={handleImageChange}
+ onChange={handleImageChange}
  />
 
  <button
  type="button"
- onClick​={() =>
+ onClick={() =>
  fileInputRef.current?.click()
  }
  className="group relative cursor-pointer"
@@ -179,7 +179,7 @@ const CompleteProfile = () => {
 
  <input
  value={fullName}
- onChange​={(e) =>
+ onChange={(e) =>
  setFullName(e.target.value)
  }
  placeholder="Your full name"
@@ -207,7 +207,7 @@ const CompleteProfile = () => {
 
  <input
  value={phoneNumber}
- onChange​={(e) =>
+ onChange={(e) =>
  setPhoneNumber(e.target.value)
  }
  placeholder="+234 801 234 5678"
@@ -235,7 +235,7 @@ const CompleteProfile = () => {
 
  <input
  value={jobTitle}
- onChange​={(e) =>
+ onChange={(e) =>
  setJobTitle(e.target.value)
  }
  placeholder="e.g. Senior Recruiter"
@@ -263,7 +263,7 @@ const CompleteProfile = () => {
 
  <input
  value={department}
- onChange​={(e) =>
+ onChange={(e) =>
  setDepartment(e.target.value)
  }
  placeholder="e.g. Human Resources"
@@ -292,7 +292,7 @@ const CompleteProfile = () => {
  <textarea
  rows={4}
  value={bio}
- onChange​={(e) =>
+ onChange={(e) =>
  setBio(e.target.value)
  }
  placeholder="Tell your team a little about yourself..."
@@ -319,7 +319,7 @@ const CompleteProfile = () => {
 
  <button
  type="button"
- onClick​={handleSkip}
+ onClick={handleSkip}
  className="
  rounded-2xl
  border
@@ -341,10 +341,10 @@ const CompleteProfile = () => {
 
  <button
  type="button"
- onClick​={handleComplete}
+ onClick={handleComplete}
  className="
  rounded-2xl
- bg-[hashtag#285A48]
+ bg-[#285A48]
  px-6
  py-3
  text-sm

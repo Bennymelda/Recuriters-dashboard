@@ -7,6 +7,8 @@ import { Link } from "react-router-dom";
 import { useAuthStore } from "../../store/authStore";
 import { MdVisibility, MdVisibilityOff } from "react-icons/md";
 import { useTeamStore } from "../../store/teamStore";
+import { useEffect } from "react";
+import type { TeamInvitation } from "../../types/team";
 
 const Login = () => {
 
@@ -20,12 +22,16 @@ const invitationId =
  );
 const [error, setError] = useState("");
 
-const getInvitation = useTeamStore(
- (state) => state.getInvitation
+const fetchInvitationFromFirestore = useTeamStore(
+ (state) => state.fetchInvitationFromFirestore
 );
 
-const acceptInvitation = useTeamStore(
- (state) => state.acceptInvitation
+const acceptInvitationInFirestore = useTeamStore(
+ (state) => state.acceptInvitationInFirestore
+);
+
+const createTeamMemberInFirestore = useTeamStore(
+ (state) => state.createTeamMemberInFirestore
 );
 
  const [formData, setFormData] = useState({
@@ -33,7 +39,32 @@ const acceptInvitation = useTeamStore(
  password: "",
  });
 
+ const [invitation, setInvitation] = useState<TeamInvitation | null>(null);
+ const [invitationLoading, setInvitationLoading] = useState(false);
 
+const [showPassword, setShowPassword] = useState(false);
+
+ useEffect(() => {
+ const fetchInvitation = async () => {
+ if (!invitationId) {
+ return;
+ }
+
+ setInvitationLoading(true);
+
+ try {
+ const fetchedInvitation = await fetchInvitationFromFirestore(invitationId);
+ setInvitation(fetchedInvitation);
+ } catch (error) {
+ console.error("Error fetching invitation:", error);
+ setInvitation(null);
+ } finally {
+ setInvitationLoading(false);
+ }
+ };
+
+ fetchInvitation();
+ }, [invitationId, fetchInvitationFromFirestore]);
 
  const handleChange = (
  e: React.ChangeEvent<HTMLInputElement>
@@ -47,11 +78,15 @@ const acceptInvitation = useTeamStore(
  };
 
 
- const handleSubmit = (
+ const handleSubmit = async (
  e: React.FormEvent
  ) => {
 
  e.preventDefault();
+
+ if (invitationId && invitationLoading) {
+ return;
+ }
 
 const result = login(formData);
 
@@ -61,8 +96,6 @@ if (!result.success) {
 }
 
 if (invitationId) {
- const invitation = getInvitation(invitationId);
-
  if (!invitation) {
  setError(
  "This invitation could not be found."
@@ -87,7 +120,44 @@ if (invitationId) {
  return;
  }
 
- acceptInvitation(invitationId);
+ try {
+ const currentUser = useAuthStore.getState().user;
+ 
+ // Accept the invitation in Firestore
+ await acceptInvitationInFirestore(invitationId);
+ 
+ // Update team member in Firestore to "Active" status
+ await createTeamMemberInFirestore({
+ id: currentUser?.id ?? crypto.randomUUID(),
+ companyId: invitation.companyId,
+ invitationId,
+ fullName: currentUser?.fullName ?? invitation.fullName,
+ email: currentUser?.email ?? invitation.email,
+ phone: currentUser?.phoneNumber ?? "",
+ avatar: currentUser?.avatar ?? "",
+ companyName: invitation.companyName,
+ role: invitation.role,
+ department: "",
+ membershipStatus: "Active",
+ presenceStatus: "Online",
+ lastActive: new Date().toISOString(),
+ assignedJobIds: [],
+ candidatesHandled: 0,
+ interviewsThisWeek: 0,
+ offersMade: 0,
+ successfulHires: 0,
+ averageHiringDays: 0,
+ performanceScore: 0,
+ recentActivity: [],
+ invitedAt: invitation.invitedAt,
+ joinedAt: new Date().toISOString(),
+ createdAt: new Date().toISOString(),
+ });
+ } catch (error) {
+ console.error("Error processing invitation:", error);
+ setError("Failed to process your invitation. Please try again.");
+ return;
+ }
 
  navigate("/dashboard");
  return;
@@ -96,7 +166,15 @@ if (invitationId) {
 navigate("/dashboard");
  };
 
-const [showPassword, setShowPassword] = useState(false);
+ if (invitationId && invitationLoading) {
+ return (
+ <div className="flex min-h-screen items-center justify-center">
+ <p className="text-sm text-zinc-500">
+ Checking your invitation...
+ </p>
+ </div>
+ );
+ }
 
 
 
