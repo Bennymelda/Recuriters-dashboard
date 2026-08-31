@@ -11,7 +11,10 @@ import { useAuthStore } from "../../store/authStore";
 import PasswordStrength from "./PasswordStrength";
 import { useSearchParams } from "react-router-dom";
 import { useTeamStore } from "../../store/teamStore";
-
+import { useEffect } from "react";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../../firebase";
+import type { TeamInvitation } from "../../types/team";
 
 type FormErrors = {
  fullName: string;
@@ -61,19 +64,73 @@ const [searchParams] = useSearchParams();
 
 const invitationId =
  searchParams.get("invitationId");
-
+/*
 const getInvitation = useTeamStore(
  (state) => state.getInvitation
 );
 
-const acceptInvitation = useTeamStore(
- (state) => state.acceptInvitation
-);
 const invitation = invitationId
  ? getInvitation(invitationId)
  : undefined;
+*/
 
+
+
+const [invitation, setInvitation] =
+ useState<TeamInvitation | null>(null);
+
+const [invitationLoading, setInvitationLoading] =
+ useState(false);
+
+useEffect(() => {
+ const fetchInvitation = async () => {
+ if (!invitationId) {
+ return;
+ }
+
+ setInvitationLoading(true);
+
+ try {
+ const invitationRef = doc(
+ db,
+ "invitations",
+ invitationId
+ );
+
+ const invitationSnap =
+ await getDoc(invitationRef);
+
+ if (invitationSnap.exists()) {
+ setInvitation(
+ invitationSnap.data() as TeamInvitation
+ );
+ } else {
+ setInvitation(null);
+ }
+ } catch (error) {
+ console.error(
+ "Error fetching invitation:",
+ error
+ );
+
+ setInvitation(null);
+ } finally {
+ setInvitationLoading(false);
+ }
+ };
+
+ fetchInvitation();
+}, [invitationId]);
+
+
+
+
+const acceptInvitation = useTeamStore(
+ (state) => state.acceptInvitation
+);
 const isInvitedUser = Boolean(invitationId);
+
+
  const handleChange = (
  e: React.ChangeEvent<HTMLInputElement>
 ) => {
@@ -89,6 +146,17 @@ const isInvitedUser = Boolean(invitationId);
  [name]: "",
  });
 };
+
+
+if (invitationId && invitationLoading) {
+ return (
+ <div className="flex min-h-screen items-center justify-center">
+ <p className="text-sm text-zinc-500">
+ Checking your invitation...
+ </p>
+ </div>
+ );
+}
 
 const handleSubmit = (e: React.FormEvent) => {
  e.preventDefault();
