@@ -12,6 +12,10 @@ import {
  
  getDoc,
  updateDoc,
+ collection,
+ getDocs,
+ query,
+ where,
 } from "firebase/firestore";
 
 import { db } from "../firebase";
@@ -41,6 +45,7 @@ createInvitation: (data: InviteMemberData) => Promise<string>;
  fetchInvitationFromFirestore: (invitationId: string) => Promise<TeamInvitation | null>;
  acceptInvitationInFirestore: (invitationId: string) => Promise<void>;
  createTeamMemberInFirestore: (member: TeamMember) => Promise<void>;
+ syncTeamMembersFromFirestore: (companyId: string) => Promise<void>;
  
  // Members
  // -----------------------------
@@ -625,6 +630,59 @@ acceptInvitation: (invitationId) =>
  });
  } catch (error) {
  console.error("Error creating team member in Firestore:", error);
+ throw error;
+ }
+ },
+
+ // Sync team members from Firestore to Zustand
+ syncTeamMembersFromFirestore: async (companyId: string): Promise<void> => {
+ try {
+ const q = query(
+ collection(db, "teamMembers"),
+ where("companyId", "==", companyId)
+ );
+ const querySnapshot = await getDocs(q);
+ const firestoreMembers: TeamMember[] = [];
+ 
+ querySnapshot.forEach((doc) => {
+ firestoreMembers.push(doc.data() as TeamMember);
+ });
+ 
+ // Merge with existing Zustand members to preserve local state
+ set((state) => {
+ const merged = [...state.members];
+ 
+ firestoreMembers.forEach((fsMember) => {
+ const existingIndex = merged.findIndex(
+ (m) => m.id === fsMember.id
+ );
+ 
+ if (existingIndex >= 0) {
+ // Update existing member with Firestore data
+ merged[existingIndex] = {
+ ...merged[existingIndex],
+ ...fsMember,
+ membershipStatus: fsMember.membershipStatus,
+ presenceStatus: fsMember.presenceStatus,
+ lastActive: fsMember.lastActive,
+ };
+ } else {
+ // Add new member from Firestore
+ merged.push(fsMember);
+ }
+ });
+ 
+ const nextState = {
+ ...state,
+ members: merged,
+ };
+ 
+ persistTeamState(nextState);
+ 
+ return nextState;
+ });
+ } catch (error) {
+ console.error("Error syncing team members from Firestore:", error);
  throw error;
  }
  },

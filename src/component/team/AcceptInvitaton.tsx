@@ -111,6 +111,16 @@ const handleAccept = async () => {
  }
 };
 
+ if (loading) {
+ return (
+ <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 dark:bg-zinc-950">
+ <p className="text-sm text-zinc-500 dark:text-zinc-400">
+ Checking invitation...
+ </p>
+ </div>
+ );
+}
+
  if (!invitation) {
  return (
  <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 dark:bg-zinc-950">
@@ -123,15 +133,6 @@ const handleAccept = async () => {
  This invitation may have expired or does not exist.
  </p>
  </div>
- </div>
- );
- }
-if (loading) {
- return (
- <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 dark:bg-zinc-950">
- <p className="text-sm text-zinc-500 dark:text-zinc-400">
- Loading invitation...
- </p>
  </div>
  );
 }

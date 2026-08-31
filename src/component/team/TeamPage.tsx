@@ -1,13 +1,26 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 
 import TeamHeader from "./TeamHeader";
 import TeamStats from "./TeamStats";
 import TeamToolbar from "./TeamToolbar";
 import TeamGrid from "./TeamGrid";
 import { useTeamStore } from "../../store/teamStore";
+import { useAuthStore } from "../../store/authStore";
 
 const TeamPage = () => {
  const members = useTeamStore((state) => state.members);
+ const syncTeamMembersFromFirestore = useTeamStore((state) => state.syncTeamMembersFromFirestore);
+ const user = useAuthStore((state) => state.user);
+
+ // Sync team members from Firestore when page loads
+ useEffect(() => {
+ if (user?.companyId) {
+ syncTeamMembersFromFirestore(user.companyId).catch((error) => {
+ console.error("Failed to sync team members:", error);
+ });
+ }
+ }, [user?.companyId, syncTeamMembersFromFirestore]);
+
  const [filters, setFilters] = useState({
   role: "",
   department: "",
