@@ -24,6 +24,7 @@ export default function JobApplicationForm(){
     const [location, setLocation] = useState("");
     
     const [isSubmitting, setIsSubmitting] = useState(false);
+    /*
     const uploadCV = async (file: File) => {
      const formData = new FormData();
     
@@ -49,8 +50,47 @@ export default function JobApplicationForm(){
     
      return data.secure_url;
     };
+*/
 
     
+
+
+const uploadCV = async (file: File) => {
+ console.log("Starting CV upload:", file.name, file.type, file.size);
+
+ const formData = new FormData();
+
+ formData.append("file", file);
+
+ formData.append(
+ "upload_preset",
+ "careerflow_cv"
+ );
+
+ const response = await fetch(
+ "https://api.cloudinary.com/v1_1/xs1osb7m/raw/upload",
+ {
+ method: "POST",
+ body: formData,
+ }
+ );
+
+ console.log("Cloudinary response status:", response.status);
+
+ if (!response.ok) {
+ const errorData = await response.text();
+
+ console.error("Cloudinary error:", errorData);
+
+ throw new Error("CV upload failed.");
+ }
+
+ const data = await response.json();
+
+ console.log("CV uploaded successfully:", data);
+
+ return data.secure_url;
+};
 const [job, setJob] = useState<Job | null>(null);
 const [loadingJob, setLoadingJob] = useState(true);
 
@@ -136,8 +176,11 @@ if (isSubmitting) return;
 
  try {
  // Upload CV to Cloudinary
- const resumeUrl = await uploadCV(cv);
+console.log("About to upload CV");
 
+const resumeUrl = await uploadCV(cv);
+
+console.log("CV upload finished. URL:", resumeUrl);
  const now = new Date().toISOString();
 
  const newCandidate = {
