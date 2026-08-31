@@ -5,11 +5,11 @@ import type { TeamMember, TeamActivity, TeamInvitation, TeamRole } from "../type
 import { teamMembers } from "../data/team";
 import { useCompanyStore } from "./companyStore";
 import {
- collection,
+ 
  doc,
- getDoc,
+
  setDoc,
- updateDoc,
+ 
 } from "firebase/firestore";
 
 import { db } from "../firebase";
