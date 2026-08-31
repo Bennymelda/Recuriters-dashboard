@@ -4,7 +4,15 @@ import { create } from "zustand";
 import type { TeamMember, TeamActivity, TeamInvitation, TeamRole } from "../types/team";
 import { teamMembers } from "../data/team";
 import { useCompanyStore } from "./companyStore";
+import {
+ collection,
+ doc,
+ getDoc,
+ setDoc,
+ updateDoc,
+} from "firebase/firestore";
 
+import { db } from "../firebase";
 const STORAGE_KEY = "careerflow-team";
 
 interface InviteMemberData {
@@ -25,9 +33,7 @@ interface TeamStore {
  invitations: TeamInvitation[];
 
  getInvitation: (invitationId: string) => TeamInvitation | undefined;
-
- createInvitation: (data: InviteMemberData) => string;
- // -----------------------------
+createInvitation: (data: InviteMemberData) => Promise<string>;
  // Members
  // -----------------------------
 
@@ -568,7 +574,7 @@ acceptInvitation: (invitationId) =>
  ),
 
 
- createInvitation: ({
+ createInvitation:async ({
  fullName,
  email,
  role,
@@ -590,7 +596,7 @@ acceptInvitation: (invitationId) =>
  status: "Pending",
  invitedAt: now,
  };
-
+await setDoc(doc(db, "invitations", invitationId), invitation);
  const newMember: TeamMember = {
  id: crypto.randomUUID(),
 

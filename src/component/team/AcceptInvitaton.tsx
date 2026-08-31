@@ -1,14 +1,73 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useTeamStore } from "../../store/teamStore";
-import { useState } from "react";
+//import { useTeamStore } from "../../store/teamStore";
+import { useState,useEffect } from "react";
+import { doc, getDoc, updateDoc} from "firebase/firestore";
 
+import { db } from "../../firebase";
+
+import type { TeamInvitation } from "../../types/team";
 const AcceptInvitation = () => {
  const { invitationId } = useParams<{
  invitationId: string;
  }>();
 
- const navigate = useNavigate();
+const [invitation, setInvitation] =
+ useState<TeamInvitation | null>(null);
 
+const [loading, setLoading] = useState(true);
+
+const [error, setError] = useState("");
+
+useEffect(() => {
+ const fetchInvitation = async () => {
+ if (!invitationId) {
+ setError("Invitation link is invalid.");
+ setLoading(false);
+ return;
+ }
+
+ try {
+ const invitationRef = doc(
+ db,
+ "invitations",
+ invitationId
+ );
+
+ const invitationSnap =
+ await getDoc(invitationRef);
+
+ if (!invitationSnap.exists()) {
+ setError(
+ "This invitation could not be found."
+ );
+ setLoading(false);
+ return;
+ }
+
+ setInvitation(
+ invitationSnap.data() as TeamInvitation
+ );
+ } catch (error) {
+ console.error(
+ "Error fetching invitation:",
+ error
+ );
+
+ setError(
+ "Unable to load this invitation."
+ );
+ } finally {
+ setLoading(false);
+ }
+ };
+
+ fetchInvitation();
+}, [invitationId]);
+
+
+
+ const navigate = useNavigate();
+/*
  const getInvitation = useTeamStore(
  (state) => state.getInvitation
  );
@@ -18,8 +77,8 @@ const AcceptInvitation = () => {
  const invitation = invitationId
  ? getInvitation(invitationId)
  : undefined;
-
- const handleAccept = () => {
+*/
+const handleAccept = async () => {
  setError("");
 
  if (!invitation) {
@@ -32,16 +91,32 @@ const AcceptInvitation = () => {
  return;
  }
 
- /*
- * We are not creating the user yet.
- *
- * We pass the invitation information
- * into the signup flow.
- */
+ try {
+ const invitationRef = doc(
+ db,
+ "invitations",
+ invitation.id
+ );
+
+ await updateDoc(invitationRef, {
+ status: "Accepted",
+ acceptedAt: new Date().toISOString(),
+ });
+
  navigate(
  `/signup?invitationId=${invitation.id}`
  );
- };
+ } catch (error) {
+ console.error(
+ "Error accepting invitation:",
+ error
+ );
+
+ setError(
+ "Unable to accept this invitation. Please try again."
+ );
+ }
+};
 
  if (!invitation) {
  return (
@@ -58,7 +133,15 @@ const AcceptInvitation = () => {
  </div>
  );
  }
-
+if (loading) {
+ return (
+ <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 dark:bg-zinc-950">
+ <p className="text-sm text-zinc-500 dark:text-zinc-400">
+ Loading invitation...
+ </p>
+ </div>
+ );
+}
  return (
  <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 dark:bg-zinc-950">
  <div className="w-full max-w-md rounded-3xl bg-white p-8 shadow-xl dark:bg-zinc-900">
