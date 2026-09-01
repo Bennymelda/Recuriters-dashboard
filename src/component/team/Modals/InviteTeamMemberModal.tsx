@@ -25,9 +25,6 @@ const createInvitation = useTeamStore(
  (state) => state.createInvitation
 );
  const [error, setError] = useState("");
-const addPendingMember = useTeamStore(
- (state) => state.addPendingMember
-);
  if (!isOpen) return null;
 const handleSubmit = async (
  e: React.FormEvent<HTMLFormElement>
@@ -58,6 +55,7 @@ const handleSubmit = async (
 
  setIsSubmitting(true);
  try {
+ // Step 1: Create invitation in Firestore ONLY (no member yet)
  const invitationId = await createInvitation({
  fullName: fullName.trim(),
  email: email.trim(),
@@ -65,6 +63,9 @@ const handleSubmit = async (
  companyId: company.id,
  });
 
+ console.log("Invitation created:", invitationId);
+
+ // Step 2: Send email
  const response = await fetch(
  "https://recuriters-dashboard-api.onrender.com/api/invitations/send",
  {
@@ -84,31 +85,44 @@ const handleSubmit = async (
 
  const result = await response.json();
 
+ // Step 3: Check if email was sent successfully
  if (!response.ok) {
+ console.error("Email send failed:", result);
+
+ // Clean up: Delete the invitation from Firestore
+ await useTeamStore
+ .getState()
+ .deleteInvitationFromFirestore(invitationId);
+
  setError(
  result.message ||
- "Failed to send invitation email."
+ "Failed to send invitation email. Please try again."
  );
  return;
  }
-addPendingMember(invitationId);
 
+ // Step 4: Email succeeded! Now save the pending member
+ console.log("Email sent successfully, saving pending member...");
+ await useTeamStore
+ .getState()
+ .savePendingMemberToFirestore(invitationId);
 
  console.log("Invitation email sent:", result);
 
+ // Step 5: Success - reset form and close modal
  setFullName("");
  setEmail("");
  setRole("");
+ setError("");
 
  onClose();
-
  } catch (error) {
  console.error("Failed to send invitation:", error);
 
  setError(
  "Unable to send the invitation. Please try again."
  );
- }finally {
+ } finally {
  setIsSubmitting(false);
 }
 

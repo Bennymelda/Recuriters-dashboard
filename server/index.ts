@@ -32,11 +32,14 @@ app.post("/api/invitations/send", async (req, res) => {
  !role ||
  !invitationId
  ) {
+ console.warn("Missing invitation information:", req.body);
  return res.status(400).json({
  success: false,
  message: "Missing invitation information.",
  });
  }
+
+ console.log(`Sending invitation email to ${email} for ${fullName}...`);
 
  const result = await sendInvitationEmail({
  email,
@@ -46,6 +49,8 @@ app.post("/api/invitations/send", async (req, res) => {
  invitationId,
  });
 
+ console.log(`Email sent successfully to ${email}:`, result.messageId);
+
  return res.status(200).json({
  success: true,
  message: "Invitation email sent successfully.",
@@ -53,10 +58,13 @@ app.post("/api/invitations/send", async (req, res) => {
  });
  } catch (error) {
  console.error("Invitation email error:", error);
-
+ 
+ const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+ 
  return res.status(500).json({
  success: false,
- message: "Failed to send invitation email.",
+ message: `Failed to send invitation email: ${errorMessage}`,
+ error: errorMessage,
  });
  }
 });

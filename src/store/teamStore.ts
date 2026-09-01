@@ -40,6 +40,8 @@ interface TeamStore {
 
  getInvitation: (invitationId: string) => TeamInvitation | undefined;
 createInvitation: (data: InviteMemberData) => Promise<string>;
+ savePendingMemberToFirestore: (invitationId: string) => Promise<string>;
+ deleteInvitationFromFirestore: (invitationId: string) => Promise<void>;
  
  // Firestore-based invitation operations
  fetchInvitationFromFirestore: (invitationId: string) => Promise<TeamInvitation | null>;
@@ -283,6 +285,14 @@ export const useTeamStore = create<TeamStore>(
 
  persistTeamState(nextState);
 
+ // Sync to Firestore
+ updateDoc(
+ doc(db, "teamMembers", updatedMember.id),
+ updatedMember as unknown as Record<string, unknown>
+ ).catch((error) => {
+ console.error("Error updating team member in Firestore:", error);
+ });
+
  return nextState;
  }),
 
@@ -325,6 +335,15 @@ deleteMember: (id) =>
 
  persistTeamState(nextState);
 
+ // Delete from Firestore
+ const memberRef = doc(db, "teamMembers", id);
+ updateDoc(memberRef, {
+ membershipStatus: "Inactive",
+ presenceStatus: "Offline",
+ }).catch((error) => {
+ console.error("Error marking team member as inactive in Firestore:", error);
+ });
+
  return nextState;
  }),
  // =====================================
@@ -352,6 +371,17 @@ deleteMember: (id) =>
 
  persistTeamState(nextState);
 
+ // Sync to Firestore
+ updateDoc(
+ doc(db, "teamMembers", id),
+ {
+ membershipStatus: "Inactive",
+ presenceStatus: "Offline",
+ }
+ ).catch((error) => {
+ console.error("Error deactivating team member in Firestore:", error);
+ });
+
  return nextState;
  }),
 
@@ -377,6 +407,16 @@ deleteMember: (id) =>
  };
 
  persistTeamState(nextState);
+
+ // Sync to Firestore
+ updateDoc(
+ doc(db, "teamMembers", id),
+ {
+ membershipStatus: "Active",
+ }
+ ).catch((error) => {
+ console.error("Error activating team member in Firestore:", error);
+ });
 
  return nextState;
  }),
@@ -433,6 +473,24 @@ acceptInvitation: (invitationId) =>
 
  persistTeamState(nextState);
 
+ // Sync the updated member to Firestore
+ const acceptedMember = nextState.members.find(
+ (m) => m.invitationId === invitationId
+ );
+ if (acceptedMember) {
+ updateDoc(
+ doc(db, "teamMembers", acceptedMember.id),
+ {
+ membershipStatus: "Active",
+ presenceStatus: "Online",
+ joinedAt: acceptedMember.joinedAt,
+ lastActive: now,
+ }
+ ).catch((error) => {
+ console.error("Error updating member after accepting invitation:", error);
+ });
+ }
+
  return nextState;
  }),
 
@@ -473,6 +531,16 @@ acceptInvitation: (invitationId) =>
  };
 
  persistTeamState(nextState);
+
+ // Sync to Firestore
+ updateDoc(
+ doc(db, "teamMembers", resolvedMemberId),
+ {
+ assignedJobIds: [...new Set(jobIds)],
+ }
+ ).catch((error) => {
+ console.error("Error assigning jobs in Firestore:", error);
+ });
 
  return nextState;
  }),
@@ -515,6 +583,19 @@ acceptInvitation: (invitationId) =>
  };
 
  persistTeamState(nextState);
+
+ // Sync to Firestore
+ const member = state.members.find((m) => m.id === resolvedMemberId);
+ if (member) {
+ updateDoc(
+ doc(db, "teamMembers", resolvedMemberId),
+ {
+ assignedJobIds: member.assignedJobIds.filter((id) => id !== jobId),
+ }
+ ).catch((error) => {
+ console.error("Error removing job assignment in Firestore:", error);
+ });
+ }
 
  return nextState;
  }),
@@ -567,6 +648,9 @@ acceptInvitation: (invitationId) =>
    category: activity.category,
   };
 
+  const member = state.members.find((m) => m.id === resolvedMemberId);
+  if (!member) return state;
+
   const nextState = {
    ...state,
    members: state.members.map((member) =>
@@ -581,6 +665,18 @@ acceptInvitation: (invitationId) =>
   };
 
   persistTeamState(nextState);
+
+  // Sync to Firestore
+  updateDoc(
+   doc(db, "teamMembers", resolvedMemberId),
+   {
+    recentActivity: [fullActivity, ...member.recentActivity],
+    lastActive: new Date().toISOString(),
+   }
+  ).catch((error) => {
+   console.error("Error adding activity in Firestore:", error);
+  });
+
   return nextState;
  }),
 
@@ -757,17 +853,17 @@ acceptInvitation: (invitationId) =>
  }
  },
 
+ // Create invitation document ONLY (no member yet)
  createInvitation: async ({
  fullName,
  email,
  role,
  companyId,
-}) => {
+ }) => {
  const invitationId = crypto.randomUUID();
  const now = new Date().toISOString();
 
- const company =
- useCompanyStore.getState().company;
+ const company = useCompanyStore.getState().company;
 
  const invitation: TeamInvitation = {
  id: invitationId,
@@ -781,28 +877,106 @@ acceptInvitation: (invitationId) =>
  };
 
  // Save ONLY the invitation to Firestore
- await setDoc(
- doc(db, "invitations", invitationId),
- invitation
- );
+ await setDoc(doc(db, "invitations", invitationId), invitation);
 
+ // Add to Zustand for tracking purposes
  set((state) => {
  const nextState = {
  ...state,
-
- invitations: [
- ...state.invitations,
- invitation,
- ],
+ invitations: [...state.invitations, invitation],
  };
 
  persistTeamState(nextState);
-
  return nextState;
  });
 
  return invitationId;
-},
+ },
+
+ // Save pending member AFTER email is successfully sent
+ savePendingMemberToFirestore: async (
+ invitationId: string
+ ): Promise<string> => {
+ const state = get();
+ const invitation = state.invitations.find(
+ (inv) => inv.id === invitationId
+ );
+
+ if (!invitation) {
+ throw new Error("Invitation not found");
+ }
+
+ const pendingMemberId = crypto.randomUUID();
+ const now = new Date().toISOString();
+
+ const pendingMember: TeamMember = {
+ id: pendingMemberId,
+ companyId: invitation.companyId,
+ invitationId: invitation.id,
+ fullName: invitation.fullName,
+ email: invitation.email,
+ phone: "",
+ avatar: "",
+ companyName: invitation.companyName,
+ role: invitation.role,
+ department: "",
+ membershipStatus: "Pending",
+ presenceStatus: "Offline",
+ assignedJobIds: [],
+ candidatesHandled: 0,
+ interviewsThisWeek: 0,
+ offersMade: 0,
+ successfulHires: 0,
+ averageHiringDays: 0,
+ performanceScore: 0,
+ recentActivity: [],
+ invitedAt: invitation.invitedAt,
+ createdAt: now,
+ };
+
+ // Save pending member to Firestore
+ await setDoc(doc(db, "teamMembers", pendingMemberId), pendingMember);
+
+ // Add to Zustand
+ set((state) => {
+ const nextState = {
+ ...state,
+ members: [...state.members, pendingMember],
+ };
+
+ persistTeamState(nextState);
+ return nextState;
+ });
+
+ return pendingMemberId;
+ },
+
+ // Delete invitation from Firestore (cleanup after failed email)
+ deleteInvitationFromFirestore: async (
+ invitationId: string
+ ): Promise<void> => {
+ try {
+ const invitationRef = doc(db, "invitations", invitationId);
+ await updateDoc(invitationRef, {
+ status: "Expired",
+ } as unknown as Record<string, unknown>);
+
+ // Remove from Zustand
+ set((state) => {
+ const nextState = {
+ ...state,
+ invitations: state.invitations.filter(
+ (inv) => inv.id !== invitationId
+ ),
+ };
+
+ persistTeamState(nextState);
+ return nextState;
+ });
+ } catch (error) {
+ console.error("Error cleaning up invitation:", error);
+ }
+ },
 
 
 

@@ -131,9 +131,7 @@ console.log(
 
 
 
-const acceptInvitation = useTeamStore(
- (state) => state.acceptInvitation
-);
+
 
 const acceptInvitationInFirestore = useTeamStore(
  (state) => state.acceptInvitationInFirestore
@@ -304,6 +302,10 @@ const handleSubmit = async (e: React.FormEvent) => {
  await acceptInvitationInFirestore(invitation.id);
  
  // Create/update team member in Firestore with "Active" status
+ // The createTeamMemberInFirestore function will:
+ // - Find the existing pending member by invitationId
+ // - Update it with the authenticated user's data (keeping the original member ID)
+ // - If no pending member found, create a new one
  await createTeamMemberInFirestore({
  id: currentUser?.id ?? crypto.randomUUID(),
  companyId: invitation.companyId,
@@ -330,6 +332,11 @@ const handleSubmit = async (e: React.FormEvent) => {
  joinedAt: new Date().toISOString(),
  createdAt: new Date().toISOString(),
  });
+
+ // Sync team members from Firestore to get the updated member
+ if (currentUser?.companyId) {
+ await useTeamStore.getState().syncTeamMembersFromFirestore(currentUser.companyId);
+ }
  } catch (error) {
  console.error("Error processing invitation:", error);
  setErrors({
@@ -338,11 +345,6 @@ const handleSubmit = async (e: React.FormEvent) => {
  });
  return;
  }
-
- /*
- * Activate the existing team membership in Zustand (cache).
- */
- acceptInvitation(invitation.id);
 
  navigate("/complete-profile");
 

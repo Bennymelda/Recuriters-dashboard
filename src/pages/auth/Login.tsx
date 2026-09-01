@@ -126,7 +126,11 @@ if (invitationId) {
  // Accept the invitation in Firestore
  await acceptInvitationInFirestore(invitationId);
  
- // Update team member in Firestore to "Active" status
+ // Create/update team member in Firestore with "Active" status
+ // The createTeamMemberInFirestore function will:
+ // - Find the existing pending member by invitationId
+ // - Update it with the authenticated user's data (keeping the original member ID)
+ // - If no pending member found, create a new one
  await createTeamMemberInFirestore({
  id: currentUser?.id ?? crypto.randomUUID(),
  companyId: invitation.companyId,
@@ -153,6 +157,11 @@ if (invitationId) {
  joinedAt: new Date().toISOString(),
  createdAt: new Date().toISOString(),
  });
+
+ // Sync team members from Firestore to get the updated member
+ if (currentUser?.companyId) {
+ await useTeamStore.getState().syncTeamMembersFromFirestore(currentUser.companyId);
+ }
  } catch (error) {
  console.error("Error processing invitation:", error);
  setError("Failed to process your invitation. Please try again.");
