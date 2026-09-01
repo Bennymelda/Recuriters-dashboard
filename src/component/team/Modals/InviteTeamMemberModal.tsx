@@ -65,66 +65,90 @@ const handleSubmit = async (
 
  console.log("Invitation created:", invitationId);
 
- // Step 2: Send email
- const response = await fetch(
- "https://recuriters-dashboard-api.onrender.com/api/invitations/send",
- {
- method: "POST",
- headers: {
- "Content-Type": "application/json",
- },
- body: JSON.stringify({
- email: email.trim(),
- fullName: fullName.trim(),
- companyName: company.companyName,
- role,
- invitationId,
- }),
- }
- );
+  // Step 2: Send email with fallback endpoints (local dev server & remote server)
+  const primaryApiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+  const endpoints = Array.from(new Set([
+  `${primaryApiUrl}/api/invitations/send`,
+  "http://localhost:5000/api/invitations/send",
+  "https://recuriters-dashboard-api.onrender.com/api/invitations/send",
+  ]));
 
- const result = await response.json();
+  let response: Response | null = null;
+  let result: any = null;
+  let lastErrorMessage = "";
 
- // Step 3: Check if email was sent successfully
- if (!response.ok) {
- console.error("Email send failed:", result);
+  for (const endpoint of endpoints) {
+  try {
+  console.log(`Attempting to send invitation via ${endpoint}...`);
+  const res = await fetch(endpoint, {
+  method: "POST",
+  headers: {
+  "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+  email: email.trim(),
+  fullName: fullName.trim(),
+  companyName: company.companyName,
+  role,
+  invitationId,
+  }),
+  });
 
- // Clean up: Delete the invitation from Firestore
- await useTeamStore
- .getState()
- .deleteInvitationFromFirestore(invitationId);
+  const data = await res.json().catch(() => null);
+  if (res.ok && data?.success) {
+  response = res;
+  result = data;
+  break;
+  } else {
+  lastErrorMessage = data?.message || `Server returned status ${res.status}`;
+  console.warn(`Endpoint ${endpoint} returned error:`, lastErrorMessage);
+  }
+  } catch (err) {
+  console.warn(`Failed to connect to ${endpoint}:`, err);
+  lastErrorMessage = err instanceof Error ? err.message : "Network error";
+  }
+  }
 
- setError(
- result.message ||
- "Failed to send invitation email. Please try again."
- );
- return;
- }
+  // Step 3: Check if email was sent successfully
+  if (!response || !result) {
+  console.error("All email send attempts failed:", lastErrorMessage);
 
- // Step 4: Email succeeded! Now save the pending member
- console.log("Email sent successfully, saving pending member...");
- await useTeamStore
- .getState()
- .savePendingMemberToFirestore(invitationId);
+  // Clean up: Delete the invitation from Firestore
+  await useTeamStore
+  .getState()
+  .deleteInvitationFromFirestore(invitationId);
 
- console.log("Invitation email sent:", result);
+  setError(
+  lastErrorMessage ||
+  "Failed to send invitation email. Please check your backend server."
+  );
+  return;
+  }
 
- // Step 5: Success - reset form and close modal
- setFullName("");
- setEmail("");
- setRole("");
- setError("");
+  // Step 4: Email succeeded! Now save the pending member
+  console.log("Email sent successfully, saving pending member...");
+  await useTeamStore
+  .getState()
+  .savePendingMemberToFirestore(invitationId);
 
- onClose();
+  console.log("Invitation email sent:", result);
+
+  // Step 5: Success - reset form and close modal
+  setFullName("");
+  setEmail("");
+  setRole("");
+  setError("");
+
+  onClose();
  } catch (error) {
- console.error("Failed to send invitation:", error);
+  console.error("Failed to send invitation:", error);
 
- setError(
- "Unable to send the invitation. Please try again."
- );
+  setError(
+  "Unable to send the invitation. Please try again."
+  );
  } finally {
- setIsSubmitting(false);
-}
+  setIsSubmitting(false);
+ }
 
 
 };

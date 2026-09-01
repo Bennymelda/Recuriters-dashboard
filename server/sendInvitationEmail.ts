@@ -22,7 +22,8 @@ export const sendInvitationEmail = async ({
  role: string;
  invitationId: string;
 }) => {
- const invitationLink = `https://recuriters-dashboard.onrender.com/accept-invitation/${invitationId}`;
+ const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+ const invitationLink = `${frontendUrl}/accept-invitation/${invitationId}`;
  const result = await transporter.sendMail({
  from: `"${companyName}" <${process.env.EMAIL_USER}>`,
  to: email,
