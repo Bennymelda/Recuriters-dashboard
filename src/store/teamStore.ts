@@ -125,51 +125,51 @@ addPendingMember: (
 // -----------------------------------------
 
 const loadPersistedTeamState = () => {
- if (typeof window === "undefined") {
- return {
- members: teamMembers as TeamMember[],
- selectedMemberId: null as string | null,
-  invitations: [] as TeamInvitation[],
- };
- }
+  if (typeof window === "undefined") {
+    return {
+      members: teamMembers as TeamMember[],
+      selectedMemberId: null as string | null,
+      invitations: [] as TeamInvitation[],
+    };
+  }
 
- try {
- const saved = window.localStorage.getItem(
- STORAGE_KEY
- );
+  try {
+    const saved = window.localStorage.getItem(STORAGE_KEY);
 
- if (!saved) {
- return {
- members: teamMembers as TeamMember[],
- selectedMemberId: null as string | null,
-  invitations: [] as TeamInvitation[],
- };
- }
+    if (!saved) {
+      return {
+        members: teamMembers as TeamMember[],
+        selectedMemberId: null as string | null,
+        invitations: [] as TeamInvitation[],
+      };
+    }
 
- const parsed = JSON.parse(saved) as Partial<TeamStore>;
+    const parsed = JSON.parse(saved) as Partial<TeamStore>;
+    const savedMembers = Array.isArray(parsed.members) ? (parsed.members as TeamMember[]) : [];
 
- return {
- members: Array.isArray(parsed.members)
- ? (parsed.members as TeamMember[])
- : (teamMembers as TeamMember[]),
+    // Combine dummy team members and saved members to ensure dummy data is never removed
+    const memberMap = new Map<string, TeamMember>();
+    (teamMembers as TeamMember[]).forEach((m) => memberMap.set(m.id, m));
+    savedMembers.forEach((m) => memberMap.set(m.id, m));
 
- selectedMemberId:
- typeof parsed.selectedMemberId === "string" ||
- parsed.selectedMemberId === null
- ? parsed.selectedMemberId
- : null,
-
- invitations: Array.isArray(parsed.invitations)
- ? (parsed.invitations as TeamInvitation[])
- : [],
- };
- } catch {
- return {
- members: teamMembers as TeamMember[],
- selectedMemberId: null as string | null,
-  invitations: [] as TeamInvitation[],
- };
- }
+    return {
+      members: Array.from(memberMap.values()),
+      selectedMemberId:
+        typeof parsed.selectedMemberId === "string" ||
+        parsed.selectedMemberId === null
+          ? parsed.selectedMemberId
+          : null,
+      invitations: Array.isArray(parsed.invitations)
+        ? (parsed.invitations as TeamInvitation[])
+        : [],
+    };
+  } catch {
+    return {
+      members: teamMembers as TeamMember[],
+      selectedMemberId: null as string | null,
+      invitations: [] as TeamInvitation[],
+    };
+  }
 };
 
 // -----------------------------------------
@@ -817,26 +817,26 @@ acceptInvitation: (invitationId) =>
       });
       
       set((state) => {
-        let merged: TeamMember[] = [];
-        
-        if (firestoreMembers.length > 0) {
-          // If Firestore has members for this company, start with Firestore members
-          merged = [...firestoreMembers];
-          
-          // Also preserve any local members that belong to this companyId
-          state.members.forEach((locMem) => {
-            if (locMem.companyId === companyId && !merged.some((m) => m.id === locMem.id)) {
-              merged.push(locMem);
-            }
-          });
-        } else {
-          // No Firestore members returned yet for this company, keep state members
-          merged = [...state.members];
-        }
-        
+        const memberMap = new Map<string, TeamMember>();
+
+        // 1. Always keep initial dummy team members
+        (teamMembers as TeamMember[]).forEach((dummyMember) => {
+          memberMap.set(dummyMember.id, dummyMember);
+        });
+
+        // 2. Add existing state members (preserves local edits/additions)
+        state.members.forEach((mem) => {
+          memberMap.set(mem.id, mem);
+        });
+
+        // 3. Merge in Firestore members (adds new invited team members from cloud)
+        firestoreMembers.forEach((fsMem) => {
+          memberMap.set(fsMem.id, fsMem);
+        });
+
         const nextState = {
           ...state,
-          members: merged,
+          members: Array.from(memberMap.values()),
         };
         
         persistTeamState(nextState);
