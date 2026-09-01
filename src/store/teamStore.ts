@@ -798,242 +798,218 @@ acceptInvitation: (invitationId) =>
  console.error("Error updating team member phone:", error);
  // Don't throw - phone update is optional and shouldn't break the flow
  }
- },
+  },
 
- // Sync team members from Firestore to Zustand
- syncTeamMembersFromFirestore: async (companyId: string): Promise<void> => {
- try {
- const q = query(
- collection(db, "teamMembers"),
- where("companyId", "==", companyId)
- );
- const querySnapshot = await getDocs(q);
- const firestoreMembers: TeamMember[] = [];
- 
- querySnapshot.forEach((doc) => {
- firestoreMembers.push(doc.data() as TeamMember);
- });
- 
- // Merge with existing Zustand members to preserve local state
- set((state) => {
- const merged = [...state.members];
- 
- firestoreMembers.forEach((fsMember) => {
- const existingIndex = merged.findIndex(
- (m) => m.id === fsMember.id
- );
- 
- if (existingIndex >= 0) {
- // Update existing member with Firestore data
- merged[existingIndex] = {
- ...merged[existingIndex],
- ...fsMember,
- membershipStatus: fsMember.membershipStatus,
- presenceStatus: fsMember.presenceStatus,
- lastActive: fsMember.lastActive,
- };
- } else {
- // Add new member from Firestore
- merged.push(fsMember);
- }
- });
- 
- const nextState = {
- ...state,
- members: merged,
- };
- 
- persistTeamState(nextState);
- 
- return nextState;
- });
- } catch (error) {
- console.error("Error syncing team members from Firestore:", error);
- throw error;
- }
- },
+  // Sync team members from Firestore to Zustand
+  syncTeamMembersFromFirestore: async (companyId: string): Promise<void> => {
+    try {
+      const q = query(
+        collection(db, "teamMembers"),
+        where("companyId", "==", companyId)
+      );
+      const querySnapshot = await getDocs(q);
+      const firestoreMembers: TeamMember[] = [];
+      
+      querySnapshot.forEach((doc) => {
+        firestoreMembers.push(doc.data() as TeamMember);
+      });
+      
+      set((state) => {
+        let merged: TeamMember[] = [];
+        
+        if (firestoreMembers.length > 0) {
+          // If Firestore has members for this company, start with Firestore members
+          merged = [...firestoreMembers];
+          
+          // Also preserve any local members that belong to this companyId
+          state.members.forEach((locMem) => {
+            if (locMem.companyId === companyId && !merged.some((m) => m.id === locMem.id)) {
+              merged.push(locMem);
+            }
+          });
+        } else {
+          // No Firestore members returned yet for this company, keep state members
+          merged = [...state.members];
+        }
+        
+        const nextState = {
+          ...state,
+          members: merged,
+        };
+        
+        persistTeamState(nextState);
+        return nextState;
+      });
+    } catch (error) {
+      console.error("Error syncing team members from Firestore:", error);
+      throw error;
+    }
+  },
 
- // Create invitation document ONLY (no member yet)
- createInvitation: async ({
- fullName,
- email,
- role,
- companyId,
- }) => {
- const invitationId = crypto.randomUUID();
- const now = new Date().toISOString();
+  // Create invitation document AND pending team member in Firestore
+  createInvitation: async ({
+    fullName,
+    email,
+    role,
+    companyId,
+  }) => {
+    const invitationId = crypto.randomUUID();
+    const pendingMemberId = crypto.randomUUID();
+    const now = new Date().toISOString();
 
- const company = useCompanyStore.getState().company;
+    const company = useCompanyStore.getState().company;
 
- const invitation: TeamInvitation = {
- id: invitationId,
- companyId,
- companyName: company?.companyName ?? "",
- fullName: fullName.trim(),
- email: email.trim().toLowerCase(),
- role,
- status: "Pending",
- invitedAt: now,
- };
+    const invitation: TeamInvitation = {
+      id: invitationId,
+      companyId,
+      companyName: company?.companyName ?? "",
+      fullName: fullName.trim(),
+      email: email.trim().toLowerCase(),
+      role,
+      status: "Pending",
+      invitedAt: now,
+    };
 
- // Save ONLY the invitation to Firestore
- await setDoc(doc(db, "invitations", invitationId), invitation);
+    const pendingMember: TeamMember = {
+      id: pendingMemberId,
+      companyId: invitation.companyId,
+      invitationId: invitation.id,
+      fullName: invitation.fullName,
+      email: invitation.email,
+      phone: "",
+      avatar: "",
+      companyName: invitation.companyName,
+      role: invitation.role,
+      department: "",
+      membershipStatus: "Pending",
+      presenceStatus: "Offline",
+      assignedJobIds: [],
+      candidatesHandled: 0,
+      interviewsThisWeek: 0,
+      offersMade: 0,
+      successfulHires: 0,
+      averageHiringDays: 0,
+      performanceScore: 0,
+      recentActivity: [],
+      invitedAt: invitation.invitedAt,
+      createdAt: now,
+    };
 
- // Add to Zustand for tracking purposes
- set((state) => {
- const nextState = {
- ...state,
- invitations: [...state.invitations, invitation],
- };
+    // Save invitation document to Firestore
+    await setDoc(doc(db, "invitations", invitationId), invitation);
 
- persistTeamState(nextState);
- return nextState;
- });
+    // Save pending member to Firestore immediately
+    await setDoc(doc(db, "teamMembers", pendingMemberId), pendingMember);
 
- return invitationId;
- },
+    // Add both to Zustand for tracking and instant UI reactivity
+    set((state) => {
+      const nextState = {
+        ...state,
+        invitations: [...state.invitations.filter((i) => i.id !== invitationId), invitation],
+        members: [...state.members.filter((m) => m.id !== pendingMemberId), pendingMember],
+      };
 
- // Save pending member AFTER email is successfully sent
- savePendingMemberToFirestore: async (
- invitationId: string
- ): Promise<string> => {
- const state = get();
- const invitation = state.invitations.find(
- (inv) => inv.id === invitationId
- );
+      persistTeamState(nextState);
+      return nextState;
+    });
 
- if (!invitation) {
- throw new Error("Invitation not found");
- }
+    return invitationId;
+  },
 
- const pendingMemberId = crypto.randomUUID();
- const now = new Date().toISOString();
+  // Save pending member AFTER email is successfully sent (or as explicit method)
+  savePendingMemberToFirestore: async (
+    invitationId: string
+  ): Promise<string> => {
+    const state = get();
+    const invitation = state.invitations.find(
+      (inv) => inv.id === invitationId
+    );
 
- const pendingMember: TeamMember = {
- id: pendingMemberId,
- companyId: invitation.companyId,
- invitationId: invitation.id,
- fullName: invitation.fullName,
- email: invitation.email,
- phone: "",
- avatar: "",
- companyName: invitation.companyName,
- role: invitation.role,
- department: "",
- membershipStatus: "Pending",
- presenceStatus: "Offline",
- assignedJobIds: [],
- candidatesHandled: 0,
- interviewsThisWeek: 0,
- offersMade: 0,
- successfulHires: 0,
- averageHiringDays: 0,
- performanceScore: 0,
- recentActivity: [],
- invitedAt: invitation.invitedAt,
- createdAt: now,
- };
+    if (!invitation) {
+      throw new Error("Invitation not found");
+    }
 
- // Save pending member to Firestore
- await setDoc(doc(db, "teamMembers", pendingMemberId), pendingMember);
+    // Check if pending member already exists in state
+    const existingMember = state.members.find((m) => m.invitationId === invitationId);
+    if (existingMember) {
+      await setDoc(doc(db, "teamMembers", existingMember.id), existingMember);
+      return existingMember.id;
+    }
 
- // Add to Zustand
- set((state) => {
- const nextState = {
- ...state,
- members: [...state.members, pendingMember],
- };
+    const pendingMemberId = crypto.randomUUID();
+    const now = new Date().toISOString();
 
- persistTeamState(nextState);
- return nextState;
- });
+    const pendingMember: TeamMember = {
+      id: pendingMemberId,
+      companyId: invitation.companyId,
+      invitationId: invitation.id,
+      fullName: invitation.fullName,
+      email: invitation.email,
+      phone: "",
+      avatar: "",
+      companyName: invitation.companyName,
+      role: invitation.role,
+      department: "",
+      membershipStatus: "Pending",
+      presenceStatus: "Offline",
+      assignedJobIds: [],
+      candidatesHandled: 0,
+      interviewsThisWeek: 0,
+      offersMade: 0,
+      successfulHires: 0,
+      averageHiringDays: 0,
+      performanceScore: 0,
+      recentActivity: [],
+      invitedAt: invitation.invitedAt,
+      createdAt: now,
+    };
 
- return pendingMemberId;
- },
+    // Save pending member to Firestore
+    await setDoc(doc(db, "teamMembers", pendingMemberId), pendingMember);
 
- // Delete invitation from Firestore (cleanup after failed email)
- deleteInvitationFromFirestore: async (
- invitationId: string
- ): Promise<void> => {
- try {
- const invitationRef = doc(db, "invitations", invitationId);
- await updateDoc(invitationRef, {
- status: "Expired",
- } as unknown as Record<string, unknown>);
+    // Add to Zustand
+    set((state) => {
+      const nextState = {
+        ...state,
+        members: [...state.members, pendingMember],
+      };
 
- // Remove from Zustand
- set((state) => {
- const nextState = {
- ...state,
- invitations: state.invitations.filter(
- (inv) => inv.id !== invitationId
- ),
- };
+      persistTeamState(nextState);
+      return nextState;
+    });
 
- persistTeamState(nextState);
- return nextState;
- });
- } catch (error) {
- console.error("Error cleaning up invitation:", error);
- }
- },
+    return pendingMemberId;
+  },
 
+  // Delete invitation from Firestore (cleanup after explicit cancel)
+  deleteInvitationFromFirestore: async (
+    invitationId: string
+  ): Promise<void> => {
+    try {
+      const invitationRef = doc(db, "invitations", invitationId);
+      await updateDoc(invitationRef, {
+        status: "Expired",
+      } as unknown as Record<string, unknown>);
 
+      // Remove from Zustand
+      set((state) => {
+        const nextState = {
+          ...state,
+          invitations: state.invitations.filter(
+            (inv) => inv.id !== invitationId
+          ),
+          members: state.members.filter(
+            (m) => m.invitationId !== invitationId
+          ),
+        };
 
-
-
- inviteMember: (data) =>
- set((state) => {
- const now = new Date().toISOString();
- const invitationId = crypto.randomUUID();
- const company = useCompanyStore.getState().company;
-
- const invitation: TeamInvitation = {
- id: invitationId,
- companyId: data.companyId,
- companyName: company?.companyName ?? "",
- fullName: data.fullName.trim(),
- email: data.email.trim().toLowerCase(),
- role: data.role,
-
- status: "Pending",
- invitedAt: now,
- };
-
- const newMember: TeamMember = {
- id: crypto.randomUUID(),
- companyId: data.companyId,
- invitationId,
- fullName: data.fullName.trim(),
- email: data.email.trim().toLowerCase(),
- phone: "",
- avatar: "",
- companyName: company?.companyName ?? "",
- role: data.role,
- department: "",
- membershipStatus: "Pending",
- presenceStatus: "Offline",
- assignedJobIds: [],
- candidatesHandled: 0,
- interviewsThisWeek: 0,
- offersMade: 0,
- successfulHires: 0,
- averageHiringDays: 0,
- performanceScore: 0,
- recentActivity: [],
- invitedAt: now,
- createdAt: now,
- };
-
- const nextState = {
- ...state,
- invitations: [...state.invitations, invitation],
- members: [...state.members, newMember],
- };
-
- persistTeamState(nextState);
- return nextState;
- }),
+        persistTeamState(nextState);
+        return nextState;
+      });
+    } catch (error) {
+      console.error("Error cleaning up invitation:", error);
+    }
+  },
 
  addPendingMember: (invitationId) => {
  const invitation = get().invitations.find(

@@ -1,165 +1,163 @@
 import { useState } from "react";
-import { MdClose, MdEmail, MdPerson, MdWorkOutline } from "react-icons/md";
+import { MdClose, MdEmail, MdPerson, MdWorkOutline, MdContentCopy, MdCheck } from "react-icons/md";
 
 import type { TeamRole } from "../../../types/team";
 import { useTeamStore } from "../../../store/teamStore";
 import { useCompanyStore } from "../../../store/companyStore";
+import { useAuthStore } from "../../../store/authStore";
+
 interface InviteTeamMemberModalProps {
- isOpen: boolean;
- onClose: () => void;
+  isOpen: boolean;
+  onClose: () => void;
 }
 
 const InviteTeamMemberModal = ({
- isOpen,
- onClose,
+  isOpen,
+  onClose,
 }: InviteTeamMemberModalProps) => {
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [role, setRole] = useState<TeamRole | "">("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
+  
+  // Link fallback state
+  const [generatedInviteLink, setGeneratedInviteLink] = useState("");
+  const [copied, setCopied] = useState(false);
+  const [emailWarning, setEmailWarning] = useState("");
 
- const [fullName, setFullName] = useState("");
- const [email, setEmail] = useState("");
- const [role, setRole] = useState<TeamRole | "">("");
-const company = useCompanyStore(
- (state) => state.company
-);
-const [isSubmitting, setIsSubmitting] = useState(false);
-const createInvitation = useTeamStore(
- (state) => state.createInvitation
-);
- const [error, setError] = useState("");
- if (!isOpen) return null;
-const handleSubmit = async (
- e: React.FormEvent<HTMLFormElement>
-) => {
- e.preventDefault();
+  const company = useCompanyStore((state) => state.company);
+  const user = useAuthStore((state) => state.user);
+  const createInvitation = useTeamStore((state) => state.createInvitation);
 
- setError("");
+  if (!isOpen) return null;
 
- if (!fullName.trim()) {
- setError("Please enter the team member's name.");
- return;
- }
+  const targetCompanyId = user?.companyId || company?.id;
 
- if (!email.trim()) {
- setError("Please enter an email address.");
- return;
- }
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError("");
+    setEmailWarning("");
+    setGeneratedInviteLink("");
 
- if (!role) {
- setError("Please select a role.");
- return;
- }
+    if (!fullName.trim()) {
+      setError("Please enter the team member's name.");
+      return;
+    }
 
- if (!company?.id) {
- setError("Company information could not be found.");
- return;
- }
+    if (!email.trim()) {
+      setError("Please enter an email address.");
+      return;
+    }
 
- setIsSubmitting(true);
- try {
- // Step 1: Create invitation in Firestore ONLY (no member yet)
- const invitationId = await createInvitation({
- fullName: fullName.trim(),
- email: email.trim(),
- role,
- companyId: company.id,
- });
+    if (!role) {
+      setError("Please select a role.");
+      return;
+    }
 
- console.log("Invitation created:", invitationId);
+    if (!targetCompanyId) {
+      setError("Company information could not be found.");
+      return;
+    }
 
-  // Step 2: Send email with fallback endpoints (local dev server & remote server)
-  const primaryApiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
-  const endpoints = Array.from(new Set([
-  `${primaryApiUrl}/api/invitations/send`,
-  "http://localhost:5000/api/invitations/send",
-  "https://recuriters-dashboard-api.onrender.com/api/invitations/send",
-  ]));
+    setIsSubmitting(true);
+    try {
+      // Step 1: Create invitation AND pending member in Firestore & Zustand immediately
+      const invitationId = await createInvitation({
+        fullName: fullName.trim(),
+        email: email.trim(),
+        role,
+        companyId: targetCompanyId,
+      });
 
-  let response: Response | null = null;
-  let result: any = null;
-  let lastErrorMessage = "";
+      console.log("Invitation & pending member created in Firestore:", invitationId);
 
-  for (const endpoint of endpoints) {
-  try {
-  console.log(`Attempting to send invitation via ${endpoint}...`);
-  const res = await fetch(endpoint, {
-  method: "POST",
-  headers: {
-  "Content-Type": "application/json",
-  },
-  body: JSON.stringify({
-  email: email.trim(),
-  fullName: fullName.trim(),
-  companyName: company.companyName,
-  role,
-  invitationId,
-  }),
-  });
+      const inviteUrl = `${window.location.origin}/accept-invitation/${invitationId}`;
+      setGeneratedInviteLink(inviteUrl);
 
-  const data = await res.json().catch(() => null);
-  if (res.ok && data?.success) {
-  response = res;
-  result = data;
-  break;
-  } else {
-  lastErrorMessage = data?.message || `Server returned status ${res.status}`;
-  console.warn(`Endpoint ${endpoint} returned error:`, lastErrorMessage);
-  }
-  } catch (err) {
-  console.warn(`Failed to connect to ${endpoint}:`, err);
-  lastErrorMessage = err instanceof Error ? err.message : "Network error";
-  }
-  }
+      // Step 2: Attempt email dispatch with fallback endpoints
+      const primaryApiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      const endpoints = Array.from(
+        new Set([
+          `${primaryApiUrl}/api/invitations/send`,
+          "http://localhost:5000/api/invitations/send",
+          "https://recuriters-dashboard-api.onrender.com/api/invitations/send",
+        ])
+      );
 
-  // Step 3: Check if email was sent successfully
-  if (!response || !result) {
-  console.error("All email send attempts failed:", lastErrorMessage);
+      let emailSentSuccess = false;
+      let lastErrorMessage = "";
 
-  // Clean up: Delete the invitation from Firestore
-  await useTeamStore
-  .getState()
-  .deleteInvitationFromFirestore(invitationId);
+      for (const endpoint of endpoints) {
+        try {
+          console.log(`Attempting to send invitation via ${endpoint}...`);
+          const res = await fetch(endpoint, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email: email.trim(),
+              fullName: fullName.trim(),
+              companyName: company?.companyName || user?.companyName || "Our Company",
+              role,
+              invitationId,
+            }),
+          });
 
-  setError(
-  lastErrorMessage ||
-  "Failed to send invitation email. Please check your backend server."
-  );
-  return;
-  }
+          const data = await res.json().catch(() => null);
+          if (res.ok && data?.success) {
+            emailSentSuccess = true;
+            break;
+          } else {
+            lastErrorMessage = data?.message || `Server returned status ${res.status}`;
+            console.warn(`Endpoint ${endpoint} returned error:`, lastErrorMessage);
+          }
+        } catch (err) {
+          console.warn(`Failed to connect to ${endpoint}:`, err);
+          lastErrorMessage = err instanceof Error ? err.message : "Network error";
+        }
+      }
 
-  // Step 4: Email succeeded! Now save the pending member
-  console.log("Email sent successfully, saving pending member...");
-  await useTeamStore
-  .getState()
-  .savePendingMemberToFirestore(invitationId);
+      if (emailSentSuccess) {
+        // Email sent successfully! Clean up and close modal
+        setFullName("");
+        setEmail("");
+        setRole("");
+        setError("");
+        onClose();
+      } else {
+        // Email dispatch failed, BUT pending member IS SAVED in Firestore!
+        // Show fallback UI to copy the link directly
+        setEmailWarning(
+          "The team member has been added to your team as Pending in cloud storage. However, automatic email delivery was unavailable. You can copy and share the invitation link below manually:"
+        );
+      }
+    } catch (err) {
+      console.error("Failed to process invitation:", err);
+      setError("Unable to process invitation. Please check your network and try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
-  console.log("Invitation email sent:", result);
+  const handleCopyLink = () => {
+    if (!generatedInviteLink) return;
+    navigator.clipboard.writeText(generatedInviteLink);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2500);
+  };
 
-  // Step 5: Success - reset form and close modal
-  setFullName("");
-  setEmail("");
-  setRole("");
-  setError("");
-
-  onClose();
- } catch (error) {
-  console.error("Failed to send invitation:", error);
-
-  setError(
-  "Unable to send the invitation. Please try again."
-  );
- } finally {
-  setIsSubmitting(false);
- }
-
-
-};
-
- const handleClose = () => {
- setFullName("");
- setEmail("");
- setRole("");
- setError("");
- onClose();
- };
+  const handleClose = () => {
+    setFullName("");
+    setEmail("");
+    setRole("");
+    setError("");
+    setEmailWarning("");
+    setGeneratedInviteLink("");
+    setCopied(false);
+    onClose();
+  };
 
  return (
  <div
@@ -480,6 +478,34 @@ const handleSubmit = async (
  </div>
  </div>
 
+ {/* Email warning banner & copyable link fallback */}
+ {emailWarning && (
+   <div className="space-y-3 rounded-xl bg-amber-50 p-4 border border-amber-200 dark:bg-amber-500/10 dark:border-amber-500/20">
+     <p className="text-xs leading-5 text-amber-800 dark:text-amber-300 font-medium">
+       {emailWarning}
+     </p>
+
+     {generatedInviteLink && (
+       <div className="flex items-center gap-2">
+         <input
+           type="text"
+           readOnly
+           value={generatedInviteLink}
+           className="w-full rounded-lg border border-amber-300 bg-white px-3 py-2 text-xs font-mono text-zinc-800 outline-none dark:border-amber-700 dark:bg-zinc-800 dark:text-zinc-200"
+         />
+         <button
+           type="button"
+           onClick={handleCopyLink}
+           className="flex items-center gap-1 shrink-0 rounded-lg bg-[#285A48] px-3 py-2 text-xs font-semibold text-white transition hover:bg-[#285A48]/90 dark:bg-[#B0E4CC] dark:text-zinc-900"
+         >
+           {copied ? <MdCheck size={16} /> : <MdContentCopy size={16} />}
+           {copied ? "Copied!" : "Copy"}
+         </button>
+       </div>
+     )}
+   </div>
+ )}
+
  {/* Error */}
  {error && (
  <div
@@ -553,9 +579,10 @@ const handleSubmit = async (
  sm:w-auto
  "
  >
- Cancel
+ {emailWarning ? "Close" : "Cancel"}
  </button>
 
+ {!emailWarning && (
  <button
  type="submit"
  disabled={isSubmitting}
@@ -579,9 +606,9 @@ const handleSubmit = async (
  sm:w-auto
  "
  >
-     {isSubmitting ? "sending..." : " Send invitation"}
-
+     {isSubmitting ? "Sending..." : "Send invitation"}
  </button>
+ )}
  </div>
  </form>
  </div>

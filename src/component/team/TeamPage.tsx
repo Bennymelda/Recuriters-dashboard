@@ -7,19 +7,24 @@ import TeamGrid from "./TeamGrid";
 import { useTeamStore } from "../../store/teamStore";
 import { useAuthStore } from "../../store/authStore";
 
-const TeamPage = () => {
- const members = useTeamStore((state) => state.members);
- const syncTeamMembersFromFirestore = useTeamStore((state) => state.syncTeamMembersFromFirestore);
- const user = useAuthStore((state) => state.user);
+import { useCompanyStore } from "../../store/companyStore";
 
- // Sync team members from Firestore when page loads
- useEffect(() => {
- if (user?.companyId) {
- syncTeamMembersFromFirestore(user.companyId).catch((error) => {
- console.error("Failed to sync team members:", error);
- });
- }
- }, [user?.companyId, syncTeamMembersFromFirestore]);
+const TeamPage = () => {
+  const members = useTeamStore((state) => state.members);
+  const syncTeamMembersFromFirestore = useTeamStore((state) => state.syncTeamMembersFromFirestore);
+  const user = useAuthStore((state) => state.user);
+  const company = useCompanyStore((state) => state.company);
+
+  const companyId = user?.companyId || company?.id;
+
+  // Sync team members from Firestore when page loads or companyId is ready
+  useEffect(() => {
+    if (companyId) {
+      syncTeamMembersFromFirestore(companyId).catch((error) => {
+        console.error("Failed to sync team members:", error);
+      });
+    }
+  }, [companyId, syncTeamMembersFromFirestore]);
 
  const [filters, setFilters] = useState({
   role: "",
