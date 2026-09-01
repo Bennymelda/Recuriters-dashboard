@@ -146,9 +146,13 @@ if (loadingJob) {
  }
 const handleSubmit = async (e: React.FormEvent) => {
  e.preventDefault();
-if (isSubmitting) return;
 
- setIsSubmitting(true);
+ if (isSubmitting) return;
+
+ // -----------------------------
+ // VALIDATION
+ // -----------------------------
+
  if (!fullName.trim()) {
  alert("Please enter your full name.");
  return;
@@ -174,13 +178,22 @@ if (isSubmitting) return;
  return;
  }
 
+ // -----------------------------
+ // START SUBMISSION
+ // -----------------------------
+
+ setIsSubmitting(true);
+
  try {
- // Upload CV to Cloudinary
-console.log("About to upload CV");
+ console.log("About to upload CV");
 
-const resumeUrl = await uploadCV(cv);
+ const resumeUrl = await uploadCV(cv);
 
-console.log("CV upload finished. URL:", resumeUrl);
+ console.log(
+ "CV upload finished. URL:",
+ resumeUrl
+ );
+
  const now = new Date().toISOString();
 
  const newCandidate = {
@@ -217,7 +230,6 @@ console.log("CV upload finished. URL:", resumeUrl);
  yearsOfExperience:
  Number(experience) || 0,
 
- // ⭐ Actual Cloudinary CV URL
  resumeUrl,
 
  linkedin:
@@ -246,15 +258,21 @@ console.log("CV upload finished. URL:", resumeUrl);
  );
 
  } catch (error) {
- console.error("Application submission error:", error);
+ console.error(
+ "Application submission error:",
+ error
+ );
 
  alert(
- "We couldn't upload your CV. Please try again."
+ "We couldn't submit your application. Please try again."
  );
- }finally{
-   setIsSubmitting(false)
+
+ } finally {
+ setIsSubmitting(false);
  }
-}
+};
+
+
 
     return(<>
     
@@ -425,7 +443,7 @@ console.log("CV upload finished. URL:", resumeUrl);
  disabled:opacity-60
  "
 >
- {isSubmitting ? "Uploading CV..." : "Submit Application"}
+ {isSubmitting ? "submitting..." : "Submit Application"}
 </button>
 
 
