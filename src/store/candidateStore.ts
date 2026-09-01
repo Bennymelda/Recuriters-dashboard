@@ -36,34 +36,47 @@ const loadPersistedCandidates = (): Candidate[] => {
  if (typeof window === "undefined") return initialCandidates as Candidate[];
 
  try {
+ // Always start with initialCandidates as base (Map by ID)
+ const candidateMap = new Map(
+ (initialCandidates as Candidate[]).map((c) => [c.id, c])
+ );
+
  const saved = window.localStorage.getItem(STORAGE_KEY);
- if (!saved) return initialCandidates as Candidate[];
+ if (!saved) return Array.from(candidateMap.values());
 
  const parsed = JSON.parse(saved) as Partial<PersistedCandidateState> | Candidate[];
 
  if (Array.isArray(parsed)) {
  window.localStorage.removeItem(STORAGE_KEY);
- return initialCandidates as Candidate[];
+ return Array.from(candidateMap.values());
  }
 
     if (parsed.version === STORAGE_VERSION && Array.isArray(parsed.candidates)) {
-      const initialMap = new Map(initialCandidates.map((c) => [c.id, c.source]));
-      return parsed.candidates.map((c, idx) => ({
+      // Process persisted candidates
+      const processedCandidates = parsed.candidates.map((c) => ({
         ...c,
         source:
           c.source ||
-          initialMap.get(c.id) ||
-          initialCandidates[idx % initialCandidates.length]?.source ||
+          candidateMap.get(c.id)?.source ||
           "LinkedIn",
         hiredAt:
           c.status === "Hired"
             ? c.hiredAt || c.updatedAt || c.stageUpdatedAt || new Date().toISOString()
             : c.hiredAt,
       })) as Candidate[];
+      
+      // Override initialCandidates with persisted changes (preserves initial data + updates)
+      processedCandidates.forEach((c) => {
+        if (c.id) {
+          candidateMap.set(c.id, c);
+        }
+      });
+      
+      return Array.from(candidateMap.values());
     }
 
  window.localStorage.removeItem(STORAGE_KEY);
- return initialCandidates as Candidate[];
+ return Array.from(candidateMap.values());
  } catch {
  window.localStorage.removeItem(STORAGE_KEY);
  return initialCandidates as Candidate[];
@@ -195,19 +208,27 @@ fetchCandidates: async () => {
  }));
 
  set((state) => {
- const firebaseIds = new Set(
- firebaseCandidates.map((candidate) => candidate.id)
+ // Use Map to merge: initialCandidates (base) + state.candidates (local changes) + firebaseCandidates (remote)
+ // This ensures initialCandidates are always present and duplicates are prevented by ID
+ const candidateMap = new Map(
+ (initialCandidates as Candidate[]).map((c) => [c.id, c])
  );
 
- // Keep local/dummy candidates that aren't in Firebase
- const localCandidates = state.candidates.filter(
- (candidate) => !firebaseIds.has(candidate.id)
- );
+ // Override with current state (preserves any local changes like status updates, notes)
+ state.candidates.forEach((c) => {
+ if (c.id) {
+ candidateMap.set(c.id, c);
+ }
+ });
 
- const mergedCandidates = [
- ...localCandidates,
- ...firebaseCandidates,
- ];
+ // Override with Firestore candidates (latest remote data)
+ firebaseCandidates.forEach((c) => {
+ if (c.id) {
+ candidateMap.set(c.id, c);
+ }
+ });
+
+ const mergedCandidates = Array.from(candidateMap.values());
 
  persistCandidates(mergedCandidates);
 
