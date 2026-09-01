@@ -88,7 +88,9 @@ createInvitation: (data: InviteMemberData) => Promise<string>;
  // -----------------------------
  // Selection
  // -----------------------------
-
+addPendingMember: (
+ invitationId: string
+) => void;
  selectMember: (id: string) => void;
 
  clearSelectedMember: () => void;
@@ -755,7 +757,7 @@ acceptInvitation: (invitationId) =>
  }
  },
 
- createInvitation:async ({
+ createInvitation: async ({
  fullName,
  email,
  role,
@@ -777,45 +779,12 @@ acceptInvitation: (invitationId) =>
  status: "Pending",
  invitedAt: now,
  };
-await setDoc(doc(db, "invitations", invitationId), invitation);
- const newMember: TeamMember = {
- id: crypto.randomUUID(),
 
- companyId,
- invitationId,
-
- fullName: fullName.trim(),
- email: email.trim().toLowerCase(),
-
- phone: "",
- avatar: "",
-
- companyName: company?.companyName ?? "",
-
- role,
- department: "",
-
- membershipStatus: "Pending",
-
- presenceStatus: "Offline",
- lastActive: undefined,
-
- assignedJobIds: [],
-
- candidatesHandled: 0,
- interviewsThisWeek: 0,
- offersMade: 0,
- successfulHires: 0,
- averageHiringDays: 0,
- performanceScore: 0,
-
- recentActivity: [],
-
- invitedAt: now,
- joinedAt: undefined,
-
- createdAt: now,
- };
+ // Save ONLY the invitation to Firestore
+ await setDoc(
+ doc(db, "invitations", invitationId),
+ invitation
+ );
 
  set((state) => {
  const nextState = {
@@ -824,11 +793,6 @@ await setDoc(doc(db, "invitations", invitationId), invitation);
  invitations: [
  ...state.invitations,
  invitation,
- ],
-
- members: [
- ...state.members,
- newMember,
  ],
  };
 
@@ -839,6 +803,8 @@ await setDoc(doc(db, "invitations", invitationId), invitation);
 
  return invitationId;
 },
+
+
 
 
 
@@ -894,6 +860,66 @@ await setDoc(doc(db, "invitations", invitationId), invitation);
  persistTeamState(nextState);
  return nextState;
  }),
+
+ addPendingMember: (invitationId) => {
+ const invitation = get().invitations.find(
+ (item) => item.id === invitationId
+ );
+
+ if (!invitation) return;
+
+ const newMember: TeamMember = {
+ id: crypto.randomUUID(),
+
+ companyId: invitation.companyId,
+ invitationId: invitation.id,
+
+ fullName: invitation.fullName,
+ email: invitation.email,
+
+ phone: "",
+ avatar: "",
+
+ companyName: invitation.companyName,
+
+ role: invitation.role,
+ department: "",
+
+ membershipStatus: "Pending",
+
+ presenceStatus: "Offline",
+
+ assignedJobIds: [],
+
+ candidatesHandled: 0,
+ interviewsThisWeek: 0,
+ offersMade: 0,
+ successfulHires: 0,
+ averageHiringDays: 0,
+ performanceScore: 0,
+
+ recentActivity: [],
+
+ invitedAt: invitation.invitedAt,
+
+ createdAt: new Date().toISOString(),
+ };
+
+ set((state) => {
+ const nextState = {
+ ...state,
+
+ members: [
+ ...state.members,
+ newMember,
+ ],
+ };
+
+ persistTeamState(nextState);
+
+ return nextState;
+ });
+},
  // =====================================
  // CLEAR MEMBERS
  // =====================================

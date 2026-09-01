@@ -20,12 +20,14 @@ const InviteTeamMemberModal = ({
 const company = useCompanyStore(
  (state) => state.company
 );
-
+const [isSubmitting, setIsSubmitting] = useState(false);
 const createInvitation = useTeamStore(
  (state) => state.createInvitation
 );
  const [error, setError] = useState("");
-
+const addPendingMember = useTeamStore(
+ (state) => state.addPendingMember
+);
  if (!isOpen) return null;
 const handleSubmit = async (
  e: React.FormEvent<HTMLFormElement>
@@ -54,6 +56,7 @@ const handleSubmit = async (
  return;
  }
 
+ setIsSubmitting(true);
  try {
  const invitationId = await createInvitation({
  fullName: fullName.trim(),
@@ -63,7 +66,7 @@ const handleSubmit = async (
  });
 
  const response = await fetch(
- "http://localhost:5000/api/invitations/send",
+ "https://recuriters-dashboard-api.onrender.com/api/invitations/send",
  {
  method: "POST",
  headers: {
@@ -88,6 +91,8 @@ const handleSubmit = async (
  );
  return;
  }
+addPendingMember(invitationId);
+
 
  console.log("Invitation email sent:", result);
 
@@ -103,7 +108,11 @@ const handleSubmit = async (
  setError(
  "Unable to send the invitation. Please try again."
  );
- }
+ }finally {
+ setIsSubmitting(false);
+}
+
+
 };
 
  const handleClose = () => {
@@ -511,6 +520,7 @@ const handleSubmit = async (
 
  <button
  type="submit"
+ disabled={isSubmitting}
  className="
  w-full
  cursor-pointer
@@ -531,7 +541,8 @@ const handleSubmit = async (
  sm:w-auto
  "
  >
- Send invitation
+     {isSubmitting ? "sending..." : " Send invitation"}
+
  </button>
  </div>
  </form>
