@@ -262,9 +262,11 @@ export const useTeamStore = create<TeamStore>(
  // INVITE MEMBER
  // =====================================
 
-
-
-
+ inviteMember: (data) => {
+    get().createInvitation(data).catch((error) => {
+      console.error("Error in inviteMember:", error);
+    });
+  },
 
  // =====================================
  // UPDATE MEMBER
