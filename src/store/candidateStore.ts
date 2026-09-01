@@ -189,16 +189,32 @@ fetchCandidates: async () => {
  collection(db, "candidates")
  );
 
- const candidates = snapshot.docs.map((docSnap) => ({
+ const firebaseCandidates = snapshot.docs.map((docSnap) => ({
  ...(docSnap.data() as Candidate),
  id: docSnap.id,
  }));
 
- persistCandidates(candidates);
+ set((state) => {
+ const firebaseIds = new Set(
+ firebaseCandidates.map((candidate) => candidate.id)
+ );
 
- set({
- candidates,
+ // Keep local/dummy candidates that aren't in Firebase
+ const localCandidates = state.candidates.filter(
+ (candidate) => !firebaseIds.has(candidate.id)
+ );
+
+ const mergedCandidates = [
+ ...localCandidates,
+ ...firebaseCandidates,
+ ];
+
+ persistCandidates(mergedCandidates);
+
+ return {
+ candidates: mergedCandidates,
  isLoading: false,
+ };
  });
  } catch (error) {
  console.error(
