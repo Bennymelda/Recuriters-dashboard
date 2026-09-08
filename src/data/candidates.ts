@@ -55,7 +55,7 @@ stageUpdatedAt: "2026-07-22T13:00:00.000Z",
  id: "note_001",
  author: "Sarah Johnson",
  authorId: "member_001",
- authRole:"Recuriter",
+ authorRole:"Recuriter",
  date: "2026-06-11",
  content: "Recommended for technical interview with the frontend team."
  }
@@ -120,7 +120,7 @@ stageUpdatedAt: "2026-08-22T13:00:00.000Z",
  author: "Michael Brown",
  date: "2026-06-09",
  authorId: "member_002",
- authRole:"Recuriter",
+ authorRole:"Recuriter",
  content: "Strong leadership experience and excellent communication."
  },
  {
@@ -128,7 +128,7 @@ stageUpdatedAt: "2026-08-22T13:00:00.000Z",
  author: "David Wilson",
  authorId: "member_002",
  date: "2026-06-12",
- authRole:"Recuriter",
+ authorRole:"Recuriter",
  content: "One of the strongest backend candidates in the current hiring pipeline."
  }
  ],
@@ -191,7 +191,7 @@ department:"Design",
  id: "note_004",
  author: "Sarah Johnson",
  authorId: "member_001",
- authRole:"Recuriter",
+ authorRole:"Recuriter",
  date: "2026-06-08",
  content: "Portfolio stands out. Strong visual design and UX thinking."
  },
@@ -199,7 +199,7 @@ department:"Design",
  id: "note_005",
  author: "Emma Davis",
  authorId: "member_002",
- authRole:"Recuriter",
+ authorRole:"Recuriter",
  date: "2026-06-11",
  content: "Would be a great addition to the Product Design team."
  }
@@ -264,7 +264,7 @@ stageUpdatedAt: "2026-09-22T13:00:00.000Z",
  id: "note_006",
  author: "Michael Brown",
  authorId: "member_001",
- authRole:"Recuriter",
+ authorRole:"Recuriter",
  date: "2026-06-07",
  content: "Strong React Native background with several published apps."
  },
@@ -273,7 +273,7 @@ stageUpdatedAt: "2026-09-22T13:00:00.000Z",
  author: "David Wilson",
  authorId: "member_002",
  date: "2026-06-12",
- authRole:"HR Manager",
+ authorRole:"HR Manager",
  content: "Performed exceptionally well in the technical assessment."
  }
  ],
@@ -339,7 +339,7 @@ stageUpdatedAt: "2026-03-22T13:00:00.000Z",
  author: "Sarah Johnson",
  authorId: "member_001",
  date: "2026-06-06",
- authRole:"HR Manager",
+ authorRole:"HR Manager",
  content: "Highly experienced candidate with leadership potential."
  },
  {
@@ -347,7 +347,7 @@ stageUpdatedAt: "2026-03-22T13:00:00.000Z",
  author: "Daniel Adams",
  authorId: "member_002",
  date: "2026-06-10",
- authRole:"HR Manager",
+ authorRole:"HR Manager",
  content: "One of the strongest DevOps candidates in this hiring cycle."
  }
  ],

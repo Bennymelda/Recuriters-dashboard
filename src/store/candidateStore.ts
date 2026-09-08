@@ -1095,7 +1095,16 @@ rejectHiring: (candidateId, note) =>
  }
 
  const now = new Date().toISOString();
-
+console.log("CREATE OFFER DATA:", {
+ candidateId,
+ salary,
+ startDate,
+ employmentType,
+ description,
+ companyName: currentUser.companyName,
+ createdBy: currentUser.id,
+ createdByName: currentUser.fullName,
+});
  const updatedCandidates: Candidate[] =
  state.candidates.map((candidate) =>
  candidate.id !== candidateId
@@ -1116,6 +1125,10 @@ rejectHiring: (candidateId, note) =>
  updatedAt: now,
  }
  );
+
+
+
+console.log("UPDATED CANDIDATE:", updatedCandidates);
 
  persistCandidates(updatedCandidates);
 

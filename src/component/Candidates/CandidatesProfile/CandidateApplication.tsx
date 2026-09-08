@@ -26,6 +26,9 @@ const statusColors = {
  "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400",
  Rejected:
  "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
+"Offer Declined":
+ "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
+ 
 };
 
 const CandidateApplication = ({

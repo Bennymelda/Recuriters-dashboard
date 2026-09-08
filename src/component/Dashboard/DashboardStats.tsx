@@ -141,7 +141,7 @@ const navigate = useNavigate();
  <div className="flex items-center justify-between">
   <button
      onClick={() => {
-     useAuthStore.getState().setRole("HR Manager");
+     useAuthStore.getState().setRole("Recruiter");
      window.location.reload();
      }}
     >

@@ -66,7 +66,6 @@ const CompleteProfile = () => {
  const handleComplete = async () => {
  updateProfile({
  fullName: fullName.trim() || user.fullName,
- companyName: user.companyName,
  phoneNumber: phoneNumber.trim(),
  jobTitle: jobTitle.trim(),
  department: department.trim(),
