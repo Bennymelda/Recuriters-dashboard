@@ -13,6 +13,7 @@ import {
  MdEdit,
  MdDelete,
 } from "react-icons/md";
+import { useAuthStore } from "../../../store/authStore";
 interface CandidateNotesProps {
  candidate: Candidate;
 }
@@ -53,6 +54,8 @@ const updateNote = useCandidateStore((state) => state.updateNote);
 const deleteNote = useCandidateStore((state) => state.deleteNote);
 
 const [noteToDelete, setNoteToDelete] = useState<string | null>(null);
+const user = useAuthStore((state) => state.user);
+if(!user) return
 const handleDeleteNote = (noteId: string) => {
  setNoteToDelete(noteId);
 };
@@ -227,33 +230,27 @@ justify-center
  <MdMoreVert size={20} />
  </button>
 
- {activeMenu === note.id && (
+ {activeMenu === note.id ||note.authorId === user.id  && (
  <div
  className="
  absolute
  right-0
  top-12
  z-20
-
  w-48
-
  overflow-hidden
  rounded-2xl
-
  border
  border-zinc-200
-
  bg-white
-
  py-2
-
  shadow-xl
-
  dark:border-zinc-700
  dark:bg-zinc-900
  "
  >
-
+ {note.authorId === user.id && (
+ <>
  <button
  onClick={() => {
  handleEditNote(note);
@@ -264,20 +261,14 @@ justify-center
  w-full
  items-center
  gap-3
-
  px-4
  cursor-pointer
  py-3
-
  text-sm
  font-medium
-
  text-zinc-700
-
  transition
-
  hover:bg-zinc-100
-
  dark:text-zinc-300
  dark:hover:bg-zinc-800
  "
@@ -297,29 +288,23 @@ justify-center
  w-full
  items-center
  gap-3
-
  px-4
  py-3
-
  text-sm
  font-medium
-
  text-red-600
-
  transition
-
  hover:bg-red-50
-
  dark:hover:bg-red-900/20
  "
  >
  <MdDelete size={18} />
  Delete Note
  </button>
-
- </div>
+ </>
  )}
-
+ </div>
+)}
  </div>
 
 </div>
@@ -464,7 +449,9 @@ justify-center
  );
  } else {
  addNote(candidate.id, {
- author: "Benny",
+ authorId: user.id,
+ author: user.fullName,
+ authorRole: user.role,
  content,
  });
  }

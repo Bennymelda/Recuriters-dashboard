@@ -1,19 +1,16 @@
 import { useState } from "react";
 import { useAuthStore } from "../../../store/authStore";
-import { useCompanyStore } from "../../../store/companyStore";
+
 import { useRef} from "react";
 import { MdCameraAlt } from "react-icons/md";
 
 const ProfileSettings = () => {
  const user = useAuthStore((state) => state.user);
-const company = useCompanyStore((state) => state.company);
 
  const [fullName, setFullName] = useState(user?.fullName ?? "");
  const [email] = useState(user?.email ?? "");
  
-const [companyName, setCompanyName] = useState(
- company.companyName
-);
+
 const [phoneNumber, setPhoneNumber] = useState(
  user?.phoneNumber ?? ""
 );
@@ -45,7 +42,6 @@ const [timeZone, setTimeZone] = useState(
 const handleSave = () => {
  updateProfile({
  fullName,
- companyName,
  phoneNumber,
  jobTitle,
  department,
@@ -63,7 +59,7 @@ const fileInputRef = useRef<HTMLInputElement>(null);
 
 const hasChanges =
  fullName !== (user?.fullName ?? "") ||
- companyName !== company.companyName ||
+
  phoneNumber !== (user?.phoneNumber ?? "") ||
  jobTitle !== (user?.jobTitle ?? "") ||
  department !== (user?.department ?? "") ||
@@ -199,9 +195,7 @@ const hasChanges =
  {department || "Human Resources"}
  </span>
 
- <span className="rounded-full bg-zinc-100 px-3 py-1 text-xs font-semibold text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
- {companyName || "Company"}
- </span>
+
 
  </div>
 
@@ -344,30 +338,7 @@ const hasChanges =
  />
  </div>
 
- {/* Company */}
- <div>
- <label className="mb-2 block text-sm font-semibold">
- Company
- </label>
 
- <input
- value={companyName}
- onChange={(e) => setCompanyName(e.target.value)}
- className="
- w-full
- rounded-2xl
- border
- border-zinc-300
- px-4
- py-3
- outline-none
- focus:border-[#408A71]
- dark:border-zinc-700
- dark:bg-zinc-800
- dark:text-white
- "
- />
- </div>
 
  {/* Location */}
  <div>

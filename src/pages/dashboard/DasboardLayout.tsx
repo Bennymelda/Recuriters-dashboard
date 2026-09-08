@@ -2,19 +2,25 @@ import { Outlet } from "react-router-dom";
 import ToastContainer from "../../component/toast/ToastContainer";
 import Sidebar from "../sidebar/Sidebar";
 import Header from "../header/Header";
-//import MobileTopBar from "../header/MobileTopbar";
 import { useState } from "react";
-const DashboardLayout = () => {
+import { useAuthStore } from "../../store/authStore";
 
-  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
-  return (
-    <div className="flex min-h-screen bg-zinc-50 dark:bg-zinc-950">
+const DashboardLayout = () => {
+ const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+
+ const user = useAuthStore((state) => state.user);
+
+ return (
+ <div className="flex min-h-screen bg-zinc-50 dark:bg-zinc-950">
+
  <Sidebar
  mobileSidebarOpen={mobileSidebarOpen}
  setMobileSidebarOpen={setMobileSidebarOpen}
-/>
+ userRole={user?.role}
+ />
 
-<div className="flex min-w-0 flex-1 flex-col">
+ <div className="flex min-w-0 flex-1 flex-col">
+
  <Header
  onOpenSidebar={() => setMobileSidebarOpen(true)}
  />
@@ -24,9 +30,10 @@ const DashboardLayout = () => {
  </main>
 
  <ToastContainer />
-</div>
-</div>
-  );
+
+ </div>
+ </div>
+ );
 };
 
 export default DashboardLayout;

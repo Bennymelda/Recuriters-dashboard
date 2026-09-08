@@ -16,7 +16,7 @@ interface TeamFormProps {
  setFormData: React.Dispatch<
  React.SetStateAction<TeamFormData>
  >;
-
+isHRManager?: boolean;
  image: File | null;
  preview: string | null;
  setImage: (file: File | null) => void;
@@ -30,6 +30,7 @@ const TeamForm = ({
  preview,
  setImage,
  setPreview,
+ isHRManager
 }: TeamFormProps) => {
  return (
  <form className="space-y-8">
@@ -109,12 +110,13 @@ const TeamForm = ({
  <CustomSelect
  placeholder="Select Role"
  value={formData.role}
- options={[
- "Admin",
- "Recruiter",
- "Hiring Manager",
- "HR Manager",
- ]}
+ options={
+ isHRManager
+ ? ["Recruiter", "Hiring Manager", "HR Manager"]
+ : ["Admin", "Recruiter", "Hiring Manager", "HR Manager"]
+}
+
+
  onChange={(value) =>
  setFormData((prev) => ({
  ...prev,

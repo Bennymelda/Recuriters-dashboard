@@ -8,6 +8,15 @@ import type {
  UserRole,
 } from "../types/auth";
 
+import {
+ collection,
+ query,
+ where,
+ getDocs,
+ updateDoc,
+ doc,
+} from "firebase/firestore";
+import { db } from "../firebase";
 interface AuthStore {
  user: User | null;
  isAuthenticated: boolean;
@@ -34,7 +43,7 @@ interface AuthStore {
 
  updateProfile: (data: {
  fullName: string;
- companyName: string;
+
  phoneNumber: string;
  jobTitle: string;
  department: string;
@@ -294,30 +303,13 @@ export const useAuthStore = create<AuthStore>()(
  ...state.user,
 
  fullName: data.fullName,
-
- /*
- * Company name can still be updated from
- * the user's profile for now.
- *
- * We can later restrict company editing
- * to Admin only.
- */
- companyName: data.companyName,
-
  phoneNumber: data.phoneNumber,
-
  jobTitle: data.jobTitle,
-
  department: data.department,
-
  bio: data.bio,
-
  location: data.location,
-
  timeZone: data.timeZone,
-
- avatar:
- data.avatar ?? state.user.avatar,
+ avatar: data.avatar ?? state.user.avatar,
  };
 
  /*
@@ -345,6 +337,41 @@ export const useAuthStore = create<AuthStore>()(
  "users",
  JSON.stringify(updatedUsers)
  );
+
+ /*
+ * Sync the user's name with their TeamMember.
+ */
+ const syncTeamMember = async () => {
+ try {
+ const q = query(
+ collection(db, "teamMembers"),
+ where("userId", "==", updatedUser.id)
+ );
+
+ const snapshot = await getDocs(q);
+   console.log("Profile sync userId:", updatedUser.id);
+console.log("TeamMember matches:", snapshot.size);
+ if (snapshot.empty) {
+ return;
+ }
+
+ const memberDoc = snapshot.docs[0];
+
+ await updateDoc(
+ doc(db, "teamMembers", memberDoc.id),
+ {
+ fullName: updatedUser.fullName,
+ }
+ );
+ } catch (error) {
+ console.error(
+ "Error syncing team member profile:",
+ error
+ );
+ }
+ };
+
+ syncTeamMember();
 
  return {
  ...state,

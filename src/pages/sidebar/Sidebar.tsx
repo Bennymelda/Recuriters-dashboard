@@ -1,3 +1,5 @@
+
+
 import { useState } from "react";
 import {
  MdDashboard,
@@ -6,28 +8,31 @@ import {
  MdAssignment,
  MdInsights,
  MdClose,
- 
 } from "react-icons/md";
-
 
 import SidebarItem from "./sidebarItem";
 import SidebarsFooter from "./sidebarMainFooter";
 import SidebarDropdown from "./SidebarDropdown";
 import { CiSquareChevLeft, CiSquareChevRight } from "react-icons/ci";
 import { useCompanyStore } from "../../store/companyStore";
+import type { UserRole } from "../../types/auth";
+
 interface SidebarProps {
  mobileSidebarOpen: boolean;
- setMobileSidebarOpen: React.Dispatch<
- React.SetStateAction<boolean>
- >;
+ setMobileSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;
+ userRole?: UserRole;
 }
+
 const Sidebar = ({
  mobileSidebarOpen,
  setMobileSidebarOpen,
+ userRole,
 }: SidebarProps) => {
-const company = useCompanyStore((state) => state.company);
+ const company = useCompanyStore((state) => state.company);
+
  const [isExpanded, setIsExpanded] = useState(true);
-const closeMobileSidebar = () => {
+
+ const closeMobileSidebar = () => {
  if (window.innerWidth < 1024) {
  setMobileSidebarOpen(false);
  }
@@ -42,9 +47,64 @@ const closeMobileSidebar = () => {
  .slice(0, 2)
  .toUpperCase()
  : "RF";
+
+ /*
+ * ---------------------------------------------
+ * ROLE-BASED NAVIGATION
+ * ---------------------------------------------
+ */
+
+ const canSeeJobs =
+ userRole === "Admin" ||
+ userRole === "Recruiter" ||
+ userRole === "HR Manager" ||
+ userRole === "Hiring Manager";
+
+ const canSeeCandidates =
+ userRole === "Admin" ||
+ userRole === "Recruiter" ||
+ userRole === "Hiring Manager" ||
+ userRole === "HR Manager";
+
+
+
+ const canSeeInterviews =
+ userRole === "Admin" ||
+ userRole === "Recruiter" ||
+ userRole === "Hiring Manager" ||
+ userRole === "HR Manager";
+
+ const canSeeAnalytics =
+ userRole === "Admin" ||
+ userRole === "Recruiter" ||
+ userRole === "HR Manager";
+
+ const canSeeTeam =
+ userRole === "Admin" ||
+ userRole === "HR Manager";
+
+const isHiringManager = userRole === "Hiring Manager";
+
+const jobsPath = isHiringManager
+ ? "/hiring-manager/jobs"
+ : "/jobs";
+
+const candidatesPath = isHiringManager
+ ? "/hiring-manager/candidates"
+ : "/candidates";
+ 
+
+const interviewsPath = isHiringManager
+ ? "/hiring-manager/interviews"
+ : "/interview";
+
+const dashboardPath = isHiringManager
+ ? "/hiring-manager"
+ : "/dashboard"; 
+
  return (
-    <>
-<aside
+ <>
+ <aside
  className={`
  fixed
  inset-y-0
@@ -80,22 +140,23 @@ const closeMobileSidebar = () => {
 
  w-72
  `}
->
-
-
+ >
  {/* Header */}
- <div className="flex items-center justify-between border-b border-zinc-100 p-3 dark:border-zinc-800">
+
+ <div className="flex min-w-0 items-center justify-between border-b border-zinc-100 p-3 dark:border-zinc-800">
+ 
  <div className="flex items-center gap-3">
  {company.logo ? (
  <img
  src={company.logo}
  alt={company.companyName}
- className="h-10 w-10 rounded-xl object-cover"
+ className="h-10 w-10 shrink-0  rounded-xl object-cover"
  />
-) : (
+ ) : (
  <div
  className="
  flex
+ shrink-0
  h-10
  w-10
  items-center
@@ -111,11 +172,10 @@ const closeMobileSidebar = () => {
  >
  {companyInitials}
  </div>
-)}
+ )}
 
  {isExpanded && (
-  <div>
-
+ <div>
  <h1 className="text-lg font-bold text-zinc-900 dark:text-white">
  RecruitFlow
  </h1>
@@ -123,89 +183,98 @@ const closeMobileSidebar = () => {
  <p className="text-xs text-zinc-500 dark:text-zinc-400">
  {company.companyName || "Hiring Dashboard"}
  </p>
-
  </div>
  )}
-</div>
+ </div>
 
  <div className="flex items-center gap-2">
-
  {/* Desktop collapse button */}
+
  <button
  onClick={() => setIsExpanded(!isExpanded)}
  className="
  hidden
- lg:flex
-cursor-pointer
+ cursor-pointer
  rounded-lg
  p-2
-
  text-[#285A48]
-
  transition
-
  hover:bg-slate-100
-
  dark:text-[#B0E4CC]
  dark:hover:bg-zinc-800
+ lg:flex
  "
  >
  {isExpanded ? (
- <CiSquareChevLeft size={22} className="text-gray-400"/>
+ <CiSquareChevLeft
+ size={22}
+ className="text-gray-400"
+ />
  ) : (
- <CiSquareChevRight size={22} className="text-gray-400"/>
+ <CiSquareChevRight
+ size={22}
+ className="text-gray-400"
+ />
  )}
  </button>
 
  {/* Mobile close button */}
+
  <button
  onClick={() => setMobileSidebarOpen(false)}
  className="
+ cursor-pointer
  rounded-lg
  p-2
-cursor-pointer
  text-[#285A48]
-
  transition
-
  hover:bg-slate-100
-
  dark:text-[#B0E4CC]
  dark:hover:bg-zinc-800
-
  lg:hidden
  "
  >
  <MdClose size={22} />
  </button>
-
-</div>
-
-
+ </div>
  </div>
 
- <div className="flex flex-col flex-1">
-     {/* Navigation */}
-<nav className="flex-1 overflow-y-auto px-3 py-5">
+ {/* Navigation */}
 
- 
+ <div className="flex flex-1 flex-col">
+ <nav className="flex-1 overflow-y-auto px-3 py-5">
+
+ {/* Dashboard - Everyone */}
 
  <SidebarItem
  icon={MdDashboard}
  label="Dashboard"
- to="/dashboard"
-
+ to={dashboardPath}
  isExpanded={isExpanded}
  onClick={closeMobileSidebar}
  />
 
+ {/* Candidates */}
+
+ {canSeeCandidates && (
  <SidebarDropdown
  icon={MdGroups}
  label="Candidates"
  onItemClick={closeMobileSidebar}
  isExpanded={isExpanded}
-
- items={[
+ items={
+ isHiringManager
+ ? [
+ {
+ label: "Candidate List",
+ to: candidatesPath,
+ },
+ {
+ label: "Hiring Pipeline",
+ to: "hiring-manager/pipeline",
+ },
+ ]
+ : [
  {
  label: "Candidate List",
  to: "/candidates",
@@ -214,72 +283,79 @@ cursor-pointer
  label: "Hiring Pipeline",
  to: "/pipeline",
  },
-
- 
- ]}
+ ]
+}
  />
+)}
 
+ {/* Jobs */}
+
+ {canSeeJobs && (
  <SidebarItem
  icon={MdWork}
-
  label="Jobs"
- to="/jobs"
+ to={jobsPath}
  isExpanded={isExpanded}
  onClick={closeMobileSidebar}
  />
+ )}
 
-<SidebarItem
+ {/* Interviews */}
+
+ {canSeeInterviews && (
+ <SidebarItem
  icon={MdAssignment}
-
  label="Interview Candidate"
- to="/interview"
+ to={interviewsPath}
  isExpanded={isExpanded}
  onClick={closeMobileSidebar}
  />
+ )}
 
+ {/* Analytics */}
+
+ {canSeeAnalytics && (
  <SidebarItem
  icon={MdInsights}
  label="Analytics"
-
  to="/analytics"
  isExpanded={isExpanded}
  onClick={closeMobileSidebar}
  />
+ )}
 
- 
+ {/* Team */}
 
+ {canSeeTeam && (
  <SidebarItem
  icon={MdGroups}
  label="Team Members"
-
  to="/team"
  isExpanded={isExpanded}
  onClick={closeMobileSidebar}
  />
+ )}
 
- 
+ {/* Settings - Everyone */}
 
  <SidebarItem
  icon={MdAssignment}
  label="Settings"
  to="/settings"
  isExpanded={isExpanded}
-
  onClick={closeMobileSidebar}
  />
-
-</nav>
+ </nav>
 
  {/* Footer */}
 
- <div className="mt-auto border-t  border-zinc-200 p-4 dark:border-zinc-800">
-    <SidebarsFooter isExpanded={isExpanded} />
- 
-</div>
-
+ <div className="mt-auto border-t border-zinc-200 p-4 dark:border-zinc-800">
+ <SidebarsFooter isExpanded={isExpanded} />
  </div>
-
+ </div>
  </aside>
+
+ {/* Mobile overlay */}
 
  {mobileSidebarOpen && (
  <div
@@ -288,14 +364,12 @@ cursor-pointer
  fixed
  inset-0
  z-40
-
  bg-black/40
-
  lg:hidden
  "
  />
-)}
-</>
+ )}
+ </>
  );
 };
 

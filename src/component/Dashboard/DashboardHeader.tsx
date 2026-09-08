@@ -33,6 +33,8 @@ const DashboardHeader = () => {
  lg:py-4
  "
  >
+   
+    
  {/* Subtle decorative background */}
  <div
  className="

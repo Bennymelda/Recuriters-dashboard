@@ -54,6 +54,8 @@ stageUpdatedAt: "2026-07-22T13:00:00.000Z",
  {
  id: "note_001",
  author: "Sarah Johnson",
+ authorId: "member_001",
+ authRole:"Recuriter",
  date: "2026-06-11",
  content: "Recommended for technical interview with the frontend team."
  }
@@ -117,12 +119,16 @@ stageUpdatedAt: "2026-08-22T13:00:00.000Z",
  id: "note_002",
  author: "Michael Brown",
  date: "2026-06-09",
+ authorId: "member_002",
+ authRole:"Recuriter",
  content: "Strong leadership experience and excellent communication."
  },
  {
  id: "note_003",
  author: "David Wilson",
+ authorId: "member_002",
  date: "2026-06-12",
+ authRole:"Recuriter",
  content: "One of the strongest backend candidates in the current hiring pipeline."
  }
  ],
@@ -184,12 +190,16 @@ department:"Design",
  {
  id: "note_004",
  author: "Sarah Johnson",
+ authorId: "member_001",
+ authRole:"Recuriter",
  date: "2026-06-08",
  content: "Portfolio stands out. Strong visual design and UX thinking."
  },
  {
  id: "note_005",
  author: "Emma Davis",
+ authorId: "member_002",
+ authRole:"Recuriter",
  date: "2026-06-11",
  content: "Would be a great addition to the Product Design team."
  }
@@ -253,13 +263,17 @@ stageUpdatedAt: "2026-09-22T13:00:00.000Z",
  {
  id: "note_006",
  author: "Michael Brown",
+ authorId: "member_001",
+ authRole:"Recuriter",
  date: "2026-06-07",
  content: "Strong React Native background with several published apps."
  },
  {
  id: "note_007",
  author: "David Wilson",
+ authorId: "member_002",
  date: "2026-06-12",
+ authRole:"HR Manager",
  content: "Performed exceptionally well in the technical assessment."
  }
  ],
@@ -323,13 +337,17 @@ stageUpdatedAt: "2026-03-22T13:00:00.000Z",
  {
  id: "note_008",
  author: "Sarah Johnson",
+ authorId: "member_001",
  date: "2026-06-06",
+ authRole:"HR Manager",
  content: "Highly experienced candidate with leadership potential."
  },
  {
  id: "note_009",
  author: "Daniel Adams",
+ authorId: "member_002",
  date: "2026-06-10",
+ authRole:"HR Manager",
  content: "One of the strongest DevOps candidates in this hiring cycle."
  }
  ],
@@ -391,7 +409,9 @@ department:"Human Resources",
  {
  id: "note_010",
  author: "Michael Brown",
+ authorId: "member_002",
  date: "2026-06-05",
+ authRole:"Admin",
  content: "Shows great potential and is eager to learn."
  }
  ],
@@ -454,13 +474,17 @@ department:"Human Resource",
  {
  id: "note_011",
  author: "Sarah Johnson",
+ authorId: "member_002",
  date: "2026-06-04",
+ authRole:"Admin",
  content: "Excellent recruiter with startup hiring experience."
  },
  {
  id: "note_012",
  author: "Grace Williams",
+ authorId: "member_002",
  date: "2026-06-08",
+ authRole:"Admin",
  content: "Accepted offer and ready to onboard."
  }
  ],
@@ -524,13 +548,17 @@ department:"Engineering",
  {
  id: "note_013",
  author: "Michael Brown",
+ authorId: "member_003",
  date: "2026-06-03",
+ authRole:"Admin",
  content: "Strong frontend architecture skills."
  },
  {
  id: "note_014",
  author: "David Wilson",
+ authorId: "member_004",
  date: "2026-06-07",
+ authRole:"Admin",
  content: "Would be a great fit for the Platform team."
  }
  ],
@@ -593,13 +621,17 @@ department:"Desgin",
  {
  id: "note_015",
  author: "Sarah Johnson",
+ authorId: "member_003",
  date: "2026-06-02",
+ authRole:"HR Manager",
  content: "Highly experienced backend engineer with strong architectural knowledge."
  },
  {
  id: "note_016",
  author: "Daniel Adams",
+ authorId: "member_004",
  date: "2026-06-06",
+ authRole:"HR Manager",
  content: "One of the top candidates for the Senior Backend Engineer role."
  }
  ],
@@ -667,14 +699,18 @@ department:"Marketing",
  {
  id: "note_001",
  author: "Sarah Johnson",
+ authorId: "member_001",
  date: "2026-06-05",
+ authRole:"Hiring Manager",
  content:
  "Candidate was well prepared and articulated previous product launches clearly."
  },
  {
  id: "note_002",
  author: "David Wilson",
+ authorId: "member_002",
  date: "2026-06-10",
+ authRole:"HR Manager",
  content:
  "Strong analytical mindset. Would fit well with the Growth Product team."
  }

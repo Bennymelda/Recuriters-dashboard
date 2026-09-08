@@ -10,6 +10,8 @@ import { useJobStore } from "../../store/jobStore";
 import { useCandidateStore } from "../../store/candidateStore";
 import { GoArrowUpRight } from "react-icons/go";
 import { AiOutlineRise } from "react-icons/ai";
+import { useAuthStore } from "../../store/authStore";
+import { useNavigate } from "react-router";
 
 const DashboardStats = () => {
     const jobs = useJobStore((state) => state.jobs);
@@ -35,6 +37,7 @@ const DashboardStats = () => {
             title: "Active Jobs",
             output:"total jobs",
             value: activeJobs,
+            path:"/jobs",
             icon: <MdWork size={26} />,
             num:'5%',
             color:
@@ -44,6 +47,7 @@ const DashboardStats = () => {
             title: "Candidates",
             output: "total candidates",
             value: totalCandidates,
+            path:"/candidates",
             icon: <MdPeople size={26} />,
             num:'10%',
             color:
@@ -53,6 +57,7 @@ const DashboardStats = () => {
             title: "Interviews Today",
             output: "Today interviews ",
             value: interviewsToday,
+            path:"/interview",
             icon: <MdEvent size={26} />,
             num:'15%',
             color:
@@ -63,6 +68,7 @@ const DashboardStats = () => {
             output: "offers sent",
             value: offersSent,
             num:'20%',
+            path:"/pipeline",
             icon: <MdCardGiftcard size={26} />,
             color:
                 "bg-purple-50 text-purple-600 dark:bg-purple-500/15 dark:text-purple-400",
@@ -72,11 +78,14 @@ const DashboardStats = () => {
             output: " candidates hired",
             value: hired,
             num:'10%',
+            path:"/pipeline",
             icon: <MdVerified size={26} />,
             color:
                 "bg-emerald-50 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400",
         },
     ];
+
+const navigate = useNavigate();
 
   return (
  <section
@@ -130,6 +139,14 @@ const DashboardStats = () => {
  >
  {/* Top */}
  <div className="flex items-center justify-between">
+  <button
+     onClick={() => {
+     useAuthStore.getState().setRole("HR Manager");
+     window.location.reload();
+     }}
+    >
+     Test as Hiring Manager
+    </button>
  <div
  className={`
  rounded-2xl
@@ -154,7 +171,7 @@ const DashboardStats = () => {
  dark:text-white
  "
  >
- <GoArrowUpRight className="text-gray-700 dark:text-white" />
+ <GoArrowUpRight onClick={()=> navigate(stat.path)} className="text-gray-700 dark:text-white" />
  </div>
  </div>
 

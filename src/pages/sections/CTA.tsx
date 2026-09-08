@@ -29,14 +29,14 @@ const CTA = () => {
  Ready to transform your hiring process?
  </h2>
 
- <p className="text-gray-700 md:text-lg max-w-xl mx-auto relative z-10">
+ <p className="text-gray-700 lg:text-lg max-w-xl mx-auto relative z-10">
  Join the thousands of teams finding their next great hire with CareerFlow.
  </p>
 
- <div className="pt-5 mt-10 relative z-10">
+ <div className="pt-2 mt-10 relative z-10">
  <Link to="/login"
  className="
- px-8 py-6
+ px-8 py-4
  bg-[#285A48]
  dark:bg-[#B0E4CC]
  text-white

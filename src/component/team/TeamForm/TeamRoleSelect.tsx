@@ -18,7 +18,7 @@ const TeamRoleSelect = ({
  "Hiring Manager",
  "HR Manager",
  "Interviewer",
- "Admin",
+
  ]}
 	onChange={setRole}
  />

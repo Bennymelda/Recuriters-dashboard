@@ -7,20 +7,20 @@ const Add = () => {
 <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-32 -mt-32"></div>
 <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/5 rounded-full -ml-32 -mb-32"></div>
 <div className="lg:w-1/2 space-y-md text-on-primary relative z-10">
-<h2 className=" text-white text-2xl md:text-4xl font-semibold mb-4 dark:text-gray-900">Data-driven hiring at your fingertips</h2>
-<p className="text-gray-100 dark:text-gray-800">Get a bird's-eye view of your recruitment health. Track conversion rates, team performance, and cost-per-hire in real-time.</p>
+<h2 className=" text-white text-2xl lg:text-4xl font-semibold mb-4 dark:text-gray-900">Data-driven hiring at your fingertips</h2>
+<p className="text-gray-100 text-sm md:text-base dark:text-gray-800">Get a bird's-eye view of your recruitment health. Track conversion rates, team performance, and cost-per-hire in real-time.</p>
 <ul className="space-y-sm mt-10">
 <li className="flex items-center gap-2">
 <FaRegCheckCircle className="text-[#408A71]"/>
-<span className="text-gray-200 dark:text-gray-800">Customizable hiring funnel visualizer</span>
+<span className="text-gray-200 dark:text-gray-800 text-sm md:text-base">Customizable hiring funnel visualizer</span>
 </li>
 <li className="flex items-center gap-2">
 <FaRegCheckCircle className="text-[#408A71]"/>
-<span className="text-gray-200 dark:text-gray-800">Automated EEO and compliance reporting</span>
+<span className="text-gray-200 dark:text-gray-800 text-sm md:text-base">Automated EEO and compliance reporting</span>
 </li>
 <li className="flex items-center gap-2">
 <FaRegCheckCircle className="text-[#408A71]"/>
-<span className="text-gray-200 dark:text-gray-800">One-click data export to HRIS</span>
+<span className="text-gray-200 dark:text-gray-800 text-sm md:text-base">One-click data export to HRIS</span>
 </li>
 </ul>
 

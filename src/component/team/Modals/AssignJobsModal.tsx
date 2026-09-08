@@ -31,9 +31,9 @@ const AssignJobsModal = ({
  (state) => state.jobs
  );
 
- const updateMember = useTeamStore(
- (state) => state.updateMember
- );
+ const assignJobs = useTeamStore(
+ (state) => state.assignJobs
+);
 
  const addActivity = useTeamStore(
  (state) => state.addActivity
@@ -133,16 +133,7 @@ const AssignJobsModal = ({
  // -------------------------------------------
  // Update member
  // -------------------------------------------
-
- const updatedMember: TeamMember = {
- ...member,
-
- assignedJobIds:
- normalizedSelectedJobs,
- };
-
- updateMember(updatedMember);
-
+assignJobs(member.id, normalizedSelectedJobs);
  // -------------------------------------------
  // Activity + notification
  // -------------------------------------------

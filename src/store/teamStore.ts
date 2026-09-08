@@ -5,50 +5,49 @@ import type { TeamMember, TeamActivity, TeamInvitation, TeamRole } from "../type
 import { teamMembers } from "../data/team";
 import { useCompanyStore } from "./companyStore";
 import {
- 
- doc,
-
- setDoc,
- 
- getDoc,
- updateDoc,
- collection,
- getDocs,
- query,
- where,
+  doc,
+  setDoc,
+  getDoc,
+  updateDoc,
+  collection,
+  getDocs,
+  query,
+  where,
+  onSnapshot,
 } from "firebase/firestore";
 
 import { db } from "../firebase";
 const STORAGE_KEY = "careerflow-team";
 
 interface InviteMemberData {
- fullName: string;
- email: string;
- role: TeamRole;
- companyId:string;
+  fullName: string;
+  email: string;
+  role: TeamRole;
+  companyId:string;
 }
 
 interface TeamStore {
- // -----------------------------
- // State
- // -----------------------------
+  // -----------------------------
+  // State
+  // -----------------------------
 
- members: TeamMember[];
+  members: TeamMember[];
 
- selectedMemberId: string | null;
- invitations: TeamInvitation[];
+  selectedMemberId: string | null;
+  invitations: TeamInvitation[];
 
- getInvitation: (invitationId: string) => TeamInvitation | undefined;
-createInvitation: (data: InviteMemberData) => Promise<string>;
- savePendingMemberToFirestore: (invitationId: string) => Promise<string>;
- deleteInvitationFromFirestore: (invitationId: string) => Promise<void>;
- 
- // Firestore-based invitation operations
- fetchInvitationFromFirestore: (invitationId: string) => Promise<TeamInvitation | null>;
- acceptInvitationInFirestore: (invitationId: string) => Promise<void>;
- createTeamMemberInFirestore: (member: TeamMember) => Promise<void>;
- updateTeamMemberPhone: (companyId: string, userId: string, phone: string) => Promise<void>;
- syncTeamMembersFromFirestore: (companyId: string) => Promise<void>;
+  getInvitation: (invitationId: string) => TeamInvitation | undefined;
+  createInvitation: (data: InviteMemberData) => Promise<string>;
+  savePendingMemberToFirestore: (invitationId: string) => Promise<string>;
+  deleteInvitationFromFirestore: (invitationId: string) => Promise<void>;
+  
+  // Firestore-based invitation operations
+  fetchInvitationFromFirestore: (invitationId: string) => Promise<TeamInvitation | null>;
+  acceptInvitationInFirestore: (invitationId: string) => Promise<void>;
+  createTeamMemberInFirestore: (member: TeamMember) => Promise<void>;
+  updateTeamMemberPhone: (companyId: string, userId: string, phone: string) => Promise<void>;
+  syncTeamMembersFromFirestore: (companyId: string) => Promise<void>;
+  subscribeToTeamMembersFromFirestore: (companyId: string) => () => void;
  
  // Members
  // -----------------------------
@@ -118,6 +117,12 @@ addPendingMember: (
  | "candidate";
  }
  ) => void;
+
+syncTeamMemberProfile: (
+ userId: string,
+ fullName: string
+) => Promise<void>;
+
 }
 
 // -----------------------------------------
@@ -272,13 +277,12 @@ export const useTeamStore = create<TeamStore>(
  // UPDATE MEMBER
  // =====================================
 
- updateMember: (updatedMember) =>
+updateMember: (updatedMember) =>
  set((state) => {
  const nextState = {
  ...state,
 
- members: state.members.map(
- (member) =>
+ members: state.members.map((member) =>
  member.id === updatedMember.id
  ? updatedMember
  : member
@@ -287,16 +291,25 @@ export const useTeamStore = create<TeamStore>(
 
  persistTeamState(nextState);
 
- // Sync to Firestore
+ const firestoreData = Object.fromEntries(
+ Object.entries(updatedMember).filter(
+ ([, value]) => value !== undefined
+ )
+ );
+
  updateDoc(
  doc(db, "teamMembers", updatedMember.id),
- updatedMember as unknown as Record<string, unknown>
+ firestoreData
  ).catch((error) => {
- console.error("Error updating team member in Firestore:", error);
+ console.error(
+ "Error updating team member in Firestore:",
+ error
+ );
  });
 
  return nextState;
  }),
+
 
 
 
@@ -645,9 +658,13 @@ acceptInvitation: (invitationId) =>
    action: activity.action,
    recruiterName: activity.recruiterName,
    target: activity.target,
-   secondaryTarget: activity.secondaryTarget,
    date: activity.date ?? new Date().toISOString(),
-   category: activity.category,
+    ...(activity.secondaryTarget !== undefined && {
+     secondaryTarget: activity.secondaryTarget,
+    }),
+    ...(activity.category !== undefined && {
+     category: activity.category,
+    }),
   };
 
   const member = state.members.find((m) => m.id === resolvedMemberId);
@@ -721,88 +738,118 @@ acceptInvitation: (invitationId) =>
  }
  },
 
- // Create a new team member record in Firestore OR update existing one
- createTeamMemberInFirestore: async (member: TeamMember): Promise<void> => {
- try {
- // If this member has an invitationId, try to find and update the existing pending member
- if (member.invitationId) {
- const q = query(
- collection(db, "teamMembers"),
- where("invitationId", "==", member.invitationId)
- );
- const querySnapshot = await getDocs(q);
- 
- if (!querySnapshot.empty) {
- // Found an existing pending member - UPDATE it instead of creating a duplicate
- const existingMemberDoc = querySnapshot.docs[0];
- const existingMember = existingMemberDoc.data() as TeamMember;
- 
- // Keep the original member ID, just update the status and new fields
- const memberRef = doc(db, "teamMembers", existingMember.id);
- await updateDoc(memberRef, {
- // Update with authenticated user data
- fullName: member.fullName,
- email: member.email,
- phone: member.phone,
- avatar: member.avatar,
- 
- // Update membership status
- membershipStatus: "Active",
- presenceStatus: "Online",
- joinedAt: member.joinedAt,
- lastActive: member.lastActive,
- 
- // Keep the rest of the member data
- });
- 
- console.log("Updated existing team member:", existingMember.id);
- return;
- }
- }
- 
- // No existing member found, create a new one
- const memberRef = doc(db, "teamMembers", member.id);
- await setDoc(memberRef, {
- ...member,
- membershipStatus: "Active",
- });
- 
- console.log("Created new team member:", member.id);
- } catch (error) {
- console.error("Error creating/updating team member in Firestore:", error);
- throw error;
- }
- },
+  // Create a new team member record in Firestore OR update existing one
+  createTeamMemberInFirestore: async (member: TeamMember): Promise<void> => {
+    try {
+      const now = new Date().toISOString();
 
- // Update team member phone number (after profile update)
- updateTeamMemberPhone: async (companyId: string, userId: string, phone: string): Promise<void> => {
- try {
- // Find the team member by userId (authenticated user ID)
- const q = query(
- collection(db, "teamMembers"),
- where("companyId", "==", companyId),
- where("id", "==", userId)
- );
- const querySnapshot = await getDocs(q);
- 
- if (!querySnapshot.empty) {
- const memberDoc = querySnapshot.docs[0];
- const memberRef = doc(db, "teamMembers", memberDoc.id);
- 
- await updateDoc(memberRef, {
- phone: phone,
- lastActive: new Date().toISOString(),
- });
- 
- console.log("Updated team member phone:", memberDoc.id);
- }
- } catch (error) {
- console.error("Error updating team member phone:", error);
- // Don't throw - phone update is optional and shouldn't break the flow
- }
+      // If this member has an invitationId, try to find and update the existing pending member
+      if (member.invitationId) {
+        const q = query(
+          collection(db, "teamMembers"),
+          where("invitationId", "==", member.invitationId)
+        );
+        const querySnapshot = await getDocs(q);
+        
+        if (!querySnapshot.empty) {
+          // Found an existing pending member - UPDATE it instead of creating a duplicate
+          const existingMemberDoc = querySnapshot.docs[0];
+          const existingMember = existingMemberDoc.data() as TeamMember;
+          
+          // Keep the original member ID, just update the status and new fields
+          const memberRef = doc(db, "teamMembers", existingMember.id);
+          const updateData = {
+            userId: member.userId,
+            fullName: member.fullName,
+            email: member.email,
+            phone: member.phone,
+            avatar: member.avatar,
+            membershipStatus: "Active" as const,
+            presenceStatus: "Online" as const,
+            joinedAt: member.joinedAt || now,
+            lastActive: now,
+          };
+
+          await updateDoc(memberRef, updateData);
+          
+          // Instantly update Zustand state for immediate UI feedback
+          set((state) => {
+            const nextState = {
+              ...state,
+              members: state.members.map((m) =>
+                m.id === existingMember.id || m.invitationId === member.invitationId
+                  ? { ...m, ...updateData }
+                  : m
+              ),
+            };
+            persistTeamState(nextState);
+            return nextState;
+          });
+
+          console.log("Updated existing team member:", existingMember.id);
+          return;
+        }
+      }
+      
+      // No existing member found, create a new one
+      const memberRef = doc(db, "teamMembers", member.id);
+      const newActiveMember: TeamMember = {
+        ...member,
+        membershipStatus: "Active" as const,
+        presenceStatus: "Online" as const,
+        lastActive: now,
+      };
+      await setDoc(memberRef, newActiveMember);
+      
+      // Instantly update Zustand state for immediate UI feedback
+      set((state) => {
+        const nextState = {
+          ...state,
+          members: [
+            ...state.members.filter((m) => m.id !== member.id),
+            newActiveMember,
+          ],
+        };
+        persistTeamState(nextState);
+        return nextState;
+      });
+
+      console.log("Created new team member:", member.id);
+    } catch (error) {
+      console.error("Error creating/updating team member in Firestore:", error);
+      throw error;
+    }
   },
 
-  // Sync team members from Firestore to Zustand
+  // Update team member phone number (after profile update)
+  updateTeamMemberPhone: async (companyId: string, userId: string, phone: string): Promise<void> => {
+    try {
+      // Find the team member by userId (authenticated user ID)
+      const q = query(
+        collection(db, "teamMembers"),
+        where("companyId", "==", companyId),
+        where("userId", "==", userId)
+      );
+      const querySnapshot = await getDocs(q);
+      
+      if (!querySnapshot.empty) {
+        const memberDoc = querySnapshot.docs[0];
+        const memberRef = doc(db, "teamMembers", memberDoc.id);
+        
+        await updateDoc(memberRef, {
+          phone: phone,
+          lastActive: new Date().toISOString(),
+        });
+        
+        console.log("Updated team member phone:", memberDoc.id);
+      }
+    } catch (error) {
+      console.error("Error updating team member phone:", error);
+      // Don't throw - phone update is optional and shouldn't break the flow
+    }
+  },
+
+  // Sync team members from Firestore to Zustand (one-time fetch)
   syncTeamMembersFromFirestore: async (companyId: string): Promise<void> => {
     try {
       const q = query(
@@ -810,6 +857,7 @@ acceptInvitation: (invitationId) =>
         where("companyId", "==", companyId)
       );
       const querySnapshot = await getDocs(q);
+   
       const firestoreMembers: TeamMember[] = [];
       
       querySnapshot.forEach((doc) => {
@@ -845,6 +893,61 @@ acceptInvitation: (invitationId) =>
     } catch (error) {
       console.error("Error syncing team members from Firestore:", error);
       throw error;
+    }
+  },
+
+  // Real-time synchronization of team members from Firestore (updates status live without page refresh)
+  subscribeToTeamMembersFromFirestore: (companyId: string): (() => void) => {
+    try {
+      const q = query(
+        collection(db, "teamMembers"),
+        where("companyId", "==", companyId)
+      );
+
+      const unsubscribe = onSnapshot(
+        q,
+        (querySnapshot) => {
+          const firestoreMembers: TeamMember[] = [];
+          querySnapshot.forEach((doc) => {
+            firestoreMembers.push(doc.data() as TeamMember);
+          });
+
+          set((state) => {
+            const memberMap = new Map<string, TeamMember>();
+
+            // 1. Always keep initial dummy team members
+            (teamMembers as TeamMember[]).forEach((dummyMember) => {
+              memberMap.set(dummyMember.id, dummyMember);
+            });
+
+            // 2. Add existing state members
+            state.members.forEach((mem) => {
+              memberMap.set(mem.id, mem);
+            });
+
+            // 3. Update with real-time Firestore members
+            firestoreMembers.forEach((fsMem) => {
+              memberMap.set(fsMem.id, fsMem);
+            });
+
+            const nextState = {
+              ...state,
+              members: Array.from(memberMap.values()),
+            };
+
+            persistTeamState(nextState);
+            return nextState;
+          });
+        },
+        (error) => {
+          console.error("Error listening to team members in Firestore:", error);
+        }
+      );
+
+      return unsubscribe;
+    } catch (error) {
+      console.error("Error setting up team member subscription:", error);
+      return () => {};
     }
   },
 
@@ -1089,5 +1192,57 @@ acceptInvitation: (invitationId) =>
 
  return nextState;
  }),
+
+ syncTeamMemberProfile: async (userId, fullName) => {
+ try {
+ const q = query(
+ collection(db, "teamMembers"),
+ where("userId", "==", userId)
+ );
+
+ const querySnapshot = await getDocs(q);
+
+ if (querySnapshot.empty) {
+ return;
+ }
+
+ const memberDoc = querySnapshot.docs[0];
+ const memberId = memberDoc.id;
+
+ await updateDoc(
+ doc(db, "teamMembers", memberId),
+ {
+ fullName,
+ }
+ );
+
+ set((state) => {
+ const nextState = {
+ ...state,
+ members: state.members.map((member) =>
+ member.userId === userId
+ ? {
+ ...member,
+ fullName,
+ }
+ : member
+ ),
+ };
+
+ persistTeamState(nextState);
+
+ return nextState;
+ });
+ } catch (error) {
+ console.error(
+ "Error syncing team member profile:",
+ error
+ );
+
+ throw error;
+ }
+},
+
+
  })
 );

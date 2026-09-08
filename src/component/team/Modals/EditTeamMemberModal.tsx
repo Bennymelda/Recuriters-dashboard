@@ -136,6 +136,7 @@ import { useTeamStore } from "../../../store/teamStore";
 import type { TeamMember } from "../../../types/team";
 import { useToastStore } from "../../toast/toastStore";
 import { useNotificationStore } from "../../../store/notificationStore";
+import { useAuthStore } from "../../../store/authStore";
 
 interface EditTeamMemberModalProps {
  open: boolean;
@@ -193,8 +194,24 @@ const EditTeamMemberModal = ({
 
  /*
  * Save changes
- */
- const handleUpdateMember = () => {
+ */const user = useAuthStore((state) => state.user);
+const isHRManager = user?.role === "HR Manager";
+const isEditingAdmin = member.role === "Admin";
+
+const handleUpdateMember = () => {
+ if (
+ isHRManager &&
+ (isEditingAdmin || formData.role === "Admin")
+ ) {
+ showToast({
+ type: "error",
+ title: "Permission Denied",
+ message: "HR Managers cannot change or assign the Admin role.",
+ });
+
+ return;
+ }
+
  const fullName = formData.fullName.trim();
  const phone = formData.phone.trim();
 
@@ -283,6 +300,7 @@ const EditTeamMemberModal = ({
  setImage={setImage}
  preview={preview}
  setPreview={setPreview}
+ isHRManager={isHRManager}
  />
 
  <TeamFormFooter

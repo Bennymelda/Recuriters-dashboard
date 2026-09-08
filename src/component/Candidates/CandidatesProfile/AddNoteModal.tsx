@@ -57,6 +57,8 @@ useEffect(() => {
  {/* Modal */}
  <div className="fixed left-1/2 top-1/2 z-50 w-full max-w-lg -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-white p-6 shadow-2xl dark:bg-zinc-900">
 
+
+
  <div className="mb-6 flex items-center justify-between">
 
  <h2 className="text-xl font-semibold dark:text-white">

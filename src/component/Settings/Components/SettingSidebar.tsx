@@ -9,6 +9,7 @@ import {
 
 } from "react-icons/md";
 import { Link} from "react-router";
+import { useAuthStore } from "../../../store/authStore";
 
 interface SettingsSidebarProps {
  activeSection: string;
@@ -23,6 +24,7 @@ const SettingsSidebar = ({
  isAdmin,
 
 }: SettingsSidebarProps) => {
+    const user =useAuthStore((state)=> state.user)
  const menuItems = [
  {
  id: "profile",
@@ -81,7 +83,9 @@ const SettingsSidebar = ({
  {/* Heading */}
  <div className="mb-8 flex items-center gap-2">
     <div className="cursor-pointer" >
-    <Link to="/dashboard">
+    <Link to={
+        user?.role === "Hiring Manager" ? "/hiring-manager" :"/dashboard"}
+    >
 <MdArrowBack size={20} className="bg-gary-600 dark:text-gray-300"/>
 </Link>
     </div>

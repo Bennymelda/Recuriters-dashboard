@@ -71,7 +71,7 @@ export interface TeamMember {
  id: string;
  companyId: string;
  invitationId?:string
-
+userId?: string;
  // --------------------------------
  // Personal / Profile Information
  // --------------------------------

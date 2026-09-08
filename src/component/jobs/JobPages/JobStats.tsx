@@ -5,22 +5,50 @@ import {
  MdDrafts,
  MdPeopleOutline,
 } from "react-icons/md";
+
 import type { Job } from "../../../types/job";
 import { useCandidateStore } from "../../../store/candidateStore";
+
 interface JobStatsProps {
  jobs: Job[];
 }
 
 const JobStats = ({ jobs }: JobStatsProps) => {
- const activeJobs = jobs.filter((job) => job.status === "Active").length;
+ const activeJobs = jobs.filter(
+ (job) => job.status === "Active"
+ ).length;
 
- const closedJobs = jobs.filter((job) => job.status === "Closed").length;
+ const closedJobs = jobs.filter(
+ (job) => job.status === "Closed"
+ ).length;
 
- const draftJobs = jobs.filter((job) => job.status === "Draft").length;
+ const draftJobs = jobs.filter(
+ (job) => job.status === "Draft"
+ ).length;
 
- const candidates = useCandidateStore((state) => state.candidates);
+ const candidates = useCandidateStore(
+ (state) => state.candidates
+ );
 
-const totalApplicants = candidates.length;
+ /*
+ * Only count candidates belonging to the jobs
+ * currently visible to this user.
+ *
+ * Admin / Recruiter / HR Manager:
+ * jobs contains all jobs, so all relevant candidates
+ * are counted.
+ *
+ * Hiring Manager:
+ * jobs contains only their assigned jobs, so only
+ * candidates belonging to those jobs are counted.
+ */
+ const visibleJobIds = new Set(
+ jobs.map((job) => job.id)
+ );
+
+ const totalApplicants = candidates.filter((candidate) =>
+ visibleJobIds.has(candidate.jobId)
+ ).length;
 
  const stats = [
  {
@@ -50,12 +78,12 @@ const totalApplicants = candidates.length;
  {
  title: "Applicants",
  value: totalApplicants,
- subtitle: "Across all jobs",
+ subtitle: "Across visible jobs",
  icon: <MdPeopleOutline size={22} />,
  color:
  "bg-cyan-50 text-cyan-600 ring-1 ring-cyan-100 dark:bg-cyan-950/30 dark:text-cyan-400 dark:ring-cyan-900/40",
  },
-];
+ ];
 
  return (
  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -68,23 +96,23 @@ const totalApplicants = candidates.length;
  overflow-hidden
  rounded-xl
  border
- border-zinc-200
+ border-zinc-100
  bg-white
  p-4
- md:p-5
- shadow-sm
+ shadow-xs
  transition-all
  duration-300
  ease-out
  hover:-translate-y-1
  hover:border-zinc-300
  hover:shadow-xl
+ md:p-5
  dark:border-zinc-800
  dark:bg-zinc-900
  dark:hover:border-zinc-700
  "
  >
- {/* decorative glow */}
+ {/* Decorative glow */}
  <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-blue-500/5 blur-2xl transition-opacity duration-300 group-hover:opacity-100" />
 
  <div className="relative flex items-start justify-between">
@@ -93,11 +121,11 @@ const totalApplicants = candidates.length;
  {stat.title}
  </p>
 
- <h2 className="mt-3 text-3xl md:text-4xl font-bold tracking-tight text-zinc-900 dark:text-white">
+ <h2 className="mt-3 text-3xl font-bold tracking-tight text-zinc-900 md:text-4xl dark:text-white">
  {stat.value.toLocaleString()}
  </h2>
 
- <p className="mt-2 text-xm md:text-sm text-zinc-500 dark:text-zinc-400">
+ <p className="mt-2 text-xs text-zinc-500 md:text-sm dark:text-zinc-400">
  {stat.subtitle}
  </p>
  </div>
@@ -117,7 +145,7 @@ const totalApplicants = candidates.length;
  </div>
  </div>
  ))}
-</div>
+ </div>
  );
 };
 

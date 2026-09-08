@@ -568,7 +568,7 @@ const TeamCard = ({ member }: TeamCardProps) => {
  );
 
  const canManageTeam =
- user?.role === "Admin";
+ user?.role === "Admin" || "HR Manager";
 
  // ---------------------------------------------
  // Notifications

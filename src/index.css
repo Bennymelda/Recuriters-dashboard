@@ -6,6 +6,14 @@ html {
   scroll-behavior: smooth;
 }
 
+@theme {
+ --font-poppins: "Poppins", sans-serif;
+}
+
+body {
+ font-family: var(--font-poppins);
+}
+
 @keyframes fadeInOut {
  0% {
  opacity: 0;

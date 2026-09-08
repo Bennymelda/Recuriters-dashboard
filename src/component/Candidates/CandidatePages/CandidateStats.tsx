@@ -4,23 +4,42 @@ import {
  MdDescription,
  MdGroups,
  MdWork,
-
 } from "react-icons/md";
+
+import { useAuthStore } from "../../../store/authStore";
+import { useTeamStore } from "../../../store/teamStore";
+import {
+ findCurrentMember,
+ getVisibleCandidates,
+} from "../../../utils/roleBasedDataFiltering";
 
 const CandidateStats = () => {
  const candidates = useCandidateStore((state) => state.candidates);
+ const user = useAuthStore((state) => state.user);
+ const members = useTeamStore((state) => state.members);
 
- const totalCandidates = candidates.length;
+ // Find the logged-in user's team member record
+ const currentMember = findCurrentMember(members, user);
 
- const appliedCandidates = candidates.filter(
+ // Get candidates the current user is allowed to see
+ const visibleCandidates = getVisibleCandidates(
+ candidates,
+ user,
+ currentMember
+ );
+
+ // Calculate stats from visible candidates only
+ const totalCandidates = visibleCandidates.length;
+
+ const appliedCandidates = visibleCandidates.filter(
  (candidate) => candidate.status === "Applied"
  ).length;
 
- const interviewCandidates = candidates.filter(
+ const interviewCandidates = visibleCandidates.filter(
  (candidate) => candidate.status === "Interview"
  ).length;
 
- const hiredCandidates = candidates.filter(
+ const hiredCandidates = visibleCandidates.filter(
  (candidate) => candidate.status === "Hired"
  ).length;
 
@@ -47,7 +66,7 @@ const CandidateStats = () => {
  },
  ];
 
-return (
+ return (
  <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
  {stats.map((stat) => (
  <div
@@ -56,7 +75,7 @@ return (
  group
  relative
  overflow-hidden
- rounded-[20px]
+ rounded-[16px]
  border
  p-3
  md:p-5
@@ -67,26 +86,19 @@ return (
  hover:shadow-lg
  ${
  stat.title === "Total Candidates"
- ? "border-[#408A71] bg-gradient-to-br from-[#408A71]  text-white "
- : "border-zinc-200 bg-gradient-to-br from-white to-zinc-50 hover:border-[#408A71]/40 dark:border-zinc-700 dark:from-zinc-900 dark:to-zinc-900"
+ ? "border-[#408A71]  bg-[#408A71] text-white"
+ : "border-zinc-100 bg-white dark:bg-zinc-900  hover:border-[#408A71]/40 dark:border-zinc-800 "
  }
  `}
  >
- {/* Decorative Glow */}
- <div
- className={`absolute -right-10 -top-10 h-36 w-36 rounded-full blur-3xl ${
- stat.title === "Total Candidates"
- ? "bg-white/10"
- : "bg-[#408A71]/10"
- }`}
- />
+ 
 
  <div className="relative z-10 flex items-start justify-between">
  <div>
  <p
  className={`text-sm font-semibold uppercase tracking-wider ${
  stat.title === "Total Candidates"
- ? "dark:text-white/80  text-zinc-900"
+ ? "text-zinc-900 dark:text-white/80"
  : "text-zinc-500 dark:text-zinc-400"
  }`}
  >
@@ -94,9 +106,9 @@ return (
  </p>
 
  <h2
- className={`mt-4 text-3xl md:text-4xl font-bold tracking-tight ${
+ className={`mt-4 text-3xl font-bold tracking-tight md:text-4xl ${
  stat.title === "Total Candidates"
- ? "dark:text-white text-zinc-900"
+ ? "text-zinc-900 dark:text-white"
  : "text-zinc-900 dark:text-white"
  }`}
  >
@@ -107,7 +119,7 @@ return (
  <span
  className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${
  stat.title === "Total Candidates"
- ? "bg-white/20 dark:text-white text-[#225e4a] "
+ ? "bg-white/20 text-[#225e4a] dark:text-white"
  : "bg-[#EEF8F3] text-[#408A71] dark:bg-[#408A71]/20 dark:text-[#B0E4CC]"
  }`}
  >
@@ -122,8 +134,6 @@ return (
  flex
  h-12
  w-12
- md:h-16
- md:w-16
  items-center
  justify-center
  rounded-3xl
@@ -132,7 +142,8 @@ return (
  duration-300
  group-hover:scale-110
  group-hover:-rotate-6
-
+ md:h-16
+ md:w-16
  ${
  stat.title === "Total Candidates"
  ? "bg-white/15 text-white"
@@ -146,16 +157,16 @@ return (
 
  {/* Bottom Accent */}
  <div
- className={`relative z-10 mt-4 md:mt-8 flex items-center justify-between border-t pt-5 ${
+ className={`relative z-10 mt-4 flex items-center justify-between border-t pt-5 md:mt-8 ${
  stat.title === "Total Candidates"
- ? "border-white/15"
- : "border-zinc-200 dark:border-zinc-700"
+ ? "border-white/10"
+ : "border-zinc-100 dark:border-zinc-700"
  }`}
  >
  <p
  className={`text-sm ${
  stat.title === "Total Candidates"
- ? "dark:text-white/80 text-zinc-500"
+ ? "text-zinc-500 dark:text-white/80"
  : "text-zinc-500 dark:text-zinc-400"
  }`}
  >
@@ -165,7 +176,7 @@ return (
  <span
  className={`text-xs font-medium ${
  stat.title === "Total Candidates"
- ? "dark:text-white text-[#408A71]"
+ ? "text-[#408A71] dark:text-white"
  : "text-[#408A71] dark:text-[#B0E4CC]"
  }`}
  >
@@ -175,7 +186,7 @@ return (
  </div>
  ))}
  </div>
-);
+ );
 };
 
 export default CandidateStats;

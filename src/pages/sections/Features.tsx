@@ -8,10 +8,10 @@ import { IoGitNetworkSharp } from "react-icons/io5";
 
 const Features = () => {
     return ( <>
-    <section id="features" className="py-5  lg:mt-15 max-w-container-max mx-auto px-gutter">
+    <section id="features" className="py-5  mt-10 lg:mt-10 max-w-container-max mx-auto px-gutter">
 <div className="text-center max-w-2xl mx-auto mb-10">
-<h2 className="md:text-4xl mb-2 text-2xl font-bold text-gray-900 mb-sm dark:text-white">Everything you need to hire the best</h2>
-<p className="font-body-md text-gray-700 md:text-lg dark:text-gray-300">Say goodbye to spreadsheets. CareerFlow provides a centralized platform for your entire hiring lifecycle.</p>
+<h2 className="xl:text-4xl mb-2 text-2xl font-bold text-gray-900 mb-sm dark:text-white">Everything you need to hire the best</h2>
+<p className="font-body-md text-gray-700 text-sm md:text-lg dark:text-gray-300">Say goodbye to spreadsheets. CareerFlow provides a centralized platform for your entire hiring lifecycle.</p>
 </div>
 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
 <div 
@@ -37,8 +37,10 @@ dark:bg-zinc-900
 >
 <div 
  className="
- w-12 
- h-12 
+ w-10 
+ h-10
+ md:w-12 
+ md:h-12
  bg-[#cfe8e0]
  dark:bg-[#aadaca] 
  rounded-lg 
@@ -52,8 +54,8 @@ dark:bg-zinc-900
  ">
 <FaUsers className="material-symbols-outlined text-[#285A48] " data-icon="alt_route" />
 </div>
-<h3 className="font-headline-sm text-xl md:text-2xl font-semibold mb-2 dark:text-white">Candidate Management</h3>
-<p className="text-gray-700 md:text-lg dark:text-gray-300">A unified database for all applicant information, resumes, and communications history.</p>
+<h3 className="font-headline-sm text-lg md:text-xl font-semibold mb-1 dark:text-white xl:text-2xl">Candidate Management</h3>
+<p className="text-gray-700 text-sm md:text-base dark:text-gray-300">A unified database for all applicant information, resumes, and communications history.</p>
 </div>
 <div 
  
@@ -79,8 +81,10 @@ dark:bg-[#B0E4CC]
 >
 <div 
  className="
- w-12 
- h-12 
+ w-10 
+ h-10
+ md:w-12 
+ md:h-12
  bg-[#cfe8e0]
  dark:bg-[#aadaca] 
  rounded-lg 
@@ -96,8 +100,8 @@ dark:bg-[#B0E4CC]
 
 
 </div>
-<h3 className="font-headline-sm text-white text-xl md:text-2xl font-semibold mb-2 dark:text-zinc-900">Smart Hiring Pipeline</h3>
-<p className=" text-gray-200 dark:text-gray-700 md:text-lg">Drag-and-drop workflows that automatically trigger actions at every stage of the process.</p>
+<h3 className="font-headline-sm text-white text-lg md:text-xl xl:text-2xl font-semibold mb-1 dark:text-zinc-900">Smart Hiring Pipeline</h3>
+<p className=" text-gray-200 text-sm dark:text-gray-700 md:text-base">Drag-and-drop workflows that automatically trigger actions at every stage of the process.</p>
 </div>
 <div
 className="
@@ -123,8 +127,10 @@ dark:bg-zinc-900
 >
 <div 
  className="
- w-12 
- h-12 
+w-10 
+ h-10
+ md:w-12 
+ md:h-12
  bg-[#cfe8e0]
  dark:bg-[#aadaca] 
  rounded-lg 
@@ -140,8 +146,8 @@ dark:bg-zinc-900
  className=" text-[#285A48]" data-icon="calendar_month" />
 
 </div>
-<h3 className="font-headline-sm text-xl md:text-2xl dark:text-white font-semibold mb-2">Interview Scheduling</h3>
-<p className="text-gray-700 md:text-lg dark:text-gray-300">Automated scheduling that syncs with your team's calendars and sends reminders instantly.</p>
+<h3 className="font-headline-sm text-lg xl:text-2xl md:text-xl dark:text-white font-semibold mb-1">Interview Scheduling</h3>
+<p className="text-gray-700 text-sm md:text-base dark:text-gray-300">Automated scheduling that syncs with your team's calendars and sends reminders instantly.</p>
 </div>
 <div 
 className="
@@ -166,8 +172,10 @@ className="
 >
 <div 
  className="
- w-12 
- h-12 
+ w-10 
+ h-10
+ md:w-12 
+ md:h-12
  bg-[#cfe8e0]
  dark:bg-[#aadaca] 
  rounded-lg 
@@ -182,8 +190,8 @@ className="
 <MdOutlineAnalytics className=" text-[#285A48]" data-icon="analytics" />
 
 </div>
-<h3 className="font-headline-sm text-xl dark:text-white  md:text-2xl font-semibold mb-2">Recruitment Analytics</h3>
-<p className="text-gray-700 md:text-lg dark:text-gray-300">Deep insights into time-to-hire, source quality, and bottleneck identification.</p>
+<h3 className="font-headline-sm text-lg xl:text-2xl dark:text-white  md:text-xl font-semibold mb-1">Recruitment Analytics</h3>
+<p className="text-gray-700 text-sm md:text-base dark:text-gray-300">Deep insights into time-to-hire, source quality, and bottleneck identification.</p>
 </div>
 <div
  className="
@@ -208,8 +216,10 @@ className="
 >
  <div
  className="
- w-12 
- h-12 
+w-10 
+ h-10
+ md:w-12 
+ md:h-12
  bg-[#aadaca]
  dark:bg-[#aadaca] 
  rounded-lg 
@@ -225,11 +235,11 @@ className="
  <MdOutlineCollections className="text-[#285A48]" />
  </div>
 
- <h3 className="dark:text-white  font-headline-sm text-xl md:text-2xl font-semibold mb-2">
+ <h3 className="dark:text-white text-lg  font-headline-sm md:text-xl xl:text-2xl font-semibold mb-1">
  Team Collaboration
  </h3>
 
- <p className="text-gray-700 md:text-lg dark:text-gray-300">
+ <p className="text-gray-700 text-sm md:text-base dark:text-gray-300">
  Shared feedback loops and scorecard systems to keep everyone aligned on
  candidate quality.
  </p>
@@ -259,8 +269,10 @@ className="
 >
  <div
  className="
- w-12 
- h-12 
+ w-10 
+ h-10
+ md:w-12 
+ md:h-12
  bg-[#aadaca] 
  rounded-lg 
  flex 
@@ -275,11 +287,11 @@ className="
  <FaBahai className="text-[#285A48]" />
  </div>
 
- <h3 className="dark:text-white  font-headline-sm text-xl md:text-2xl font-semibold mb-2">
+ <h3 className="dark:text-white  font-headline-sm xl:text-2xl text-lg md:text-xl font-semibold mb-2">
  AI-Powered Matching
  </h3>
 
- <p className="text-gray-700 md:text-lg dark:text-gray-300">
+ <p className="text-gray-700 text-sm md:text-base dark:text-gray-300">
  Advanced algorithms that highlight the most qualified candidates based on
  your job requirements.
  </p>

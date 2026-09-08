@@ -36,11 +36,20 @@ const loadPersistedJobs = (): Job[] => {
   if (typeof window === "undefined") return initialJobs as Job[];
 
   try {
+    const jobMap = new Map(
+      (initialJobs as Job[]).map((job) => [job.id, job])
+    );
     const saved = window.localStorage.getItem(STORAGE_KEY);
-    if (!saved) return initialJobs as Job[];
+    if (!saved) return Array.from(jobMap.values());
 
     const parsed = JSON.parse(saved) as Partial<{ jobs: Job[] }>;
-    return Array.isArray(parsed.jobs) ? parsed.jobs : (initialJobs as Job[]);
+    if (Array.isArray(parsed.jobs)) {
+      parsed.jobs.forEach((job) => {
+        if (job.id) jobMap.set(job.id, job);
+      });
+    }
+
+    return Array.from(jobMap.values());
   } catch {
     return initialJobs as Job[];
   }
@@ -67,10 +76,18 @@ export const useJobStore = create<JobStore>((set, get) => ({
   fetchJobs: async () => {
     try {
       const snapshot = await getDocs(collection(db, "jobs"));
-      const jobs = snapshot.docs.map((docSnap) => ({
+      const firebaseJobs = snapshot.docs.map((docSnap) => ({
         ...(docSnap.data() as Job),
         id: docSnap.id,
       }));
+      const jobMap = new Map(
+        (initialJobs as Job[]).map((job) => [job.id, job])
+      );
+
+      get().jobs.forEach((job) => jobMap.set(job.id, job));
+      firebaseJobs.forEach((job) => jobMap.set(job.id, job));
+
+      const jobs = Array.from(jobMap.values());
 
       persistJobs(jobs);
       set({ jobs });

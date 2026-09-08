@@ -36,9 +36,12 @@ const JobDetails = () => {
 const role = user?.role;
 
 const canCreateJobs =
+ role === "Admin" || 
+ role === "HR Manager" || 
+ role === "Recruiter";
+const canDeleteJobs =
  role === "Admin" ||
  role === "HR Manager";
-
 
 const { duplicateJob, deleteJob } = useJobStore();
 const showToast = useToastStore((state) => state.showToast);
@@ -55,7 +58,11 @@ const applicantsCount = candidates.filter(
  (candidate) => candidate.jobId === job.id
 ).length;
 
-const jobLink = `${window.location.origin}/apply/${job.id}`;
+const publicAppUrl = (
+ import.meta.env.VITE_PUBLIC_APP_URL ||
+ "https://recuriters-dashboard.onrender.com"
+).replace(/\/$/, "");
+const jobLink = `${publicAppUrl}/apply/${job.id}`;
 
  if (!job) {
  return (
@@ -219,7 +226,7 @@ showToast({
  </Tooltip>
 
  <Tooltip text="Delete">
-    { canCreateJobs&& (
+    { canDeleteJobs&& (
  <button 
  onClick={() => setDeleteOpen(true)}
  className="cursor-pointer rounded-xl p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20">

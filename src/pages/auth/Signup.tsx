@@ -308,6 +308,7 @@ const handleSubmit = async (e: React.FormEvent) => {
  // - If no pending member found, create a new one
  await createTeamMemberInFirestore({
  id: currentUser?.id ?? crypto.randomUUID(),
+ userId:currentUser?.id?? crypto.randomUUID(),
  companyId: invitation.companyId,
  invitationId: invitation.id,
  fullName: currentUser?.fullName ?? invitation.fullName,

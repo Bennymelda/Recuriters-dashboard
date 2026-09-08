@@ -25,7 +25,7 @@ const InterviewModal = ({
  interview,
 }: InterviewModalProps) => {
 const members = useTeamStore((state) => state.members);
-console.log(members)
+
 const [stage, setStage] = useState<InterviewStage>(
  interview?.stage ?? "Technical"
 );
@@ -68,6 +68,7 @@ const addActivity = useTeamStore(
 );
 const user = useAuthStore((state) => state.user);
 const handleSubmit = () => {
+
  if (!stage.trim()) {
  showToast({
  type: "warning",
@@ -164,6 +165,23 @@ if (interviewDate <= now) {
 
  type: "interview",
 });
+
+
+
+console.log("SELECTED MEMBER BEFORE UPDATE:", selectedMember);
+console.log(
+ "UNDEFINED FIELDS:",
+ Object.entries(selectedMember).filter(
+ ([, value]) => value === undefined
+ )
+);
+console.log("SELECTED MEMBER BEFORE UPDATE:", selectedMember);
+console.log(
+ "UNDEFINED FIELDS:",
+ Object.entries(selectedMember).filter(
+ ([, value]) => value === undefined
+ )
+);
     updateMember({
       ...selectedMember,
       lastActive: new Date().toISOString(),
@@ -187,6 +205,8 @@ if (interviewDate <= now) {
       target: candidate.fullName,
       date: new Date().toISOString(),
     });
+
+ 
     updateMember({
       ...selectedMember,
       lastActive: new Date().toISOString(),
@@ -199,6 +219,7 @@ if (interviewDate <= now) {
   }
 
  onClose();
+
 };
 
 

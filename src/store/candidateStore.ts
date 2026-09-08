@@ -10,6 +10,8 @@ import {
 } from "firebase/firestore";
 
 import { db } from "../firebase";
+import { useAuthStore } from "./authStore";
+import type { TeamRole } from "../types/team";
 const STORAGE_KEY = "careerflow-candidates";
 const STORAGE_VERSION = 3;
 
@@ -114,6 +116,8 @@ addNote: (
  note: {
  author: string;
  content: string;
+ authorRole:TeamRole;
+ authorId: string;
  }
 ) => void;
  getFilteredCandidates: (filters: {
@@ -184,6 +188,26 @@ cancelInterview: (
  interviewId: string
 ) => void;
 
+requestHiringApproval: (candidateId: string) => void;
+approveHiring: (candidateId: string, note?: string) => void;
+rejectHiring: (candidateId: string, note?: string) => void;
+
+createOffer: (
+ candidateId: string,
+ salary?: number,
+ startDate?: string,
+ employmentType?: string,
+ 
+ description?:string,
+) => void;
+
+approveOffer: (candidateId: string) => void;
+
+rejectOffer: (candidateId: string, note?: string) => void;
+
+sendOffer: (candidateId: string) => void;
+acceptOffer: (candidateId: string) => void;
+declineOffer: (candidateId: string, note?: string) => void;
 }
 
 
@@ -308,6 +332,7 @@ addCandidate: async (candidate) => {
  isLoading: false,
  };
  }),
+ 
 
  deleteCandidate: (id) =>
  set((state) => {
@@ -418,6 +443,8 @@ updateCandidateStatus: (id, status) =>
  {
  id: crypto.randomUUID(),
  author: note.author,
+ authorRole:note.authorRole,
+ authorId: note.authorId,
  date: new Date().toISOString(),
  content: note.content,
  },
@@ -434,9 +461,35 @@ updateCandidateStatus: (id, status) =>
  isLoading: false,
  };
  }),
-
- updateNote: (candidateId, noteId, content) =>
+updateNote: (candidateId, noteId, content) =>
  set((state) => {
+ const currentUser = useAuthStore.getState().user;
+
+ if (!currentUser) {
+ return state;
+ }
+
+ const candidate = state.candidates.find(
+ (candidate) => candidate.id === candidateId
+ );
+
+ if (!candidate) {
+ return state;
+ }
+
+ const note = candidate.notes.find(
+ (note) => note.id === noteId
+ );
+
+ if (!note) {
+ return state;
+ }
+
+ // Only the person who created the note can edit it
+ if (note.authorId !== currentUser.id) {
+ return state;
+ }
+
  const updatedCandidates = state.candidates.map((candidate) =>
  candidate.id !== candidateId
  ? candidate
@@ -464,6 +517,33 @@ updateCandidateStatus: (id, status) =>
 
 deleteNote: (candidateId, noteId) =>
  set((state) => {
+ const currentUser = useAuthStore.getState().user;
+
+ if (!currentUser) {
+ return state;
+ }
+
+ const candidate = state.candidates.find(
+ (candidate) => candidate.id === candidateId
+ );
+
+ if (!candidate) {
+ return state;
+ }
+
+ const note = candidate.notes.find(
+ (note) => note.id === noteId
+ );
+
+ if (!note) {
+ return state;
+ }
+
+ // Only the person who created the note can delete it
+ if (note.authorId !== currentUser.id) {
+ return state;
+ }
+
  const updatedCandidates = state.candidates.map((candidate) =>
  candidate.id !== candidateId
  ? candidate
@@ -482,7 +562,7 @@ deleteNote: (candidateId, noteId) =>
  isLoading: false,
  };
  }),
-
+ 
  scheduleInterview: (candidateId, interview) =>
  set((state) => {
   const updatedCandidates: Candidate[] = state.candidates.map((candidate) =>
@@ -597,7 +677,7 @@ completeInterview: (
  }),
 
 
- 
+ /*
 moveCandidateStage: (candidateId, status) =>
  set((state) => {
   const updatedCandidates: Candidate[] = state.candidates.map((candidate) =>
@@ -621,8 +701,108 @@ moveCandidateStage: (candidateId, status) =>
    isLoading: false,
   };
  }),
+*/
+moveCandidateStage: (candidateId, status) =>
+ set((state) => {
+ const currentUser = useAuthStore.getState().user;
 
+ if (!currentUser) {
+ return state;
+ }
 
+ // Only Recruiters can manually move candidates
+ if (currentUser.role !== "Recruiter") {
+ return state;
+ }
+
+ const candidate = state.candidates.find(
+ (candidate) => candidate.id === candidateId
+ );
+
+ if (!candidate) {
+ return state;
+ }
+
+ // Hired candidates cannot be moved
+ if (candidate.status === "Hired") {
+ return state;
+ }
+
+ // Normal pipeline movement must be sequential
+ const allowedNextStages: Partial<
+ Record<Candidate["status"], Candidate["status"][]>
+ > = {
+ Applied: ["Screening"],
+ Screening: ["Interview"],
+ };
+
+ const allowedStages = allowedNextStages[candidate.status] ?? [];
+
+ // Hired has a separate workflow requirement
+ if (status === "Hired") {
+ if (candidate.offer?.status !== "Accepted") {
+ return state;
+ }
+ }
+ // Offer can only happen after Hiring Manager approval
+ else if (status === "Offer") {
+ if (candidate.hiringApproval?.status !== "Approved") {
+ return state;
+ }
+ }
+ // Interview cannot be manually moved to Offer
+ else if (
+ candidate.status === "Interview" &&
+ status !== "Rejected" &&
+ !allowedStages.includes(status)
+ ) {
+ return state;
+ }
+ // Applied/Screening can only move to their next stage
+ else if (
+ candidate.status in allowedNextStages &&
+ status !== "Rejected" &&
+ !allowedStages.includes(status)
+ ) {
+ return state;
+ }
+
+ const now = new Date().toISOString();
+
+ const updatedCandidates: Candidate[] = state.candidates.map(
+ (candidate) =>
+ candidate.id !== candidateId
+ ? candidate
+ : {
+ ...candidate,
+ status,
+ updatedAt: now,
+ stageUpdatedAt: now,
+
+ hiredAt:
+ status === "Hired"
+ ? candidate.hiredAt || now
+ : candidate.hiredAt,
+
+ hiredBy:
+ status === "Hired"
+ ? currentUser.id
+ : candidate.hiredBy,
+
+ hiredByName:
+ status === "Hired"
+ ? currentUser.fullName
+ : candidate.hiredByName,
+ }
+ );
+
+ persistCandidates(updatedCandidates);
+
+ return {
+ candidates: updatedCandidates,
+ isLoading: false,
+ };
+ }),
 
  rejectCandidate: (
  candidateId,
@@ -635,7 +815,7 @@ moveCandidateStage: (candidateId, status) =>
     ? candidate
     : {
        ...candidate,
-       status: "Rejected",
+       status: "Rejected" as const,
        rejection: {
         reason,
         note,
@@ -693,5 +873,549 @@ clearCandidates: () =>
  }),
 
 
+requestHiringApproval: (candidateId) =>
+ set((state) => {
+ const currentUser = useAuthStore.getState().user;
+
+ if (!currentUser) {
+ return state;
+ }
+
+ const candidate = state.candidates.find(
+ (candidate) => candidate.id === candidateId
+ );
+
+ if (!candidate) {
+ return state;
+ }
+
+ // Only Recruiters can request hiring approval
+ if (currentUser.role !== "Recruiter") {
+ return state;
+ }
+
+ // Candidate must have passed the Final interview
+ const finalInterview = candidate.interviewHistory.find(
+ (interview) => interview.stage === "Final"
+ );
+console.log("CANDIDATE BEFORE APPROVAL:", candidate);
+console.log("INTERVIEW HISTORY:", candidate.interviewHistory);
+ if (!finalInterview || finalInterview.result !== "Passed") {
+ return state;
+ }
+
+ // Don't request approval if already pending or approved
+ if (
+ candidate.hiringApproval?.status === "Pending" ||
+ candidate.hiringApproval?.status === "Approved"
+ ) {
+ return state;
+ }
+
+ const now = new Date().toISOString();
+
+ const updatedCandidates = state.candidates.map((candidate) =>
+ candidate.id !== candidateId
+ ? candidate
+ : {
+ ...candidate,
+
+ // Candidate remains in the Interview column
+ status: "Interview" as const,
+
+ hiringApproval: {
+ status: "Pending" as const,
+ requestedBy: currentUser.id,
+ requestedByName: currentUser.fullName,
+ },
+
+ updatedAt: now,
+ }
+ );
+
+ persistCandidates(updatedCandidates);
+
+ return {
+ candidates: updatedCandidates,
+ isLoading: false,
+ };
+ }),
+
+approveHiring: (candidateId, note) =>
+ set((state) => {
+ const currentUser = useAuthStore.getState().user;
+
+ if (!currentUser) {
+ return state;
+ }
+
+ const candidate = state.candidates.find(
+ (candidate) => candidate.id === candidateId
+ );
+
+ if (!candidate) {
+ return state;
+ }
+
+ // Only Hiring Managers can approve
+ if (currentUser.role !== "Hiring Manager") {
+ return state;
+ }
+
+ // There must be a pending approval
+ if (candidate.hiringApproval?.status !== "Pending") {
+ return state;
+ }
+
+ const now = new Date().toISOString();
+
+ const updatedCandidates = state.candidates.map((candidate) =>
+ candidate.id !== candidateId
+ ? candidate
+ : {
+ ...candidate,
+
+ // Keep the candidate in the Interview column.
+ status: "Interview" as const,
+
+ hiringApproval: {
+ ...candidate.hiringApproval!,
+ status: "Approved" as const,
+ reviewedBy: currentUser.id,
+ reviewedByName: currentUser.fullName,
+ reviewedAt: now,
+ note,
+ },
+
+ updatedAt: now,
+ }
+ );
+
+ persistCandidates(updatedCandidates);
+
+ return {
+ candidates: updatedCandidates,
+ isLoading: false,
+ };
+ }),
+
+rejectHiring: (candidateId, note) =>
+ set((state) => {
+ const currentUser = useAuthStore.getState().user;
+
+ if (!currentUser) {
+ return state;
+ }
+
+ const candidate = state.candidates.find(
+ (candidate) => candidate.id === candidateId
+ );
+
+ if (!candidate) {
+ return state;
+ }
+
+ // Only Hiring Managers can reject at this approval point
+ if (currentUser.role !== "Hiring Manager") {
+ return state;
+ }
+
+ // There must be a pending approval
+ if (candidate.hiringApproval?.status !== "Pending") {
+ return state;
+ }
+
+ const now = new Date().toISOString();
+
+ const updatedCandidates = state.candidates.map((candidate) =>
+ candidate.id !== candidateId
+ ? candidate
+ : {
+ ...candidate,
+
+ // Rejection is still a terminal pipeline status.
+ status: "Rejected" as const,
+
+ hiringApproval: {
+ ...candidate.hiringApproval!,
+ status: "Rejected" as const,
+ reviewedBy: currentUser.id,
+ reviewedByName: currentUser.fullName,
+ reviewedAt: now,
+ note,
+ },
+
+ rejection: {
+ reason: "Hiring Manager rejected candidate",
+ note: note ?? "",
+ date: now,
+ },
+
+ updatedAt: now,
+ stageUpdatedAt: now,
+ }
+ );
+
+ persistCandidates(updatedCandidates);
+
+ return {
+ candidates: updatedCandidates,
+ isLoading: false,
+ };
+ }),
+
+
+ createOffer: (candidateId, salary, startDate, employmentType, description,) =>
+ set((state) => {
+ const currentUser = useAuthStore.getState().user;
+
+ if (!currentUser) {
+ return state;
+ }
+
+ const candidate = state.candidates.find(
+ (candidate) => candidate.id === candidateId
+ );
+
+ if (!candidate) {
+ return state;
+ }
+
+ // Only Recruiters can create offers
+ if (currentUser.role !== "Recruiter") {
+ return state;
+ }
+
+ // Candidate must have Hiring Manager approval while remaining in Interview.
+ if (
+ candidate.status !== "Interview" ||
+ candidate.hiringApproval?.status !== "Approved"
+ ) {
+ return state;
+ }
+
+ const now = new Date().toISOString();
+
+ const updatedCandidates: Candidate[] =
+ state.candidates.map((candidate) =>
+ candidate.id !== candidateId
+ ? candidate
+ : {
+ ...candidate,
+ offer: {
+  id:crypto.randomUUID(),
+ status: "Pending HR Approval" as const,
+ salary,
+ startDate,
+
+ description,
+ employmentType,
+ createdBy: currentUser.id,
+ createdByName: currentUser.fullName,
+ },
+ updatedAt: now,
+ }
+ );
+
+ persistCandidates(updatedCandidates);
+
+ return {
+ candidates: updatedCandidates,
+ isLoading: false,
+ };
+ }),
+
+approveOffer: (candidateId) =>
+ set((state) => {
+ const currentUser = useAuthStore.getState().user;
+
+ if (!currentUser) {
+ return state;
+ }
+
+ const candidate = state.candidates.find(
+ (candidate) => candidate.id === candidateId
+ );
+
+ if (!candidate) {
+ return state;
+ }
+
+ // Only HR Managers can approve offers
+ if (currentUser.role !== "HR Manager") {
+ return state;
+ }
+
+ if (candidate.offer?.status !== "Pending HR Approval") {
+ return state;
+ }
+
+ const now = new Date().toISOString();
+
+ const updatedCandidates: Candidate[] =
+ state.candidates.map((candidate) =>
+ candidate.id !== candidateId
+ ? candidate
+ : {
+ ...candidate,
+ offer: {
+ ...candidate.offer!,
+ status: "Approved" as const,
+ approvedBy: currentUser.id,
+ approvedByName: currentUser.fullName,
+ approvedAt: now,
+ },
+ updatedAt: now,
+ }
+ );
+
+ persistCandidates(updatedCandidates);
+
+ return {
+ candidates: updatedCandidates,
+ isLoading: false,
+ };
+ }),
+
+rejectOffer: (candidateId, note) =>
+ set((state) => {
+ const currentUser = useAuthStore.getState().user;
+
+ if (!currentUser) {
+ return state;
+ }
+
+ const candidate = state.candidates.find(
+ (candidate) => candidate.id === candidateId
+ );
+
+ if (!candidate) {
+ return state;
+ }
+
+ // Only HR Managers can reject offers
+ if (currentUser.role !== "HR Manager") {
+ return state;
+ }
+
+ if (candidate.offer?.status !== "Pending HR Approval") {
+ return state;
+ }
+
+ const now = new Date().toISOString();
+
+ const updatedCandidates: Candidate[] =
+ state.candidates.map((candidate) =>
+ candidate.id !== candidateId
+ ? candidate
+ : {
+ ...candidate,
+ offer: {
+ ...candidate.offer!,
+ status: "Draft" as const,
+ },
+ rejection: {
+ reason: "Offer rejected by HR",
+ note: note ?? "",
+ date: now,
+ },
+ updatedAt: now,
+ }
+ );
+
+ persistCandidates(updatedCandidates);
+
+ return {
+ candidates: updatedCandidates,
+ isLoading: false,
+ };
+ }),
+sendOffer: async (candidateId) => {
+ const currentUser = useAuthStore.getState().user;
+
+ if (!currentUser) {
+ return;
+ }
+
+ if (currentUser.role !== "Recruiter") {
+ return;
+ }
+
+ const candidate = get().candidates.find(
+ (candidate) => candidate.id === candidateId
+ );
+
+ if (!candidate) {
+ return;
+ }
+
+ if (candidate.offer?.status !== "Approved") {
+ return;
+ }
+
+ if (!candidate.offer.id) {
+ console.error("Cannot send offer: offer ID is missing.");
+ return;
+ }
+
+ const now = new Date().toISOString();
+
+ const updatedCandidate: Candidate = {
+ ...candidate,
+ status: "Offer",
+ offer: {
+ ...candidate.offer,
+ status: "Sent",
+ sentAt: now,
+ },
+ updatedAt: now,
+ stageUpdatedAt: now,
+ };
+
+ // Update Zustand + Firestore/local persistence
+ const updatedCandidates = get().candidates.map((candidate) =>
+ candidate.id === candidateId
+ ? updatedCandidate
+ : candidate
+ );
+
+ persistCandidates(updatedCandidates);
+
+ set({
+ candidates: updatedCandidates,
+ isLoading: false,
+ });
+
+ // Send the offer email
+ try {
+ const response = await fetch(
+  "https://recuriters-dashboard-api.onrender.com/api/offers/send",
+ {
+ method: "POST",
+ headers: {
+ "Content-Type": "application/json",
+ },
+ body: JSON.stringify({
+ email: candidate.email,
+ fullName: candidate.fullName,
+ companyName: candidate.offer.companyName,
+ appliedRole: candidate.appliedRole,
+ salary: candidate.offer.salary,
+ startDate: candidate.offer.startDate,
+ employmentType: candidate.offer.employmentType,
+ description: candidate.offer.description,
+ offerId: candidate.offer.id,
+ }),
+ }
+ );
+
+ const data = await response.json();
+
+ if (!response.ok) {
+ throw new Error(
+ data.message || "Failed to send offer email."
+ );
+ }
+
+ console.log(
+ "Offer email sent successfully:",
+ data
+ );
+ } catch (error) {
+ console.error("Offer email error:", error);
+ }
+},
+
+
+
+
+ acceptOffer: (candidateId) =>
+ set((state) => {
+ const candidate = state.candidates.find(
+ (candidate) => candidate.id === candidateId
+ );
+
+ if (!candidate) {
+ return state;
+ }
+
+ // The offer must have been sent
+ if (candidate.offer?.status !== "Sent") {
+ return state;
+ }
+
+ const now = new Date().toISOString();
+
+ const updatedCandidates: Candidate[] =
+ state.candidates.map((candidate) =>
+ candidate.id !== candidateId
+ ? candidate
+ : {
+ ...candidate,
+ offer: {
+ ...candidate.offer!,
+ status: "Accepted" as const,
+ respondedAt: now,
+ },
+ updatedAt: now,
+ }
+ );
+
+ persistCandidates(updatedCandidates);
+
+ return {
+ candidates: updatedCandidates,
+ isLoading: false,
+ };
+ }),
+
+declineOffer: (candidateId, note) =>
+ set((state) => {
+ const candidate = state.candidates.find(
+ (candidate) => candidate.id === candidateId
+ );
+
+ if (!candidate) {
+ return state;
+ }
+
+ // The offer must have been sent
+ if (candidate.offer?.status !== "Sent") {
+ return state;
+ }
+
+ const now = new Date().toISOString();
+
+ const updatedCandidates: Candidate[] =
+ state.candidates.map((candidate) =>
+ candidate.id !== candidateId
+ ? candidate
+ : {
+ ...candidate,
+ status: "Offer Declined",
+ offer: {
+ ...candidate.offer!,
+ status: "Declined" as const,
+ respondedAt: now,
+ },
+ rejection: note
+ ? {
+ reason: "Candidate declined offer",
+ note,
+ date: now,
+ }
+ : candidate.rejection,
+ updatedAt: now,
+ stageUpdatedAt: now,
+ }
+ );
+
+ persistCandidates(updatedCandidates);
+
+ return {
+ candidates: updatedCandidates,
+ isLoading: false,
+ };
+ }),
 
 }));

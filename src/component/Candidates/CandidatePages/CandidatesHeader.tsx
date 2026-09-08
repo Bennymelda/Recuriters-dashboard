@@ -1,6 +1,6 @@
 const CandidatesHeader = () => {
  return (
- <section className="relative overflow-hidden rounded-xl border border-zinc-200 bg-white p-3  dark:border-zinc-800 dark:bg-zinc-900">
+ <section className="relative overflow-hidden rounded-lg border border-zinc-100 bg-white p-3  dark:border-zinc-800 dark:bg-zinc-900">
 
  {/* Accent Glow */}
  <div className="absolute -right-16 -top-16 h-40 w-40 rounded-full bg-[#408A71]/10 blur-3xl" />

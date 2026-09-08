@@ -116,7 +116,7 @@ import { useAuthStore } from "../../store/authStore";
 const TeamHeader = () => {
  const user = useAuthStore((state) => state.user);
 
- const canManageTeam = user?.role === "Admin";
+ const canManageTeam = user?.role === "Admin" || "HR Manager";
 
  const [openInviteMemberModal, setOpenInviteMemberModal] =
  useState(false);

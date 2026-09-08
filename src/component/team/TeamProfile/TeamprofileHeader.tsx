@@ -25,7 +25,7 @@ const TeamMemberHeader = () => {
  );
 
  const canManageTeam =
- user?.role === "Admin";
+ user?.role === "Admin" || "HR Manager";
 
  // ---------------------------------------------
  // Selected member
@@ -62,7 +62,7 @@ const TeamMemberHeader = () => {
  Online: {
  dot: "bg-emerald-500",
  badge:
- "bg-[hashtag#EEF8F3] text-[hashtag#408A71] dark:bg-[hashtag#408A71]/15 dark:text-[hashtag#B0E4CC]",
+ "bg-[#EEF8F3] text-[#408A71] dark:bg-[#408A71]/15 dark:text-[#B0E4CC]",
  },
 
  Away: {
@@ -87,7 +87,7 @@ const TeamMemberHeader = () => {
 
  const membershipStyles = {
  Active:
- "bg-[hashtag#EEF8F3] text-[hashtag#408A71] dark:bg-[hashtag#408A71]/15 dark:text-[hashtag#B0E4CC]",
+ "bg-[#EEF8F3] text-[#408A71] dark:bg-[#408A71]/15 dark:text-[#B0E4CC]",
 
  Pending:
  "bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-300",
@@ -171,7 +171,7 @@ const TeamMemberHeader = () => {
  h-48
  w-48
  rounded-full
- bg-[hashtag#408A71]/10
+ bg-[#408A71]/10
  blur-3xl
  "
  />
@@ -184,7 +184,7 @@ const TeamMemberHeader = () => {
  h-40
  w-40
  rounded-full
- bg-[hashtag#B0E4CC]/10
+ bg-[#B0E4CC]/10
  blur-3xl
  "
  />
@@ -238,7 +238,7 @@ const TeamMemberHeader = () => {
  object-cover
  shadow-md
  ring-4
- ring-[hashtag#408A71]/10
+ ring-[#408A71]/10
  md:h-28
  md:w-28
  "
@@ -434,7 +434,7 @@ const TeamMemberHeader = () => {
  justify-center
  gap-2
  rounded-xl
- bg-[hashtag#408A71]
+ bg-[#408A71]
  px-4
  py-2.5
  text-sm
@@ -444,7 +444,9 @@ const TeamMemberHeader = () => {
  transition-all
  duration-200
  hover:-translate-y-0.5
- hover:bg-[hashtag#35745E]
+ hover:
+ bg-[
+ #35745E]
  hover:shadow-md
  sm:flex-none
  "

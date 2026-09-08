@@ -5,11 +5,12 @@ import InterviewsToolbar from "./InterviewToolbar";
 import { useState } from "react";
 import TodaysInterviews from "./TodayInterviews";
 import { useCandidateStore } from "../../store/candidateStore";
-//import type { Candidate, InterviewHistoryItem } from "../../types/candidate";
-
+import { useTeamStore } from "../../store/teamStore";
+import { useAuthStore } from "../../store/authStore";
 import UpcomingInterviews from "./UpcomingInterview";
 import InterviewCalendar from "./InterviewCalender";
 import NoFilterResults from "./NoFilterResults";
+import { findCurrentMember, getVisibleCandidates } from "../../utils/roleBasedDataFiltering";
 
 const InterviewsPage = () => {
      const [stage, setStage] = useState("");
@@ -18,7 +19,16 @@ const InterviewsPage = () => {
 
  const candidates = useCandidateStore((state) => state.candidates);
 
-const filteredInterviews = candidates.flatMap((candidate) =>
+const members = useTeamStore((state) => state.members);
+const user = useAuthStore((state) => state.user);
+
+// Find current team member (matches both email AND companyId)
+const currentMember = findCurrentMember(members, user);
+
+// Get visible candidates based on role and assigned jobs
+const visibleCandidates = getVisibleCandidates(candidates, user, currentMember);
+
+const filteredInterviews = visibleCandidates.flatMap((candidate) =>
  candidate.interviewHistory
  .filter((interview) => {
  if (interview.result !== "Scheduled") return false;
@@ -39,7 +49,7 @@ const filteredInterviews = candidates.flatMap((candidate) =>
  }))
 );
 
-const hasInterviews = candidates.some((candidate) =>
+const hasInterviews = visibleCandidates.some((candidate) =>
  candidate.interviewHistory.some(
  (interview) =>
  interview.result === "Scheduled" ||
@@ -52,48 +62,6 @@ const noFilterResults =
  hasInterviews && filteredInterviews.length === 0;
 
 const today = new Date().toDateString();
-
-
-/*
-const todaysInterviews: {
- candidate: Candidate;
- interview: InterviewHistoryItem;
-}[] = candidates.flatMap((candidate) =>
- candidate.interviewHistory
- .filter(
- (interview) =>
- interview.result === "Scheduled" &&
- new Date(interview.date).toDateString() === today
- )
- .map((interview) => ({
- candidate,
- interview,
- }))
-);
-
-
-const upcomingInterviews: {
- candidate: Candidate;
- interview: InterviewHistoryItem;
-}[] = candidates
- .flatMap((candidate) =>
- candidate.interviewHistory
- .filter(
- (interview) =>
- interview.result === "Scheduled" &&
- new Date(interview.date) > new Date()
- )
- .map((interview) => ({
- candidate,
- interview,
- }))
- )
- .sort(
- (a, b) =>
- new Date(a.interview.date).getTime() -
- new Date(b.interview.date).getTime()
- );
-*/
 
 
 const todaysInterviews = filteredInterviews.filter(

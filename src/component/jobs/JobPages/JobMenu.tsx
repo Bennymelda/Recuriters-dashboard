@@ -24,7 +24,12 @@ const role = user?.role;
 
 const canCreateJobs =
  role === "Admin" ||
+ role === "HR Manager" ||
+ role === "Recruiter";
+const canDeleteJobs =
+ role === "Admin" ||
  role === "HR Manager";
+
 
  return (
  <div className="absolute right-0 max-w-[calc(100vw-1rem)] top-12 z-50 w-52 md:w-56 overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-xl dark:border-zinc-700 dark:bg-zinc-900">
@@ -61,7 +66,7 @@ const canCreateJobs =
  </button>
 )}
  <div className="border-t border-slate-200 dark:border-slate-700" />
-{ canCreateJobs && (
+{ canDeleteJobs && (
  <button
  onClick={onDelete}
  className="flex cursor-pointer w-full items-center gap-3 px-4 py-3 text-left text-sm text-red-600 transition hover:bg-red-50 dark:hover:bg-red-900/20"

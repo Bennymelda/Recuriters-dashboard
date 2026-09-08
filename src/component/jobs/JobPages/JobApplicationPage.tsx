@@ -9,11 +9,6 @@ const JobApplicationPage = () => {
   const navigate = useNavigate();
   const [job, setJob] = useState<Job | null>(null);
 const [loading, setLoading] = useState(true);
-/*
-  const jobs = useJobStore((state) => state.jobs);
-
-  const job = jobs.find((job) => job.id === jobId);
-*/
 
 useEffect(() => {
  const loadJob = async () => {

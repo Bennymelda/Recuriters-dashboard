@@ -13,6 +13,7 @@ import InterviewModal from "../pipeline/ScheduleInterviewModal";
 import { useNavigate } from "react-router";
 
 import CancelInterviewModal from "./CancelInterviewModal";
+import { useAuthStore } from "../../store/authStore";
 interface InterviewRowProps {
  candidate: Candidate;
 
@@ -31,9 +32,12 @@ const [outcome, setOutcome] = useState<
  "Passed" | "Failed"
 >("Passed");
 const [showCancelModal, setShowCancelModal] = useState(false);
-
+const user = useAuthStore((state) => state.user);
 const navigate=useNavigate()
-
+const role = user?.role;
+    const scheduleInterview =
+ role === "Admin" ||
+ role === "Recruiter";
 const isOverdue =
  interview.result === "Scheduled" &&
  new Date(interview.date) < new Date();
@@ -217,19 +221,25 @@ t-white p-2 transition hover:bg-zinc-100 dark:hover:bg-zinc-700"
  dark:bg-zinc-800
  "
  >
- <button
- onClick={() =>
- navigate(`/candidates/${candidate.id}`, {
+<button
+ onClick={() => {
+ const path =
+ user?.role === "Hiring Manager"
+ ? `/hiring-manager/candidates/${candidate.id}`
+ : `/candidates/${candidate.id}`;
+
+ navigate(path, {
  state: {
  tab: "interviews",
  },
- })
- }
+ });
+ }}
  className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm hover:bg-zinc-100 dark:hover:bg-zinc-700"
 >
  <MdHistory size={18} />
  View Interview History
 </button>
+{ scheduleInterview && (
 
  <button
  onClick={() => {
@@ -241,6 +251,8 @@ t-white p-2 transition hover:bg-zinc-100 dark:hover:bg-zinc-700"
  <MdEditCalendar size={18} />
  Reschedule
 </button>
+)}
+{ scheduleInterview && (
 <button
  onClick={() => setShowCancelModal(true)}
  className="
@@ -261,6 +273,7 @@ t-white p-2 transition hover:bg-zinc-100 dark:hover:bg-zinc-700"
  ❌ Cancel Interview
 </button>
 
+)}
 
  </div>
  )}

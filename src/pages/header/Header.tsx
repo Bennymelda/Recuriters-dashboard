@@ -67,8 +67,10 @@ const Header = ({ onOpenSidebar }: HeaderProps) => {
  <NotificationButton />
 
  <div className="hidden h-8 w-px bg-zinc-200 dark:bg-zinc-700 lg:block" />
-
+<div className="hidden md:block">
  <ProfileMenu />
+</div>
+
 
  </div>
  </header>

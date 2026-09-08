@@ -29,12 +29,12 @@ const Testimonial = () => {
  ];
 
  return (
- <section className="py-xl bg-surface-container-low overflow-hidden">
+ <section className=" bg-surface-container-low overflow-hidden mt-10">
  <div className="max-w-container-max mx-auto px-gutter">
 
  {/* Heading */}
- <div className="text-center mb-20">
- <h2 className=" text-2xl md:text-3xl font-semibold">
+ <div className="text-center mb-5">
+ <h2 className=" text-2xl lg:text-3xl font-semibold">
  Recruiters love CareerFlow
  </h2>
  </div>
@@ -68,7 +68,7 @@ const Testimonial = () => {
  </div>
 
  {/* Text */}
- <p className="italic line-clamp-3 md:text-md lg:text-md dark:text-gray-300 mb-4">
+ <p className="italic line-clamp-3 text-sm md:text-base lg:text-base dark:text-gray-300 mb-4">
  "{item.text}"
  </p>
 
@@ -76,11 +76,11 @@ const Testimonial = () => {
  <div className="flex items-center gap-2">
  <img
  src={item.img}
- className="w-12 h-12 rounded-full"
+ className="w-10 h-10 lg:w-12 lg:h-12 rounded-full"
  alt={item.name}
  />
  <div>
- <p className="font-seibold dark:text-gray-200">
+ <p className="font-semibold text-sm md:text-base dark:text-gray-200">
  {item.name}
  </p>
  <p className="text-xs text-gray-600 dark:text-gray-300 md:text-sm">

@@ -1,89 +1,45 @@
+import { useAuthStore } from "../../store/authStore";
+import { useTeamStore } from "../../store/teamStore";
+import { useCandidateStore } from "../../store/candidateStore";
+
 import PipelineHeader from "./PipelineHeader";
 import PipelineStats from "./PipelineStats";
 import PipelineBoard from "./PipelineBoard";
+import { findCurrentMember, getVisibleCandidates } from "../../utils/roleBasedDataFiltering";
 
 const PipelinePage = () => {
-  return (
-    <div className="flex h-full flex-col gap-6 overflow-hidden">
-      <div className="flex-none space-y-6">
-        
-        <PipelineHeader />
-        <PipelineStats />
-        
-      </div>
-      <div>
+const user = useAuthStore((state) => state.user);
 
-{/* 
-<div className="flex items-center justify-between">
+const members = useTeamStore((state) => state.members);
 
-<div>
-<h2
-className="
-text-xl
-font-bold
-text-zinc-900
-dark:text-white
-"
->
-Hiring Pipeline
-</h2>
+const candidates = useCandidateStore(
+(state) => state.candidates
+);
 
-<p
-className="
-mt-1
-text-sm
-text-zinc-500
-dark:text-zinc-400
-"
->
-Manage and track candidates across every recruitment stage.
-</p>
+// Find current team member (matches both email AND companyId)
+const currentMember = findCurrentMember(members, user);
 
+// Get visible candidates based on role and assigned jobs
+const visibleCandidates = getVisibleCandidates(candidates, user, currentMember);
+
+return (
+<div className="flex h-full flex-col gap-6 overflow-hidden">
+<div className="flex-none space-y-6">
+<PipelineHeader />
+
+ <PipelineStats
+ candidates={visibleCandidates}
+ />
+ </div>
+
+ <div className="min-h-0 flex-1 overflow-auto">
+ <PipelineBoard
+ candidates={visibleCandidates}
+ />
+ </div>
 </div>
 
-
-<div
-className="
-hidden
-items-center
-gap-2
-
-rounded-full
-border
-border-zinc-200
-bg-white
-px-4
-py-2
-
-text-sm
-text-zinc-500
-
-dark:border-zinc-700
-dark:bg-zinc-900
-dark:text-zinc-400
-
-md:flex
-"
->
-
-<span className="h-2 w-2 rounded-full bg-[#285A48]" />
-
-5 Stages
-
-</div>
-
-
-</div>
-
-*/}
-
-        <div className="min-h-0 flex-1 overflow-auto">
-        <PipelineBoard />
-      </div>
-      </div>
-      
-    </div>
-  );
+);
 };
 
 export default PipelinePage;

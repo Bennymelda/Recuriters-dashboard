@@ -181,10 +181,10 @@ const TeamMemberInfo = () => {
  items-center
  justify-center
  rounded-xl
- bg-[hashtag#EEF8F3]
- text-[hashtag#408A71]
- dark:bg-[hashtag#408A71]/20
- dark:text-[hashtag#B0E4CC]
+ bg-[#EEF8F3]
+ text-[#408A71]
+ dark:bg-[#408A71]/20
+ dark:text-[#B0E4CC]
  "
  >
  {item.icon}

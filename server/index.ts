@@ -1,13 +1,13 @@
 import dotenv from "dotenv";
 
 
-
 import express from "express";
 import cors from "cors";
 
 //import { Resend } from "resend";
 
 import { sendInvitationEmail } from "./sendInvitationEmail";
+import { sendOfferEmail } from "./sendOfferEmail";
 dotenv.config();
 
 const app = express();
@@ -108,4 +108,79 @@ const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
  console.log(`Email server running on port ${PORT}`);
+});
+
+app.post("/api/offers/send", async (req, res) => {
+ try {
+ const {
+ email,
+ fullName,
+ companyName,
+ appliedRole,
+ salary,
+ startDate,
+ employmentType,
+ description,
+ offerId,
+ } = req.body;
+
+ if (
+ !email ||
+ !fullName ||
+ !companyName ||
+ !appliedRole ||
+ !salary ||
+ !startDate ||
+ !employmentType ||
+ !description ||
+ !offerId
+ ) {
+ console.warn("Missing offer information:", req.body);
+
+ return res.status(400).json({
+ success: false,
+ message: "Missing offer information.",
+ });
+ }
+
+ console.log(
+ `Sending offer email to ${email} for ${fullName}...`
+ );
+
+ const result = await sendOfferEmail({
+ email,
+ fullName,
+ companyName,
+ appliedRole,
+ salary,
+ startDate,
+ employmentType,
+ description,
+ offerId,
+ });
+
+ console.log(
+ `Offer email sent successfully to ${email}:`,
+ result.messageId
+ );
+
+ return res.status(200).json({
+ success: true,
+ message: "Offer email sent successfully.",
+ data: result,
+ });
+ } catch (error) {
+ console.error("Offer email error:", error);
+
+ const errorMessage =
+ error instanceof Error
+ ? error.message
+ : "Unknown error occurred";
+
+ return res.status(500).json({
+ success: false,
+ message: `Failed to send offer email: ${errorMessage}`,
+ error: errorMessage,
+ });
+ }
 });

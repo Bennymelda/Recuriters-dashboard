@@ -1,17 +1,25 @@
 import { MdAdd, MdEvent } from "react-icons/md";
 import { useNavigate } from "react-router";
+import { useAuthStore } from "../../store/authStore";
 
 const InterviewsHeader = () => {
     const navigate =useNavigate()
+const user = useAuthStore((state) => state.user); 
+
+const role = user?.role;
+    const scheduleInterview =
+ role === "Admin" ||
+ role === "Recruiter";
+
  return (
  <header
  className="
  flex flex-col gap-6
- rounded-3xl
- border border-zinc-200
+ rounded-2xl
+ border border-zinc-100
  bg-white
  p-6
- shadow-sm
+ shadow-xs
  dark:border-zinc-800
  dark:bg-zinc-900
 
@@ -83,8 +91,8 @@ const InterviewsHeader = () => {
  </p>
  </div>
  </div>
-
- {/* Right */}
+{ scheduleInterview && (
+ 
  <button
  onClick={() => navigate("/pipeline")}
  className="
@@ -124,6 +132,7 @@ cursor-pointer
  <MdAdd size={20} />
  Schedule Interview
  </button>
+)}
  </header>
 );
 };

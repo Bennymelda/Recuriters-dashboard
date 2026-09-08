@@ -3,6 +3,7 @@ import type { Candidate } from "../../types/candidate";
 import { useNavigate } from "react-router-dom";
 
 import { useEffect } from "react";
+import { useAuthStore } from "../../store/authStore";
 interface CandidateProfileSidebarProps {
  candidate: Candidate | null;
  isOpen: boolean;
@@ -40,6 +41,7 @@ const statusColors = {
  Rejected:
  "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
  };
+ const user = useAuthStore((state) => state.user);
  return (
  <>
  {/* Overlay */}
@@ -186,41 +188,42 @@ statusColors[candidate.status]
 </div>
 
 
- {/* View Full Profile */}
- <button
- onClick={() => navigate(`/candidates/${candidate.id}`)}
+{/* View Full Profile */}
+<button
+ onClick={() => {
+ if (user?.role === "Hiring Manager") {
+ navigate(`/hiring-manager/candidates/${candidate.id}`);
+ } else {
+ navigate(`/candidates/${candidate.id}`);
+ }
+ }}
  className="
  group
- 
  flex
  w-full
  items-center
  justify-center
  gap-3
-
  rounded-2xl
-
  bg-[#408A71]
-
  px-5
  py-4
-
  text-sm
  font-semibold
  text-white
  dark:text-gray-700
  shadow-lg
  shadow-[#408A71]/20
-mt-5
+ mt-5
  transition-all
  duration-300
-dark:bg-[#B0E4CC]
+ dark:bg-[#B0E4CC]
  hover:-translate-y-0.5
  hover:bg-[#35735D]
  hover:shadow-xl
  hover:dark:text-white
  hover:shadow-[#408A71]/30
-cursor-pointer
+ cursor-pointer
  active:scale-[0.98]
  "
 >
@@ -231,6 +234,7 @@ cursor-pointer
  className="transition-transform duration-300 group-hover:translate-x-1"
  />
 </button>
+
 
 </div>
 

@@ -18,7 +18,7 @@ import { useCandidateStore } from "../../store/candidateStore";
 //import RejectCandidateModal from "./RejectCandidateModal";
 import RejectCandidateModal from "../ui/RejectModalUi";
 import InterviewModal from "./ScheduleInterviewModal";
-import MoveStageModal from "../ui/MoveStageModal";
+import MoveStageModal from "./MoveStageModal";
 import { useTeamStore } from "../../store/teamStore";
 import { useAuthStore } from "../../store/authStore";
 import { useNotificationStore } from "../../store/notificationStore";
@@ -44,11 +44,13 @@ const addNotification = useNotificationStore(
 const rejectCandidate = useCandidateStore(
  (state) => state.rejectCandidate
 );
-
+const user = useAuthStore((state) => state.user);
 const [openRejectModal, setOpenRejectModal] = useState(false);
+const canDragCandidates= user?.role === "Recruiter"
 
 const draggable = useDraggable({
  id: candidate.id,
+ disabled: !canDragCandidates,
  data: {
  candidate,
  },
@@ -72,7 +74,9 @@ const style = {
 const scheduledInterview = candidate.interviewHistory.find(
  (interview) => interview.result === "Scheduled"
 );
-
+const latestPassedInterview = [...candidate.interviewHistory]
+ .reverse()
+ .find((interview) => interview.result === "Passed");
 const showInterviewBadge =
  candidate.status === "Interview" && Boolean(scheduledInterview);
 const hasScheduledInterview = candidate.interviewHistory.some(
@@ -82,12 +86,36 @@ const moveCandidateStage = useCandidateStore(
  (state) => state.moveCandidateStage
 );
 
+const requestHiringApproval = useCandidateStore(
+ (state) => state.requestHiringApproval
+);
+
+const approveHiring = useCandidateStore(
+ (state) => state.approveHiring
+);
+
+const rejectHiring = useCandidateStore(
+ (state) => state.rejectHiring
+);
+
+const createOffer = useCandidateStore(
+ (state) => state.createOffer
+);
+
+const approveOffer = useCandidateStore(
+ (state) => state.approveOffer
+);
+
+const rejectOffer = useCandidateStore(
+ (state) => state.rejectOffer
+);
+
+const sendOffer = useCandidateStore(
+ (state) => state.sendOffer
+);
+
+
 const [openMoveModal, setOpenMoveModal] = useState(false);
-
-const latestPassedInterview = [...candidate.interviewHistory]
- .reverse()
- .find((interview) => interview.result === "Passed");
-
 
 let nextStep: string | null = null;
 
@@ -111,7 +139,7 @@ if (candidate.status === "Interview" && latestPassedInterview) {
  }
 }
 const updateMember = useTeamStore((state) => state.updateMember);
-const user = useAuthStore((state) => state.user);
+
 const selectedMemberId = useTeamStore(
  (state) => state.selectedMemberId
 );
@@ -128,6 +156,7 @@ const member = useTeamStore((state) =>
  style={isOverlay ? undefined : style}
  {...(!isOverlay ? attributes : {})}
  {...(!isOverlay ? listeners : {})}
+ 
  className={`
  group
  w-full
@@ -149,8 +178,8 @@ const member = useTeamStore((state) =>
 
  hover:-translate-y-1
  hover:shadow-xl
-cursor-grabbing
- active:cursor-grab
+ ${canDragCandidates ? "cursor-grabbing active:cursor-grab" : "cursor-default"}
+
 
  dark:border-zinc-700
  dark:bg-zinc-900
@@ -259,38 +288,41 @@ dark:ring-zinc-900
  dark:bg-zinc-800
  "
  >
-
+ {/* VIEW PROFILE — EVERYONE */}
  <button
  onClick={() => {
  navigate(`/candidates/${candidate.id}`);
  setOpenMenu(false);
  }}
- className="flex cursor-pointer w-full items-center gap-3 rounded-xl px-3 py-3 text-sm hover:bg-zinc-100 dark:hover:bg-zinc-700"
->
+ className="flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-3 text-sm hover:bg-zinc-100 dark:hover:bg-zinc-700"
+ >
  <MdPerson size={18} />
  View Profile
-</button>
+ </button>
 
+ {/* MOVE STAGE — RECRUITER ONLY */}
+ {user?.role === "Recruiter" && (
  <button
  onClick={() => {
  setOpenMenu(false);
  setOpenMoveModal(true);
  }}
- className="flex cursor-pointer w-full items-center gap-3 rounded-xl px-3 py-3 text-sm hover:bg-zinc-100 dark:hover:bg-zinc-700"
->
+ className="flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-3 text-sm hover:bg-zinc-100 dark:hover:bg-zinc-700"
+ >
  <MdSwapHoriz size={18} />
  Move Stage
  </button>
+ )}
 
-
-{candidate.status === "Interview" && (
+ {/* SCHEDULE / MANAGE INTERVIEW — RECRUITER ONLY */}
+ {user?.role === "Recruiter" &&
+ candidate.status === "Interview" && (
  <button
  onClick={() => {
  setOpenMenu(false);
 
  if (hasScheduledInterview) {
- // We'll replace this with navigation later
- navigate('/interview');
+ navigate("/interview");
  } else {
  setOpenInterviewModal(true);
  }
@@ -298,26 +330,50 @@ dark:ring-zinc-900
  className="flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-3 text-sm hover:bg-zinc-100 dark:hover:bg-zinc-700"
  >
  <MdEvent size={18} />
- {hasScheduledInterview ? "Manage Interview" : "Schedule Interview"}
+ {hasScheduledInterview
+ ? "Manage Interview"
+ : "Schedule Interview"}
  </button>
-)}
- 
+ )}
 
+ {/* HIRING MANAGER — ONLY REJECT AFTER HIRING APPROVAL */}
+ {user?.role === "Hiring Manager" &&
+ candidate.hiringApproval?.status === "Pending" && (
+ <>
  <hr className="my-2 border-zinc-200 dark:border-zinc-700" />
 
  <button
  onClick={() => {
  setOpenMenu(false);
  setOpenRejectModal(true);
-}}
+ }}
  className="flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-3 text-sm text-red-600 transition hover:bg-red-50 dark:hover:bg-red-500/10"
->
+ >
  <MdClose size={18} />
  Reject Candidate
-</button>
-
- </div>
+ </button>
+ </>
  )}
+
+ {/* RECRUITER — NORMAL CANDIDATE REJECTION */}
+ {user?.role === "Recruiter" && (
+ <>
+ <hr className="my-2 border-zinc-200 dark:border-zinc-700" />
+
+ <button
+ onClick={() => {
+ setOpenMenu(false);
+ setOpenRejectModal(true);
+ }}
+ className="flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-3 text-sm text-red-600 transition hover:bg-red-50 dark:hover:bg-red-500/10"
+ >
+ <MdClose size={18} />
+ Reject Candidate
+ </button>
+ </>
+ )}
+ </div>
+)}
 
 </div>
 
@@ -641,40 +697,97 @@ dark:text-zinc-300
 <MoveStageModal
  open={openMoveModal}
  candidate={candidate}
- onClose={() => setOpenMoveModal(false)}
+ onClose={() =>
+ setOpenMoveModal(false)}
+
  onMove={(candidateId, newStatus) => {
-
- console.log("MOVE FIRED", candidateId, newStatus);
-
  moveCandidateStage(candidateId, newStatus);
-
- console.log("BEFORE NOTIFICATION");
 
  addNotification({
  title: "Candidate Updated",
- message: `${candidate.fullName} moved to ${newStatus}.`,
+ message: `${candidate?.fullName} moved to ${newStatus}.`,
  type: "candidate",
  });
+ }}
 
- console.log("AFTER NOTIFICATION");
+ onRequestApproval={(candidateId:string) => {
+ requestHiringApproval(candidateId);
 
-
- if (candidate.assignedRecruiterId) {
- const action =
- newStatus === "Hired"
- ? "Hired candidate"
- : newStatus === "Rejected"
- ? "Rejected candidate"
- : newStatus === "Offer"
- ? "Moved candidate to Offer"
- : `Moved candidate to ${newStatus}`;
-
- addActivity(candidate.assignedRecruiterId, {
- action,
- recruiterName: user?.fullName ?? "Unknown",
- target: candidate.fullName,
+ addNotification({
+ title: "Approval Requested",
+ message: "Hiring Manager approval has been requested.",
+ type: "candidate",
  });
- }
+ }}
+
+ onApproveHiring={(candidateId:string) => {
+ approveHiring(candidateId);
+
+ addNotification({
+ title: "Candidate Approved",
+ message: "Candidate has been approved for hiring.",
+ type: "candidate",
+ });
+ }}
+
+ onRejectHiring={(candidateId:string, note?:string) => {
+ rejectHiring(candidateId, note);
+
+ addNotification({
+ title: "Candidate Rejected",
+ message: "Hiring Manager rejected the candidate.",
+ type: "candidate",
+ });
+ }}
+
+ onCreateOffer={(candidateId:string) => {
+ createOffer(candidateId);
+
+ addNotification({
+ title: "Offer Created",
+ message: "The offer is now waiting for HR approval.",
+ type: "candidate",
+ });
+ }}
+
+ onApproveOffer={(candidateId:string) => {
+ approveOffer(candidateId);
+
+ addNotification({
+ title: "Offer Approved",
+ message: "The offer has been approved by HR.",
+ type: "candidate",
+ });
+ }}
+
+ onRejectOffer={(candidateId:string, note?:string) => {
+ rejectOffer(candidateId, note);
+
+ addNotification({
+ title: "Offer Rejected",
+ message: "HR rejected the offer.",
+ type: "candidate",
+ });
+ }}
+
+ onSendOffer={(candidateId:string) => {
+ sendOffer(candidateId);
+
+ addNotification({
+ title: "Offer Sent",
+ message: "The offer has been sent to the candidate.",
+ type: "candidate",
+ });
+ }}
+
+ onHireCandidate={(candidateId:string) => {
+ moveCandidateStage(candidateId, "Hired");
+
+ addNotification({
+ title: "Candidate Hired",
+ message: "Candidate has been marked as hired.",
+ type: "candidate",
+ });
  }}
 />
 

@@ -10,7 +10,7 @@ const user = useAuthStore((state) => state.user);
 const role = user?.role;
     const canCreateJobs =
  role === "Admin" ||
- role === "HR Manager";
+ role === "Recruiter";
 
     return (
  <div
@@ -144,7 +144,8 @@ active:scale-95
 
  shadow-lg
  dark:text-black
- shadow-[#3525cd]/20
+ shadow-[
+ #434939]/20
 
  transition-all
  duration-300

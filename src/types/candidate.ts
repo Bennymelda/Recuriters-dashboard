@@ -1,3 +1,4 @@
+import type { TeamRole } from "./team";
 
 
 export interface InterviewHistoryItem {
@@ -37,7 +38,47 @@ department:
  | "Interview"
  | "Offer"
  | "Hired"
- | "Rejected";
+ | "Rejected"
+ | "Offer Declined";
+
+
+hiringApproval?: {
+ status: "Pending" | "Approved" | "Rejected";
+ requestedBy: string;
+ requestedByName: string;
+ reviewedBy?: string;
+ reviewedByName?: string;
+ reviewedAt?: string;
+ note?: string;
+};
+offer?: {
+    id:string;
+ status:
+ | "Draft"
+ | "Pending HR Approval"
+ | "Approved"
+ | "Sent"
+ | "Accepted"
+ | "Declined";
+
+ salary?: number;
+ startDate?: string;
+ employmentType?: string;
+  description?:string;
+  companyName?:string;
+ createdBy?: string;
+ createdByName?: string;
+
+ approvedBy?: string;
+ approvedByName?: string;
+ approvedAt?: string;
+
+ sentAt?: string;
+ respondedAt?: string;
+};
+hiredBy?: string;
+hiredByName?: string;
+
 
  experience: "Junior" | "Mid" | "Senior";
 readyForOffer?: boolean;
@@ -72,7 +113,9 @@ readyForOffer?: boolean;
  notes: {
  id: string;
  author: string;
+ authorId: string;
  date: string;
+ authorRole:TeamRole;
  content: string;
  }[];
 
