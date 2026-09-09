@@ -1281,18 +1281,7 @@ sendOffer: async (candidateId) => {
 
  try {
  // 🧪 DUMMY EMAIL SEND
- console.log("🧪 DUMMY OFFER SENT:", {
- email: candidate.email,
- fullName: candidate.fullName,
- companyName:
- candidate.offer.companyName || currentUser.companyName,
- appliedRole: candidate.appliedRole,
- salary: candidate.offer.salary,
- startDate: candidate.offer.startDate,
- employmentType: candidate.offer.employmentType,
- description: candidate.offer.description,
- offerId: candidate.offer.id,
- });
+
 
  // Give the dummy request a small delay
  // so the "Sending..." state can be seen.
@@ -1311,7 +1300,10 @@ sendOffer: async (candidateId) => {
  updatedAt: now,
  stageUpdatedAt: now,
  };
-
+await setDoc(
+  doc(db, "candidates", updatedCandidate.id),
+  updatedCandidate
+);
  const updatedCandidates = get().candidates.map((candidate) =>
  candidate.id === candidateId
  ? updatedCandidate
