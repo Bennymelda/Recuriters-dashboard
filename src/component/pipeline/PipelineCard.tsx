@@ -740,16 +740,27 @@ dark:text-zinc-300
  });
  }}
 
- onCreateOffer={(candidateId:string) => {
- createOffer(candidateId);
+ onCreateOffer={(
+  candidateId,
+  salary,
+  startDate,
+  employmentType,
+  description
+) => {
+  createOffer(
+    candidateId,
+    salary,
+    startDate,
+    employmentType,
+    description
+  );
 
- addNotification({
- title: "Offer Created",
- message: "The offer is now waiting for HR approval.",
- type: "candidate",
- });
- }}
-
+  addNotification({
+    title: "Offer Created",
+    message: "The offer is now waiting for HR approval.",
+    type: "candidate",
+  });
+}}
  onApproveOffer={(candidateId:string) => {
  approveOffer(candidateId);
 
@@ -770,16 +781,11 @@ dark:text-zinc-300
  });
  }}
 
- onSendOffer={(candidateId:string) => {
- sendOffer(candidateId);
 
- addNotification({
- title: "Offer Sent",
- message: "The offer has been sent to the candidate.",
- type: "candidate",
- });
- }}
-
+onSendOffer={async (candidateId) => {
+ return await
+  sendOffer(candidateId);
+}}
  onHireCandidate={(candidateId:string) => {
  moveCandidateStage(candidateId, "Hired");
 

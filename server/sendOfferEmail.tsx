@@ -76,7 +76,7 @@ export const sendOfferEmail = async ({
  style="
  display:inline-block;
  padding:12px 20px;
- background:hashtag#285A48;
+ background:#285A48;
  color:white;
  text-decoration:none;
  border-radius:8px;

@@ -24,12 +24,11 @@ interface MoveStageModalProps {
  salary: number,
  startDate: string,
  employmentType: string,
- 
  description:string
 ) => void;
  onApproveOffer: (candidateId: string) => void;
  onRejectOffer: (candidateId: string, note?: string) => void;
- onSendOffer: (candidateId: string) => void;
+ onSendOffer: (candidateId: string) => Promise<boolean>;
 
  onHireCandidate: (candidateId: string) => void;
 }
@@ -54,7 +53,7 @@ const MoveStageModal = ({
 
 
 
-
+const [linkCopied, setLinkCopied] = useState(false);
 const user = useAuthStore((state) => state.user);
 //const addActivity = useTeamStore((state) => state.addActivity);
 const [stage, setStage] = useState<Candidate["status"]>(candidate?.status ?? "Applied");
@@ -110,7 +109,7 @@ const latestFinalInterview = candidate?.interviewHistory.find(
 
 const hasPassedFinalInterview =
  latestFinalInterview?.result === "Passed";
-
+const [isSendingOffer, setIsSendingOffer] = useState(false);
 const isWorkflowAction =
  candidate?.status === "Interview" ||
  hasPassedFinalInterview ||
@@ -483,6 +482,15 @@ hiringApprovalPending && (
  {/* Create Offer Button */}
  <button
  onClick={() => {
+
+ console.log("FORM OFFER DATA:", {
+ salary,
+ startDate,
+ employmentType,
+ description,
+ companyName: user?.companyName,
+ });
+
  if (!salary || !startDate || !employmentType) {
  return;
  }
@@ -616,7 +624,7 @@ hiringApprovalPending && (
  </div>
 )}
  {/* Recruiter: send approved offer */}
- {/* Recruiter: send approved offer */}
+ 
 {offerApproved && isRecruiter && (
  <div className="mt-4 rounded-2xl border border-emerald-200 bg-emerald-50 p-5 dark:border-emerald-500/20 dark:bg-emerald-500/10">
  <div>
@@ -630,16 +638,81 @@ hiringApprovalPending && (
  </div>
 
  <button
- onClick={() => {
- onSendOffer(candidate.id);
+ onClick={async () => {
+ setIsSendingOffer(true);
+
+ try {
+ const success = await onSendOffer(candidate.id);
+
+ if (success) {
  onClose();
+ } else {
+ setIsSendingOffer(false);
+ }
+ } catch (error) {
+ console.error("Send offer failed:", error);
+ setIsSendingOffer(false);
+ }
  }}
- className="mt-5 w-full rounded-2xl bg-[#408A71] px-6 py-3 font-semibold text-white transition hover:bg-[#2f6d58]"
- >
- Send Offer
- </button>
+ disabled={isSendingOffer}
+ className="mt-5 w-full rounded-2xl bg-[#408A71] px-6 py-3 font-semibold text-white transition hover:bg-[hashtag#2f6d58] disabled:cursor-not-allowed disabled:opacity-70"
+>
+ {isSendingOffer ? "Sending..." : "Send Offer"}
+</button>
+
  </div>
 )}
+
+
+{candidate.status === "Offer" &&
+ candidate.offer?.status === "Sent" &&
+ isRecruiter && (
+ <div className="mt-4 rounded-2xl border border-blue-200 bg-blue-50 p-5 dark:border-blue-500/20 dark:bg-blue-500/10">
+ <div>
+ <h3 className="text-lg font-semibold text-blue-800 dark:text-blue-300">
+ Offer Sent
+ </h3>
+
+ <p className="mt-1 text-sm text-blue-700 dark:text-blue-400">
+ The offer has been sent to the candidate. You can copy the
+ candidate's offer link below.
+ </p>
+ </div>
+
+ <div className="mt-4 rounded-xl bg-white p-3 dark:bg-zinc-900">
+ <p className="break-all text-sm text-zinc-600 dark:text-zinc-300">
+ {`${window.location.origin}/candidate/offer/${candidate.offer.id}`}
+ </p>
+ </div>
+
+<button
+ type="button"
+ onClick={async () => {
+ const publicAppUrl = (
+ import.meta.env.VITE_PUBLIC_APP_URL ||
+ "https://recuriters-dashboard.onrender.com"
+).replace(/\/$/, "");
+
+const offerLink = `${publicAppUrl}/candidate/offer/${candidate.offer?.id}`;
+ try {
+ await navigator.clipboard.writeText(offerLink);
+
+ setLinkCopied(true);
+
+ setTimeout(() => {
+ setLinkCopied(false);
+ }, 2000);
+ } catch (error) {
+ console.error("Failed to copy offer link:", error);
+ }
+ }}
+ className="mt-4 w-full rounded-2xl bg-[hashtag#408A71] px-6 py-3 font-semibold text-white transition hover:bg-[hashtag#2f6d58]"
+>
+ {linkCopied ? "✓ Link Copied!" : "Copy Offer Link"}
+</button>
+
+ </div>
+ )}
 
  {/* Recruiter: hire after candidate accepts */}
  {offerAccepted && isRecruiter && (

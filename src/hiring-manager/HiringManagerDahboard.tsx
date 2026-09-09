@@ -288,6 +288,14 @@ const latestSelectedCandidate = selectedCandidate
  rejectHiring(candidateId, note);
  }}
 onCreateOffer={(candidateId, salary, startDate, employmentType, description,) => {
+console.log("PARENT OFFER DATA:", {
+ candidateId,
+ salary,
+ startDate,
+ employmentType,
+ description,
+ });
+
  createOffer(candidateId, salary, startDate, employmentType, description,);
 }}
 
@@ -295,8 +303,9 @@ onCreateOffer={(candidateId, salary, startDate, employmentType, description,) =>
 
  onApproveOffer={() => {}}
  onRejectOffer={() => {}}
- onSendOffer={(candidateId) => {
- sendOffer(candidateId);
+ onSendOffer={async (candidateId) => {
+ return await
+  sendOffer(candidateId);
 }}
  onHireCandidate={() => {}}
  />

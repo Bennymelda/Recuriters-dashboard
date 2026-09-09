@@ -14,7 +14,9 @@ const OfferApprovalRequests = () => {
  const rejectOffer = useCandidateStore(
  (state) => state.rejectOffer
  );
-
+const sendOffer = useCandidateStore(
+ (state) => state.sendOffer
+);
  const [selectedCandidate, setSelectedCandidate] =
  useState<Candidate | null>(null);
 
@@ -137,7 +139,9 @@ const OfferApprovalRequests = () => {
  onRejectOffer={(candidateId, note) => {
  rejectOffer(candidateId, note);
  }}
- onSendOffer={() => {}}
+ onSendOffer={async (candidateId) => {
+ return await sendOffer(candidateId);
+}}
  onHireCandidate={() => {}}
  />
  )}

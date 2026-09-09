@@ -26,6 +26,7 @@ import CompleteProfile from './pages/auth/Onboarding';
 import AcceptInvitation from './component/team/AcceptInvitaton';
 import JobApplicationForm from './component/jobs/JobPages/JobApplicationForm';
 import HiringManagerDashboard from './hiring-manager/HiringManagerDahboard';
+import CandidateOffer from './component/Candidates/CandidateOffer';
 
 function App() {
   const { pathname } = useLocation();
@@ -45,6 +46,10 @@ function App() {
       <Route path="/complete-profile" element={<CompleteProfile />} />
       <Route path="/accept-invitation/:invitationId" element={<AcceptInvitation />} />
 <Route path="/settings" element={<SettingsPage />} />
+<Route
+ path="/candidate/offer/:offerId"
+ element={<CandidateOffer />}
+/>
       {/* PUBLIC JOB APPLICATION */}
       <Route path="/jobs/:jobId/apply" element={<JobApplicationForm />} />
       <Route path="/apply/:jobId" element={<JobApplicationPage />} />

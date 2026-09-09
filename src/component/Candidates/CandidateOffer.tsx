@@ -4,9 +4,9 @@ import { useParams } from "react-router-dom";
 const CandidateOffer = () => {
  const { offerId } = useParams<{ offerId: string }>();
 
- const candidates = useCandidateStore(
- (state) => state.candidates
- );
+ const candidates = useCandidateStore((state) => state.candidates);
+const acceptOffer = useCandidateStore((state) => state.acceptOffer);
+const declineOffer = useCandidateStore((state) => state.declineOffer);
 
  const candidate = candidates.find(
  (candidate) => candidate.offer?.id === offerId
@@ -122,17 +122,19 @@ const CandidateOffer = () => {
 
  <button
  type="button"
- className="w-full rounded-2xl bg-[hashtag#408A71] px-6 py-3 font-semibold text-white transition hover:bg-[hashtag#2f6d58]"
- >
+ onClick={() => acceptOffer(candidate.id)}
+ className="w-full rounded-2xl bg-[#408A71] px-6 py-3 font-semibold text-white transition hover:bg-[#2f6d58]"
+>
  Accept Offer
- </button>
+</button>
 
  <button
  type="button"
+ onClick={() => declineOffer(candidate.id)}
  className="w-full rounded-2xl border border-red-300 px-6 py-3 font-semibold text-red-600 transition hover:bg-red-50 dark:border-red-500/40 dark:hover:bg-red-500/10"
- >
+>
  Decline Offer
- </button>
+</button>
 
  </div>
  )}

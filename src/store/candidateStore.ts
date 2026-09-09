@@ -194,18 +194,19 @@ rejectHiring: (candidateId: string, note?: string) => void;
 
 createOffer: (
  candidateId: string,
- salary?: number,
- startDate?: string,
- employmentType?: string,
+ salary: number,
+ startDate: string,
+ employmentType: string,
  
- description?:string,
+ description:string,
 ) => void;
 
 approveOffer: (candidateId: string) => void;
 
 rejectOffer: (candidateId: string, note?: string) => void;
 
-sendOffer: (candidateId: string) => void;
+ sendOffer: (candidateId: string) => Promise<boolean>;
+
 acceptOffer: (candidateId: string) => void;
 declineOffer: (candidateId: string, note?: string) => void;
 }
@@ -1111,6 +1112,7 @@ console.log("CREATE OFFER DATA:", {
  ? candidate
  : {
  ...candidate,
+ 
  offer: {
   id:crypto.randomUUID(),
  status: "Pending HR Approval" as const,
@@ -1121,7 +1123,9 @@ console.log("CREATE OFFER DATA:", {
  employmentType,
  createdBy: currentUser.id,
  createdByName: currentUser.fullName,
+  companyName: currentUser.companyName,
  },
+ 
  updatedAt: now,
  }
  );
@@ -1244,14 +1248,17 @@ rejectOffer: (candidateId, note) =>
  };
  }),
 sendOffer: async (candidateId) => {
+ console.log("🧪 DUMMY SEND OFFER FUNCTION CALLED", candidateId);
+
  const currentUser = useAuthStore.getState().user;
 
  if (!currentUser) {
- return;
+ return false;
  }
 
+ // Only Recruiters can send offers
  if (currentUser.role !== "Recruiter") {
- return;
+ return false;
  }
 
  const candidate = get().candidates.find(
@@ -1259,17 +1266,37 @@ sendOffer: async (candidateId) => {
  );
 
  if (!candidate) {
- return;
+ return false;
  }
 
+ // Offer must have HR approval
  if (candidate.offer?.status !== "Approved") {
- return;
+ return false;
  }
 
  if (!candidate.offer.id) {
  console.error("Cannot send offer: offer ID is missing.");
- return;
+ return false;
  }
+
+ try {
+ // 🧪 DUMMY EMAIL SEND
+ console.log("🧪 DUMMY OFFER SENT:", {
+ email: candidate.email,
+ fullName: candidate.fullName,
+ companyName:
+ candidate.offer.companyName || currentUser.companyName,
+ appliedRole: candidate.appliedRole,
+ salary: candidate.offer.salary,
+ startDate: candidate.offer.startDate,
+ employmentType: candidate.offer.employmentType,
+ description: candidate.offer.description,
+ offerId: candidate.offer.id,
+ });
+
+ // Give the dummy request a small delay
+ // so the "Sending..." state can be seen.
+ await new Promise((resolve) => setTimeout(resolve, 1000));
 
  const now = new Date().toISOString();
 
@@ -1285,7 +1312,6 @@ sendOffer: async (candidateId) => {
  stageUpdatedAt: now,
  };
 
- // Update Zustand + Firestore/local persistence
  const updatedCandidates = get().candidates.map((candidate) =>
  candidate.id === candidateId
  ? updatedCandidate
@@ -1299,43 +1325,15 @@ sendOffer: async (candidateId) => {
  isLoading: false,
  });
 
- // Send the offer email
- try {
- const response = await fetch(
-  "https://recuriters-dashboard-api.onrender.com/api/offers/send",
- {
- method: "POST",
- headers: {
- "Content-Type": "application/json",
- },
- body: JSON.stringify({
- email: candidate.email,
- fullName: candidate.fullName,
- companyName: candidate.offer.companyName,
- appliedRole: candidate.appliedRole,
- salary: candidate.offer.salary,
- startDate: candidate.offer.startDate,
- employmentType: candidate.offer.employmentType,
- description: candidate.offer.description,
- offerId: candidate.offer.id,
- }),
- }
- );
-
- const data = await response.json();
-
- if (!response.ok) {
- throw new Error(
- data.message || "Failed to send offer email."
- );
- }
-
  console.log(
- "Offer email sent successfully:",
- data
+ "✅ Dummy offer sent successfully."
  );
+
+ return true;
  } catch (error) {
- console.error("Offer email error:", error);
+ console.error("Dummy offer error:", error);
+
+ return false;
  }
 },
 
@@ -1365,12 +1363,14 @@ sendOffer: async (candidateId) => {
  ? candidate
  : {
  ...candidate,
+ status: "Hired",
  offer: {
  ...candidate.offer!,
  status: "Accepted" as const,
  respondedAt: now,
  },
  updatedAt: now,
+ stageUpdatedAt: now,
  }
  );
 
