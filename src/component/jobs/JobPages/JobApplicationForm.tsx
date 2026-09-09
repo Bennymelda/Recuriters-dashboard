@@ -257,6 +257,22 @@ const handleSubmit = async (e: React.FormEvent) => {
  "Your application has been submitted successfully!"
  );
 
+
+
+// Clear form
+setFullName("");
+setEmail("");
+setPhone("");
+setLocation("");
+setCv(null);
+setCoverLetter("");
+setExperience("");
+setLinkedin("");
+setPortfolio("");
+
+
+
+
  } catch (error) {
  console.error(
  "Application submission error:",

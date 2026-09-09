@@ -97,7 +97,7 @@ const handleSubmit = async (e: React.FormEvent) => {
  id: crypto.randomUUID(),
  name: title,
  icon: "work",
- iconColor: "hashtag#408A71",
+ iconColor: "#408A71",
  title,
  companyId: company.id,
  department,

@@ -207,8 +207,9 @@ rejectOffer: (candidateId: string, note?: string) => void;
 
  sendOffer: (candidateId: string) => Promise<boolean>;
 
-acceptOffer: (candidateId: string) => void;
-declineOffer: (candidateId: string, note?: string) => void;
+acceptOffer: (candidateId: string) => Promise<void>;
+
+declineOffer: (candidateId: string, note?: string) => Promise<void>;
 }
 
 const removeUndefined = <T extends Record<string, any>>(obj: T): T => {
@@ -1338,95 +1339,106 @@ await setDoc(
 
 
 
- acceptOffer: (candidateId) =>
- set((state) => {
- const candidate = state.candidates.find(
- (candidate) => candidate.id === candidateId
- );
+acceptOffer: async (candidateId) => {
+  const candidate = get().candidates.find(
+    (candidate) => candidate.id === candidateId
+  );
 
- if (!candidate) {
- return state;
- }
+  if (!candidate) {
+    return;
+  }
 
- // The offer must have been sent
- if (candidate.offer?.status !== "Sent") {
- return state;
- }
+  // The offer must have been sent
+  if (candidate.offer?.status !== "Sent") {
+    return;
+  }
 
- const now = new Date().toISOString();
+  const now = new Date().toISOString();
 
- const updatedCandidates: Candidate[] =
- state.candidates.map((candidate) =>
- candidate.id !== candidateId
- ? candidate
- : {
- ...candidate,
- status: "Hired",
- offer: {
- ...candidate.offer!,
- status: "Accepted" as const,
- respondedAt: now,
- },
- updatedAt: now,
- stageUpdatedAt: now,
- }
- );
+  const updatedCandidate: Candidate = {
+    ...candidate,
+    status: "Hired",
+    offer: {
+      ...candidate.offer,
+      status: "Accepted",
+      respondedAt: now,
+    },
+    hiredAt: now,
+    updatedAt: now,
+    stageUpdatedAt: now,
+  };
 
- persistCandidates(updatedCandidates);
+  const cleanCandidate = removeUndefined(updatedCandidate);
 
- return {
- candidates: updatedCandidates,
- isLoading: false,
- };
- }),
+  await setDoc(
+    doc(db, "candidates", candidateId),
+    cleanCandidate
+  );
 
-declineOffer: (candidateId, note) =>
- set((state) => {
- const candidate = state.candidates.find(
- (candidate) => candidate.id === candidateId
- );
+  const updatedCandidates = get().candidates.map((candidate) =>
+    candidate.id === candidateId ? updatedCandidate : candidate
+  );
 
- if (!candidate) {
- return state;
- }
+  persistCandidates(updatedCandidates);
 
- // The offer must have been sent
- if (candidate.offer?.status !== "Sent") {
- return state;
- }
+  set({
+    candidates: updatedCandidates,
+    isLoading: false,
+  });
+},
 
- const now = new Date().toISOString();
+declineOffer: async (candidateId, note) => {
+  const candidate = get().candidates.find(
+    (candidate) => candidate.id === candidateId
+  );
 
- const updatedCandidates: Candidate[] =
- state.candidates.map((candidate) =>
- candidate.id !== candidateId
- ? candidate
- : {
- ...candidate,
- status: "Offer Declined",
- offer: {
- ...candidate.offer!,
- status: "Declined" as const,
- respondedAt: now,
- },
- rejection: note
- ? {
- reason: "Candidate declined offer",
- note,
- date: now,
- }
- : candidate.rejection,
- updatedAt: now,
- stageUpdatedAt: now,
- }
- );
+  if (!candidate) {
+    return;
+  }
 
- persistCandidates(updatedCandidates);
+  // The offer must have been sent
+  if (candidate.offer?.status !== "Sent") {
+    return;
+  }
 
- return {
- candidates: updatedCandidates,
- isLoading: false,
- };
- }),
+  const now = new Date().toISOString();
+
+  const updatedCandidate: Candidate = {
+    ...candidate,
+    status: "Offer Declined",
+    offer: {
+      ...candidate.offer,
+      status: "Declined",
+      respondedAt: now,
+    },
+    rejection: note
+      ? {
+          reason: "Candidate declined offer",
+          note,
+          date: now,
+        }
+      : candidate.rejection,
+    updatedAt: now,
+    stageUpdatedAt: now,
+  };
+
+  const cleanCandidate = removeUndefined(updatedCandidate);
+
+  await setDoc(
+    doc(db, "candidates", candidateId),
+    cleanCandidate
+  );
+
+  const updatedCandidates = get().candidates.map((candidate) =>
+    candidate.id === candidateId ? updatedCandidate : candidate
+  );
+
+  persistCandidates(updatedCandidates);
+
+  set({
+    candidates: updatedCandidates,
+    isLoading: false,
+  });
+},
 
 }));
