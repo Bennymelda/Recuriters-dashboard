@@ -211,7 +211,11 @@ acceptOffer: (candidateId: string) => void;
 declineOffer: (candidateId: string, note?: string) => void;
 }
 
-
+const removeUndefined = <T extends Record<string, any>>(obj: T): T => {
+  return Object.fromEntries(
+    Object.entries(obj).filter(([, value]) => value !== undefined)
+  ) as T;
+};
 export const useCandidateStore = create<CandidateStore>((set, get) => ({
  candidates: loadPersistedCandidates(),
 
@@ -1300,9 +1304,11 @@ sendOffer: async (candidateId) => {
  updatedAt: now,
  stageUpdatedAt: now,
  };
+const cleanCandidate = removeUndefined(updatedCandidate);
+
 await setDoc(
   doc(db, "candidates", updatedCandidate.id),
-  updatedCandidate
+  cleanCandidate
 );
  const updatedCandidates = get().candidates.map((candidate) =>
  candidate.id === candidateId
