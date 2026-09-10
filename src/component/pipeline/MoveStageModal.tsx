@@ -376,9 +376,30 @@ hiringApprovalPending && (
  </button>
  </div>
  )}
+{candidate.hiringApproval?.status === "Approved" &&
+  !candidate.offer && (
+  <div className="mt-4 rounded-2xl border border-green-200 bg-green-50 p-5 dark:border-green-500/30 dark:bg-green-500/10">
+    <h3 className="text-lg font-semibold text-green-700 dark:text-green-400">
+      ✓ Candidate Approved
+    </h3>
 
+    <p className="mt-1 text-sm text-green-600 dark:text-green-300">
+      This candidate has been approved by the Hiring Manager and is ready for the next step.
+    </p>
+  </div>
+)}
 
+{candidate.offer?.status === "Pending HR Approval" && isRecruiter && (
+  <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-5 dark:border-amber-500/30 dark:bg-amber-500/10">
+    <h3 className="text-lg font-semibold text-amber-700 dark:text-amber-400">
+      ⏳ Waiting for HR Approval
+    </h3>
 
+    <p className="mt-1 text-sm text-amber-600 dark:text-amber-300">
+      The offer has been submitted to HR and is currently waiting for approval.
+    </p>
+  </div>
+)}
 
 
  {/* Recruiter: create offer */}
@@ -436,13 +457,19 @@ hiringApprovalPending && (
  ₦
  </span>
 
- <input
- type="number"
- value={salary}
- onChange={(e) => setSalary(e.target.value)}
- placeholder="Enter salary"
- className="w-full bg-transparent px-3 py-3 text-sm text-zinc-900 outline-none dark:text-white"
- />
+<input
+  type="text"
+  value={salary ? Number(salary).toLocaleString("en-NG") : ""}
+  onChange={(e) => {
+    const value = e.target.value.replace(/,/g, "");
+    
+    if (!/^\d*$/.test(value)) return;
+    
+    setSalary(value);
+  }}
+  placeholder="Enter salary"
+  className="w-full bg-transparent px-3 py-3 text-sm text-zinc-900 outline-none dark:text-white"
+/>
  </div>
 </div>
 
@@ -453,11 +480,12 @@ hiringApprovalPending && (
  </label>
 
  <input
- type="date"
- value={startDate}
- onChange={(e) => setStartDate(e.target.value)}
- className="mt-2 w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 outline-none transition focus:border-[#408A71] dark:border-zinc-700 dark:bg-zinc-900 dark:text-white"
- />
+  type="date"
+  value={startDate}
+  min={new Date().toISOString().split("T")[0]}
+  onChange={(e) => setStartDate(e.target.value)}
+  className="mt-2 w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 outline-none transition focus:border-[#408A71] dark:border-zinc-700 dark:bg-zinc-900 dark:text-white"
+/>
  </div>
 
  {/* Employment Type */}
@@ -483,13 +511,7 @@ hiringApprovalPending && (
  <button
  onClick={() => {
 
- console.log("FORM OFFER DATA:", {
- salary,
- startDate,
- employmentType,
- description,
- companyName: user?.companyName,
- });
+ 
 
  if (!salary || !startDate || !employmentType) {
  return;
@@ -694,6 +716,9 @@ hiringApprovalPending && (
 ).replace(/\/$/, "");
 
 const offerLink = `${publicAppUrl}/candidate/offer/${candidate.offer?.id}`;
+console.log("OFFER LINK CANDIDATE:", candidate);
+console.log("OFFER OBJECT:", candidate.offer);
+console.log("OFFER ID:", candidate.offer?.id);
  try {
  await navigator.clipboard.writeText(offerLink);
 
@@ -706,7 +731,7 @@ const offerLink = `${publicAppUrl}/candidate/offer/${candidate.offer?.id}`;
  console.error("Failed to copy offer link:", error);
  }
  }}
- className="mt-4 w-full rounded-2xl bg-[hashtag#408A71] px-6 py-3 font-semibold text-white transition hover:bg-[hashtag#2f6d58]"
+ className="mt-4 w-full rounded-2xl bg-[#408A71] px-6 py-3 font-semibold text-white transition hover:bg-[#2f6d58]"
 >
  {linkCopied ? "✓ Link Copied!" : "Copy Offer Link"}
 </button>
