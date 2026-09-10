@@ -133,7 +133,7 @@ useEffect(() => {
 />
 
 {totalPages > 1 && (
- <div className="flex items-center justify-center gap-2 pb-8">
+ <div className="flex mt-5 items-center justify-center gap-2 pb-8">
  <button
  onClick={() =>
  setCurrentPage((page) => Math.max(page - 1, 1))

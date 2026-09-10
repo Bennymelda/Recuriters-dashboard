@@ -173,12 +173,16 @@ const CandidateOffer = () => {
           <div className="mt-10 flex flex-col gap-3 sm:flex-row">
 
             <button
-              type="button"
-              onClick={() => acceptOffer(candidate.id)}
-              className="w-full rounded-2xl bg-[#408A71] px-6 py-3 font-semibold text-white transition hover:bg-[#2f6d58]"
-            >
-              Accept Offer
-            </button>
+  type="button"
+  onClick={() => {
+    console.log("ACCEPT BUTTON CLICKED");
+    console.log("CANDIDATE ID:", candidate.id);
+    acceptOffer(candidate.id);
+  }}
+  className="w-full rounded-2xl bg-[#408A71] px-6 py-3 font-semibold text-white transition hover:bg-[#2f6d58]"
+>
+  Accept Offer
+</button>
 
             <button
               type="button"

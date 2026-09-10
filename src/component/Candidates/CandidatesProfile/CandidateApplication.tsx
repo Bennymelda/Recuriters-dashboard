@@ -185,7 +185,7 @@ const CandidateApplication = ({
  </div>
 
  </div>
-<p>{candidate.resumeUrl}</p>
+
  <div className="border-t border-zinc-200 dark:border-zinc-700">
  <CandidateResume candidate={candidate} />
  </div>

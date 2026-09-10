@@ -6,7 +6,7 @@ import {
  doc,
  setDoc,
  getDocs,
-
+getDoc,
 } from "firebase/firestore";
 
 import { db } from "../firebase";
@@ -1340,53 +1340,54 @@ await setDoc(
 
 
 acceptOffer: async (candidateId) => {
-  const candidate = get().candidates.find(
-    (candidate) => candidate.id === candidateId
-  );
+ const candidateRef = doc(db, "candidates", candidateId);
 
-  if (!candidate) {
-    return;
-  }
+ const candidateSnapshot = await getDoc(candidateRef);
 
-  // The offer must have been sent
-  if (candidate.offer?.status !== "Sent") {
-    return;
-  }
+ if (!candidateSnapshot.exists()) {
+ return;
+ }
 
-  const now = new Date().toISOString();
+ const candidate: Candidate = {
+ ...(candidateSnapshot.data() as Candidate),
+ id: candidateSnapshot.id,
+ };
 
-  const updatedCandidate: Candidate = {
-    ...candidate,
-    status: "Hired",
-    offer: {
-      ...candidate.offer,
-      status: "Accepted",
-      respondedAt: now,
-    },
-    hiredAt: now,
-    updatedAt: now,
-    stageUpdatedAt: now,
-  };
+ // The offer must have been sent
+ if (candidate.offer?.status !== "Sent") {
+ return;
+ }
 
-  const cleanCandidate = removeUndefined(updatedCandidate);
+ const now = new Date().toISOString();
 
-  await setDoc(
-    doc(db, "candidates", candidateId),
-    cleanCandidate
-  );
+ const updatedCandidate: Candidate = {
+ ...candidate,
+ status: "Hired",
+ offer: {
+ ...candidate.offer,
+ status: "Accepted",
+ respondedAt: now,
+ },
+ hiredAt: now,
+ updatedAt: now,
+ stageUpdatedAt: now,
+ };
 
-  const updatedCandidates = get().candidates.map((candidate) =>
-    candidate.id === candidateId ? updatedCandidate : candidate
-  );
+ const cleanCandidate = removeUndefined(updatedCandidate);
 
-  persistCandidates(updatedCandidates);
+ await setDoc(candidateRef, cleanCandidate);
 
-  set({
-    candidates: updatedCandidates,
-    isLoading: false,
-  });
+ const updatedCandidates = get().candidates.map((candidate) =>
+ candidate.id === candidateId ? updatedCandidate : candidate
+ );
+
+ persistCandidates(updatedCandidates);
+
+ set({
+ candidates: updatedCandidates,
+ isLoading: false,
+ });
 },
-
 declineOffer: async (candidateId, note) => {
   const candidate = get().candidates.find(
     (candidate) => candidate.id === candidateId

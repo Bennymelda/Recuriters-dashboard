@@ -10,7 +10,7 @@ import { useJobStore } from "../../store/jobStore";
 import { useCandidateStore } from "../../store/candidateStore";
 import { GoArrowUpRight } from "react-icons/go";
 import { AiOutlineRise } from "react-icons/ai";
-import { useAuthStore } from "../../store/authStore";
+
 import { useNavigate } from "react-router";
 
 const DashboardStats = () => {
@@ -139,14 +139,7 @@ const navigate = useNavigate();
  >
  {/* Top */}
  <div className="flex items-center justify-between">
-  <button
-     onClick={() => {
-     useAuthStore.getState().setRole("Recruiter");
-     window.location.reload();
-     }}
-    >
-     Test as Hiring Manager
-    </button>
+
  <div
  className={`
  rounded-2xl
