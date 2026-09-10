@@ -1340,53 +1340,75 @@ await setDoc(
 
 
 acceptOffer: async (candidateId) => {
- const candidateRef = doc(db, "candidates", candidateId);
+  try {
+    const candidateRef = doc(db, "candidates", candidateId);
 
- const candidateSnapshot = await getDoc(candidateRef);
+    // Get the latest candidate directly from Firestore
+    const candidateSnapshot = await getDoc(candidateRef);
 
- if (!candidateSnapshot.exists()) {
- return;
- }
+    if (!candidateSnapshot.exists()) {
+      console.error("Candidate not found:", candidateId);
+      return;
+    }
 
- const candidate: Candidate = {
- ...(candidateSnapshot.data() as Candidate),
- id: candidateSnapshot.id,
- };
+    const candidate: Candidate = {
+      ...(candidateSnapshot.data() as Candidate),
+      id: candidateSnapshot.id,
+    };
 
- // The offer must have been sent
- if (candidate.offer?.status !== "Sent") {
- return;
- }
+    console.log("Candidate before accepting:", candidate);
+    console.log("Offer status:", candidate.offer?.status);
 
- const now = new Date().toISOString();
+    // The offer must have been sent
+    if (candidate.offer?.status !== "Sent") {
+      console.error(
+        "Offer cannot be accepted. Current status:",
+        candidate.offer?.status
+      );
+      return;
+    }
 
- const updatedCandidate: Candidate = {
- ...candidate,
- status: "Hired",
- offer: {
- ...candidate.offer,
- status: "Accepted",
- respondedAt: now,
- },
- hiredAt: now,
- updatedAt: now,
- stageUpdatedAt: now,
- };
+    const now = new Date().toISOString();
 
- const cleanCandidate = removeUndefined(updatedCandidate);
+    const updatedCandidate: Candidate = {
+      ...candidate,
+      status: "Hired",
+      offer: {
+        ...candidate.offer,
+        status: "Accepted",
+        respondedAt: now,
+      },
+      hiredAt: now,
+      updatedAt: now,
+      stageUpdatedAt: now,
+    };
 
- await setDoc(candidateRef, cleanCandidate);
+    const cleanCandidate = removeUndefined(updatedCandidate);
 
- const updatedCandidates = get().candidates.map((candidate) =>
- candidate.id === candidateId ? updatedCandidate : candidate
- );
+    // Save the updated candidate to Firestore
+    await setDoc(candidateRef, cleanCandidate);
 
- persistCandidates(updatedCandidates);
+    console.log("Candidate successfully updated in Firestore:", cleanCandidate);
 
- set({
- candidates: updatedCandidates,
- isLoading: false,
- });
+    // Update Zustand immediately
+    const updatedCandidates = get().candidates.map((candidate) =>
+      candidate.id === candidateId ? updatedCandidate : candidate
+    );
+
+    persistCandidates(updatedCandidates);
+
+    set({
+      candidates: updatedCandidates,
+      isLoading: false,
+    });
+
+    console.log("Candidate state updated to Hired");
+  } catch (error) {
+    console.error("Error accepting offer:", error);
+    set({
+      isLoading: false,
+    });
+  }
 },
 declineOffer: async (candidateId, note) => {
   const candidate = get().candidates.find(

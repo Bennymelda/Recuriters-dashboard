@@ -99,9 +99,7 @@ const CandidateOffer = () => {
             </p>
           </div>
 
-          <div className="rounded-full bg-[#408A71]/10 px-4 py-2 text-sm font-semibold text-[#408A71]">
-            Job Offer
-          </div>
+
         </div>
       </div>
 
@@ -277,11 +275,9 @@ const CandidateOffer = () => {
 
         {/* Actions */}
         {offer.status === "Sent" && (
-          <div className="mt-10 rounded-2xl border border-zinc-200 bg-zinc-50 p-5 dark:border-zinc-700 dark:bg-zinc-800/60">
+          <div className="mt-10">
 
-            <p className="text-center text-sm text-zinc-500 dark:text-zinc-400">
-              Please indicate your decision regarding this employment offer.
-            </p>
+            
 
             <div className="mt-5 flex flex-col gap-3 sm:flex-row">
 
