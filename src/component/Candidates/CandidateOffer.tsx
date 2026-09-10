@@ -282,16 +282,28 @@ const CandidateOffer = () => {
             <div className="mt-5 flex flex-col gap-3 sm:flex-row">
 
               <button
-                type="button"
-                onClick={() => {
-                  console.log("ACCEPT BUTTON CLICKED");
-                  console.log("CANDIDATE ID:", candidate.id);
-                  acceptOffer(candidate.id);
-                }}
-                className="w-full rounded-2xl bg-[#408A71] px-6 py-3 font-semibold text-white transition hover:bg-[#2f6d58]"
-              >
-                Accept Offer
-              </button>
+  type="button"
+  onClick={async () => {
+    await acceptOffer(candidate.id);
+
+    setCandidate((prev) =>
+      prev
+        ? {
+            ...prev,
+            status: "Hired",
+            offer: {
+              ...prev.offer!,
+              status: "Accepted",
+              respondedAt: new Date().toISOString(),
+            },
+          }
+        : prev
+    );
+  }}
+  className="w-full rounded-2xl bg-[#408A71] px-6 py-3 font-semibold text-white transition hover:bg-[#2f6d58]"
+>
+  Accept Offer
+</button>
 
               <button
                 type="button"

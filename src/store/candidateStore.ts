@@ -1336,9 +1336,6 @@ await setDoc(
  }
 },
 
-
-
-
 acceptOffer: async (candidateId) => {
   try {
     const candidateRef = doc(db, "candidates", candidateId);
