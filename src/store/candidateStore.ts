@@ -237,6 +237,10 @@ fetchCandidates: async () => {
  id: docSnap.id,
  }));
 
+ console.log(
+  "🔥 FIREBASE CANDIDATES:",
+  firebaseCandidates
+);
  set((state) => {
  // Use Map to merge: initialCandidates (base) + state.candidates (local changes) + firebaseCandidates (remote)
  // This ensures initialCandidates are always present and duplicates are prevented by ID
