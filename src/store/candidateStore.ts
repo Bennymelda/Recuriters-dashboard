@@ -7,6 +7,10 @@ import {
  setDoc,
  getDocs,
  getDoc,
+ onSnapshot,
+ 
+
+
 
 } from "firebase/firestore";
 
@@ -211,6 +215,7 @@ rejectOffer: (candidateId: string, note?: string) => void;
 acceptOffer: (candidateId: string) => Promise<void>;
 
 declineOffer: (candidateId: string, note?: string) => Promise<void>;
+subscribeToCandidates: () => () => void;
 }
 
 const removeUndefined = <T extends Record<string, any>>(obj: T): T => {
@@ -1535,5 +1540,115 @@ declineOffer: async (candidateId, note) => {
     isLoading: false,
   });
 },
+
+subscribeToCandidates: () => {
+  const unsubscribe = onSnapshot(
+    collection(db, "candidates"),
+    (snapshot) => {
+      const firebaseCandidates = snapshot.docs.map((docSnap) => ({
+        ...(docSnap.data() as Candidate),
+        id: docSnap.id,
+      }));
+
+      console.log(
+        "🔥 REAL-TIME CANDIDATE UPDATE:",
+        firebaseCandidates
+      );
+
+      set((state) => {
+        const candidateMap = new Map(
+          (initialCandidates as Candidate[]).map((candidate) => [
+            candidate.id,
+            candidate,
+          ])
+        );
+
+        // Keep the current local state first
+        state.candidates.forEach((candidate) => {
+          if (candidate.id) {
+            candidateMap.set(candidate.id, candidate);
+          }
+        });
+
+        // Merge Firestore updates
+        firebaseCandidates.forEach((firebaseCandidate) => {
+          const localCandidate = candidateMap.get(
+            firebaseCandidate.id
+          );
+
+          // New candidate
+          if (!localCandidate) {
+            candidateMap.set(
+              firebaseCandidate.id,
+              firebaseCandidate
+            );
+            return;
+          }
+
+          const remoteOfferStatus =
+            firebaseCandidate.offer?.status;
+
+          const shouldSyncPipelineStatus =
+            remoteOfferStatus === "Sent" ||
+            remoteOfferStatus === "Accepted" ||
+            remoteOfferStatus === "Declined";
+
+          const mergedCandidate: Candidate = {
+            ...localCandidate,
+
+            // Firestore is the source of truth for offer changes
+            offer:
+              firebaseCandidate.offer ??
+              localCandidate.offer,
+
+            // Only sync pipeline status when the offer workflow
+            // has changed it
+            status: shouldSyncPipelineStatus
+              ? firebaseCandidate.status
+              : localCandidate.status,
+
+            hiredAt:
+              firebaseCandidate.hiredAt ??
+              localCandidate.hiredAt,
+
+            updatedAt:
+              firebaseCandidate.updatedAt ??
+              localCandidate.updatedAt,
+
+            stageUpdatedAt:
+              shouldSyncPipelineStatus
+                ? firebaseCandidate.stageUpdatedAt ??
+                  localCandidate.stageUpdatedAt
+                : localCandidate.stageUpdatedAt,
+          };
+
+          candidateMap.set(
+            firebaseCandidate.id,
+            mergedCandidate
+          );
+        });
+
+        const updatedCandidates = Array.from(
+          candidateMap.values()
+        );
+
+        persistCandidates(updatedCandidates);
+
+        return {
+          candidates: updatedCandidates,
+        };
+      });
+    },
+    (error) => {
+      console.error(
+        "❌ Real-time candidate listener error:",
+        error
+      );
+    }
+  );
+
+  return unsubscribe;
+},
+
 
 }));
