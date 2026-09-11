@@ -360,16 +360,18 @@ dark:ring-zinc-900
  <>
  <hr className="my-2 border-zinc-200 dark:border-zinc-700" />
 
- <button
- onClick={() => {
- setOpenMenu(false);
- setOpenRejectModal(true);
- }}
- className="flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-3 text-sm text-red-600 transition hover:bg-red-50 dark:hover:bg-red-500/10"
- >
- <MdClose size={18} />
- Reject Candidate
- </button>
+{candidate.status !== "Hired" && (
+  <button
+    onClick={() => {
+      setOpenMenu(false);
+      setOpenRejectModal(true);
+    }}
+    className="flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-3 text-sm text-red-600 transition hover:bg-red-50 dark:hover:bg-red-500/10"
+  >
+    <MdClose size={18} />
+    Reject Candidate
+  </button>
+)}
  </>
  )}
  </div>

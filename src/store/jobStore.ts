@@ -8,6 +8,8 @@ import {
   setDoc,
   getDocs,
   updateDoc,
+  query,
+  where,
   deleteDoc,
 } from "firebase/firestore";
 
@@ -127,7 +129,7 @@ export const useJobStore = create<JobStore>((set, get) => ({
       throw error;
     }
   },
-
+/*
   deleteJob: async (id) => {
     try {
       await deleteDoc(doc(db, "jobs", id));
@@ -142,6 +144,53 @@ export const useJobStore = create<JobStore>((set, get) => ({
       throw error;
     }
   },
+*/
+
+deleteJob: async (id) => {
+  try {
+    // Find all candidates belonging to this job
+    const candidatesQuery = query(
+      collection(db, "candidates"),
+      where("jobId", "==", id)
+    );
+
+    const candidatesSnapshot = await getDocs(candidatesQuery);
+
+    // Delete all related candidates from Firestore
+    await Promise.all(
+      candidatesSnapshot.docs.map((candidateDoc) =>
+        deleteDoc(candidateDoc.ref)
+      )
+    );
+
+    // Delete the job from Firestore
+    await deleteDoc(doc(db, "jobs", id));
+
+    // Remove the job from local state
+    set((state) => {
+      const nextJobs = state.jobs.filter(
+        (job) => job.id !== id
+      );
+
+      persistJobs(nextJobs);
+
+      return {
+        jobs: nextJobs,
+      };
+    });
+
+    console.log(
+      `✅ Job ${id} and ${candidatesSnapshot.size} related candidate(s) deleted.`
+    );
+  } catch (error) {
+    console.error(
+      "Failed to delete job and related candidates:",
+      error
+    );
+
+    throw error;
+  }
+},
 
   duplicateJob: (id) => {
     set((state) => {

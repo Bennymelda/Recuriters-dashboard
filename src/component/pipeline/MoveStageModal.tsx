@@ -317,6 +317,23 @@ onMove(
  )}
 
 {candidate.status === "Interview" &&
+  isRecruiter &&
+  !hasPassedFinalInterview &&
+  !hiringApprovalPending &&
+  !hiringApproved && (
+    <div className="rounded-2xl border border-gray-200 bg-gray-50 p-5 text-center dark:border-white/10 dark:bg-white/5">
+      <p className="font-semibold text-gray-900 dark:text-white">
+        Final interview required
+      </p>
+
+      <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+        You can only request Hiring Manager approval after the
+        candidate has completed and passed the Final Interview.
+      </p>
+    </div>
+  )}
+
+{candidate.status === "Interview" &&
  isRecruiter &&
  hiringApprovalPending && (
  <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 dark:border-amber-500/20 dark:bg-amber-500/10">
@@ -330,6 +347,8 @@ onMove(
  </div>
  )}
 
+
+{/* 
 {candidate.status === "Interview" &&
  isRecruiter &&
  hiringApproved &&
@@ -346,7 +365,7 @@ onMove(
  </div>
  </>
 )}
-
+*/}
 
 
  {/* Hiring Manager: approve */}
@@ -537,114 +556,135 @@ hiringApprovalPending && (
  )}
 
  {/* HR: approve offer */}
- {/* HR: review and approve offer */}
-{offerPendingHRApproval && isHRManager && (
- <div className="mt-4 rounded-2xl border border-zinc-200 bg-zinc-50 p-5 dark:border-zinc-700 dark:bg-zinc-800">
 
- <div>
- <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">
- Review Offer
- </h3>
+{(offerPendingHRApproval && isHRManager  || candidate.offer?.status === "Draft") && (
+  <div className="mt-4 rounded-2xl border border-zinc-200 bg-zinc-50 p-5 dark:border-zinc-700 dark:bg-zinc-800">
 
- <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
- Review the offer details before making your decision.
- </p>
- </div>
+    <div>
+      <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">
+        Review Offer
+      </h3>
 
- {/* Company */}
- <div className="mt-5">
- <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
- Company
- </p>
+      <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+        Review the offer details before making your decision.
+      </p>
+    </div>
 
- <p className="mt-1 font-medium text-zinc-900 dark:text-white">
- {candidate.offer?.companyName || "—"}
- </p>
- </div>
+    {/* Company */}
+    <div className="mt-5">
+      <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+        Company
+      </p>
 
- {/* Offer Message */}
- <div className="mt-4">
- <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
- Offer Message
- </p>
+      <p className="mt-1 font-medium text-zinc-900 dark:text-white">
+        {candidate.offer?.companyName || "—"}
+      </p>
+    </div>
 
- <div className="mt-2 rounded-xl border border-zinc-200 bg-white p-4 text-sm leading-6 text-zinc-700 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300">
- {candidate.offer?.description || "No offer message provided."}
- </div>
- </div>
+    {/* Offer Message */}
+    <div className="mt-4">
+      <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+        Offer Message
+      </p>
 
- {/* Salary */}
- <div className="mt-4">
- <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
- Salary
- </p>
+      <div className="mt-2 rounded-xl border border-zinc-200 bg-white p-4 text-sm leading-6 text-zinc-700 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300">
+        {candidate.offer?.description || "No offer message provided."}
+      </div>
+    </div>
 
- <p className="mt-1 font-medium text-zinc-900 dark:text-white">
- {candidate.offer?.salary
- ? `₦${candidate.offer.salary.toLocaleString()}`
- : "—"}
+    {/* Salary */}
+    <div className="mt-4">
+      <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+        Salary
+      </p>
 
- </p>
- </div>
+      <p className="mt-1 font-medium text-zinc-900 dark:text-white">
+        {candidate.offer?.salary
+          ? `₦${candidate.offer.salary.toLocaleString()}`
+          : "—"}
+      </p>
+    </div>
 
- {/* Start Date */}
- <div className="mt-4">
- <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
- Start Date
- </p>
+    {/* Start Date */}
+    <div className="mt-4">
+      <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+        Start Date
+      </p>
 
- <p className="mt-1 font-medium text-zinc-900 dark:text-white">
- {candidate.offer?.startDate || "—"}
- </p>
- </div>
+      <p className="mt-1 font-medium text-zinc-900 dark:text-white">
+        {candidate.offer?.startDate || "—"}
+      </p>
+    </div>
 
- {/* Employment Type */}
- <div className="mt-4">
- <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
- Employment Type
- </p>
+    {/* Employment Type */}
+    <div className="mt-4">
+      <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+        Employment Type
+      </p>
 
- <p className="mt-1 font-medium text-zinc-900 dark:text-white">
- {candidate.offer?.employmentType || "—"}
- </p>
- </div>
+      <p className="mt-1 font-medium text-zinc-900 dark:text-white">
+        {candidate.offer?.employmentType || "—"}
+      </p>
+    </div>
 
- {/* Created By */}
- <div className="mt-4">
- <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
- Created By
- </p>
+    {/* Created By */}
+    <div className="mt-4">
+      <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+        Created By
+      </p>
 
- <p className="mt-1 font-medium text-zinc-900 dark:text-white">
- {candidate.offer?.createdByName || "Recruiter"}
- </p>
- </div>
+      <p className="mt-1 font-medium text-zinc-900 dark:text-white">
+        {candidate.offer?.createdByName || "Recruiter"}
+      </p>
+    </div>
 
- {/* Decision buttons */}
- <div className="mt-6 flex flex-col gap-3 sm:flex-row">
- <button
- onClick={() => {
- onApproveOffer(candidate.id);
- onClose();
- }}
- className="w-full rounded-2xl bg-[#408A71] px-6 py-3 font-semibold text-white transition hover:bg-[#2f6d58]"
- >
- Approve Offer
- </button>
+    {/* Decision buttons */}
+    {candidate.offer?.status === "Pending HR Approval" && (
+      <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+        <button
+          onClick={() => {
+            onApproveOffer(candidate.id);
+            onClose();
+          }}
+          className="w-full rounded-2xl bg-[#408A71] px-6 py-3 font-semibold text-white transition hover:bg-[#2f6d58]"
+        >
+          Approve Offer
+        </button>
 
- <button
- onClick={() => {
- onRejectOffer(candidate.id);
- onClose();
- }}
- className="w-full rounded-2xl border border-red-300 px-6 py-3 font-semibold text-red-600 transition hover:bg-red-50 dark:border-red-500/40 dark:hover:bg-red-500/10"
- >
- Reject Offer
- </button>
- </div>
+        <button
+          onClick={() => {
+            onRejectOffer(candidate.id);
+            onClose();
+          }}
+          className="w-full rounded-2xl border border-red-300 px-6 py-3 font-semibold text-red-600 transition hover:bg-red-50 dark:border-red-500/40 dark:hover:bg-red-500/10"
+        >
+          Reject Offer
+        </button>
+      </div>
+    )}
 
- </div>
+    {/* Offer Rejected */}
+    {candidate.offer?.status === "Draft" && (
+      <div className="mt-6 rounded-2xl border border-red-200 bg-red-50 p-5 dark:border-red-500/20 dark:bg-red-500/10">
+        <p className="font-semibold text-red-700 dark:text-red-400">
+          Offer Rejected
+        </p>
+
+        <p className="mt-1 text-sm text-red-600 dark:text-red-300">
+          This offer has been rejected by HR and cannot be sent to the candidate.
+        </p>
+      </div>
+    )}
+
+  </div>
 )}
+
+
+
+
+
+
+
  {/* Recruiter: send approved offer */}
  
 {offerApproved && isRecruiter && (
