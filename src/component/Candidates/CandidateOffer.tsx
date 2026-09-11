@@ -12,7 +12,7 @@ import { useCandidateStore } from "../../store/candidateStore";
 
 const CandidateOffer = () => {
   const { offerId } = useParams<{ offerId: string }>();
-
+console.log("🔥🔥🔥 CANDIDATE OFFER PAGE IS RENDERING 🔥🔥🔥");
   const [candidate, setCandidate] = useState<Candidate | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -281,10 +281,29 @@ const CandidateOffer = () => {
 
             <div className="mt-5 flex flex-col gap-3 sm:flex-row">
 
-              <button
+            <button
   type="button"
   onClick={async () => {
+    console.log("🚨 ACCEPT BUTTON CLICKED");
+
+    console.log(
+      "🚨 ACCEPT FUNCTION:",
+      acceptOffer
+    );
+
+    console.log(
+      "🚨 CANDIDATE ID:",
+      candidate?.id
+    );
+
+    if (!candidate?.id) {
+      console.error("❌ No candidate ID");
+      return;
+    }
+
     await acceptOffer(candidate.id);
+
+    console.log("🚨 ACCEPT OFFER FUNCTION FINISHED");
 
     setCandidate((prev) =>
       prev
@@ -304,7 +323,6 @@ const CandidateOffer = () => {
 >
   Accept Offer
 </button>
-
               <button
                 type="button"
                 onClick={() => declineOffer(candidate.id)}

@@ -6,7 +6,7 @@ import {
  doc,
  setDoc,
  getDocs,
-getDoc,
+
 } from "firebase/firestore";
 
 import { db } from "../firebase";
@@ -225,60 +225,110 @@ export const useCandidateStore = create<CandidateStore>((set, get) => ({
 
  setLoading: (isLoading) => set({ isLoading }),
 fetchCandidates: async () => {
- set({ isLoading: true });
+  set({ isLoading: true });
 
- try {
- const snapshot = await getDocs(
- collection(db, "candidates")
- );
+  try {
+    const snapshot = await getDocs(
+      collection(db, "candidates")
+    );
 
- const firebaseCandidates = snapshot.docs.map((docSnap) => ({
- ...(docSnap.data() as Candidate),
- id: docSnap.id,
- }));
+    const firebaseCandidates = snapshot.docs.map((docSnap) => ({
+      ...(docSnap.data() as Candidate),
+      id: docSnap.id,
+    }));
 
- console.log(
-  "🔥 FIREBASE CANDIDATES:",
-  firebaseCandidates
-);
- set((state) => {
- // Use Map to merge: initialCandidates (base) + state.candidates (local changes) + firebaseCandidates (remote)
- // This ensures initialCandidates are always present and duplicates are prevented by ID
- const candidateMap = new Map(
- (initialCandidates as Candidate[]).map((c) => [c.id, c])
- );
+    console.log(
+      "🔥 FIREBASE CANDIDATES:",
+      firebaseCandidates
+    );
 
- // Override with current state (preserves any local changes like status updates, notes)
- state.candidates.forEach((c) => {
- if (c.id) {
- candidateMap.set(c.id, c);
- }
- });
+    set((state) => {
+      // Start with the initial candidates
+      const candidateMap = new Map(
+        (initialCandidates as Candidate[]).map((candidate) => [
+          candidate.id,
+          candidate,
+        ])
+      );
 
- // Override with Firestore candidates (latest remote data)
- firebaseCandidates.forEach((c) => {
- if (c.id) {
- candidateMap.set(c.id, c);
- }
- });
+      // Keep the current local state.
+      // Pipeline stages are managed locally, not by Firestore.
+      state.candidates.forEach((candidate) => {
+        if (candidate.id) {
+          candidateMap.set(candidate.id, candidate);
+        }
+      });
 
- const mergedCandidates = Array.from(candidateMap.values());
+      // Merge Firestore data without allowing stale Firestore
+      // pipeline statuses to overwrite local pipeline changes.
+      firebaseCandidates.forEach((firebaseCandidate) => {
+        const localCandidate = candidateMap.get(firebaseCandidate.id);
 
- persistCandidates(mergedCandidates);
+        // New candidate from Firestore
+        if (!localCandidate) {
+          candidateMap.set(firebaseCandidate.id, firebaseCandidate);
+          return;
+        }
 
- return {
- candidates: mergedCandidates,
- isLoading: false,
- };
- });
- } catch (error) {
- console.error(
- "Failed to fetch candidates from Firebase:",
- error
- );
+        const remoteOfferStatus = firebaseCandidate.offer?.status;
 
- set({ isLoading: false });
- }
+        const shouldSyncPipelineStatus =
+          remoteOfferStatus === "Sent" ||
+          remoteOfferStatus === "Accepted" ||
+          remoteOfferStatus === "Declined";
+
+        const mergedCandidate: Candidate = {
+          ...localCandidate,
+
+          // Get the latest offer information from Firestore
+          offer: firebaseCandidate.offer ?? localCandidate.offer,
+
+          // Keep locally managed pipeline status unless the
+          // Firestore offer has reached a state that should
+          // control the candidate's pipeline status.
+          status: shouldSyncPipelineStatus
+            ? firebaseCandidate.status
+            : localCandidate.status,
+
+          // These are relevant when an offer has been accepted.
+          hiredAt:
+            firebaseCandidate.hiredAt ?? localCandidate.hiredAt,
+
+          updatedAt:
+            firebaseCandidate.updatedAt ?? localCandidate.updatedAt,
+
+          stageUpdatedAt:
+            shouldSyncPipelineStatus
+              ? firebaseCandidate.stageUpdatedAt ??
+                localCandidate.stageUpdatedAt
+              : localCandidate.stageUpdatedAt,
+        };
+
+        candidateMap.set(
+          firebaseCandidate.id,
+          mergedCandidate
+        );
+      });
+
+      const mergedCandidates = Array.from(
+        candidateMap.values()
+      );
+
+      persistCandidates(mergedCandidates);
+
+      return {
+        candidates: mergedCandidates,
+        isLoading: false,
+      };
+    });
+  } catch (error) {
+    console.error(
+      "Failed to fetch candidates from Firebase:",
+      error
+    );
+
+    set({ isLoading: false });
+  }
 },
 
  setCandidates: (candidates) => {
@@ -330,7 +380,7 @@ addCandidate: async (candidate) => {
  ...candidate,
  ...updatedCandidate,
  updatedAt: new Date().toISOString(),
- stageUpdateAt:new Date().toISOString(),
+ stageUpdatedAt:new Date().toISOString(),
  }
  : candidate
  );
@@ -1342,24 +1392,22 @@ await setDoc(
 
 acceptOffer: async (candidateId) => {
   try {
-    const candidateRef = doc(db, "candidates", candidateId);
+    // Get the candidate currently in Zustand
+    const candidate = get().candidates.find(
+      (candidate) => candidate.id === candidateId
+    );
 
-    // Get the latest candidate directly from Firestore
-    const candidateSnapshot = await getDoc(candidateRef);
-
-    if (!candidateSnapshot.exists()) {
+    if (!candidate) {
       console.error("Candidate not found:", candidateId);
       return;
     }
+console.log("🚨 ACCEPT OFFER CALLED", candidate);
 
-    const candidate: Candidate = {
-      ...(candidateSnapshot.data() as Candidate),
-      id: candidateSnapshot.id,
-    };
-
-    console.log("Candidate before accepting:", candidate);
-    console.log("Offer status:", candidate.offer?.status);
-
+console.log(
+  "🚨 ZUSTAND OFFER STATUS:",
+  candidate.offer?.status
+);
+   
     // The offer must have been sent
     if (candidate.offer?.status !== "Sent") {
       console.error(
@@ -1386,26 +1434,42 @@ acceptOffer: async (candidateId) => {
 
     const cleanCandidate = removeUndefined(updatedCandidate);
 
-    // Save the updated candidate to Firestore
-    await setDoc(candidateRef, cleanCandidate);
-
-    console.log("Candidate successfully updated in Firestore:", cleanCandidate);
-
-    // Update Zustand immediately
-    const updatedCandidates = get().candidates.map((candidate) =>
-      candidate.id === candidateId ? updatedCandidate : candidate
+    // Save to Firestore
+    await setDoc(
+      doc(db, "candidates", candidateId),
+      cleanCandidate
     );
 
-    persistCandidates(updatedCandidates);
+    console.log(
+      "Candidate successfully updated in Firestore:",
+      cleanCandidate
+    );
 
-    set({
-      candidates: updatedCandidates,
-      isLoading: false,
+    // Update Zustand immediately
+    set((state) => {
+      const updatedCandidates = state.candidates.map(
+        (candidate) =>
+          candidate.id === candidateId
+            ? updatedCandidate
+            : candidate
+      );
+      console.log("🚨 ACCEPT OFFER - UPDATING ZUSTAND", {
+  candidateId,
+  status: updatedCandidate.status,
+  candidates: updatedCandidates,
+});
+      persistCandidates(updatedCandidates);
+
+      return {
+        candidates: updatedCandidates,
+        isLoading: false,
+      };
     });
 
-    console.log("Candidate state updated to Hired");
+    console.log("✅ Candidate state updated to Hired immediately");
   } catch (error) {
     console.error("Error accepting offer:", error);
+
     set({
       isLoading: false,
     });

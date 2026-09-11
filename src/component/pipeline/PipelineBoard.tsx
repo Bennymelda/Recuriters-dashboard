@@ -68,7 +68,10 @@ const PipelineBoard = ({
  ),
  },
  ];
-
+console.log(
+  "HIRED COLUMN:",
+  columns.find((column) => column.title === "Hired")?.candidates
+);
  const [activeCandidate, setActiveCandidate] =
  useState<Candidate | null>(null);
 
@@ -163,10 +166,17 @@ const PipelineBoard = ({
  key={column.title}
  className="w-[320px] shrink-0 lg:w-[360px]"
  >
- <PipelineColumn
- title={column.title}
- candidates={column.candidates}
- />
+<PipelineColumn
+  title={column.title}
+  candidates={column.candidates}
+/>
+
+{column.title === "Hired" && (
+  <div className="text-red-500">
+    DEBUG: {column.candidates.map((c) => c.fullName).join(", ")}
+  </div>
+)}
+
  </div>
  ))}
  </div>
