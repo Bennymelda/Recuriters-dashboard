@@ -6,6 +6,7 @@ import {
  doc,
  setDoc,
  getDocs,
+ getDoc,
 
 } from "firebase/firestore";
 
@@ -1392,22 +1393,27 @@ await setDoc(
 
 acceptOffer: async (candidateId) => {
   try {
-    // Get the candidate currently in Zustand
-    const candidate = get().candidates.find(
-      (candidate) => candidate.id === candidateId
-    );
+    const candidateRef = doc(db, "candidates", candidateId);
 
-    if (!candidate) {
+    // Get the latest candidate from Firestore
+    const candidateSnapshot = await getDoc(candidateRef);
+
+    if (!candidateSnapshot.exists()) {
       console.error("Candidate not found:", candidateId);
       return;
     }
-console.log("🚨 ACCEPT OFFER CALLED", candidate);
 
-console.log(
-  "🚨 ZUSTAND OFFER STATUS:",
-  candidate.offer?.status
-);
-   
+    const candidate: Candidate = {
+      ...(candidateSnapshot.data() as Candidate),
+      id: candidateSnapshot.id,
+    };
+
+    console.log("🚨 ACCEPT OFFER CALLED", candidate);
+    console.log(
+      "🚨 FIRESTORE OFFER STATUS:",
+      candidate.offer?.status
+    );
+
     // The offer must have been sent
     if (candidate.offer?.status !== "Sent") {
       console.error(
@@ -1434,14 +1440,14 @@ console.log(
 
     const cleanCandidate = removeUndefined(updatedCandidate);
 
-    // Save to Firestore
+    // Save Hired status to Firestore
     await setDoc(
-      doc(db, "candidates", candidateId),
+      candidateRef,
       cleanCandidate
     );
 
     console.log(
-      "Candidate successfully updated in Firestore:",
+      "✅ Firestore updated to Hired:",
       cleanCandidate
     );
 
@@ -1453,11 +1459,7 @@ console.log(
             ? updatedCandidate
             : candidate
       );
-      console.log("🚨 ACCEPT OFFER - UPDATING ZUSTAND", {
-  candidateId,
-  status: updatedCandidate.status,
-  candidates: updatedCandidates,
-});
+
       persistCandidates(updatedCandidates);
 
       return {
@@ -1466,9 +1468,14 @@ console.log(
       };
     });
 
-    console.log("✅ Candidate state updated to Hired immediately");
+    console.log(
+      "✅ Zustand updated to Hired immediately"
+    );
   } catch (error) {
-    console.error("Error accepting offer:", error);
+    console.error(
+      "Error accepting offer:",
+      error
+    );
 
     set({
       isLoading: false,
