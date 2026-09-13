@@ -1179,7 +1179,7 @@ console.log("CREATE OFFER DATA:", {
  ...candidate,
  
  offer: {
-  id:crypto.randomUUID(),
+  id:candidate.offer?.id ?? crypto.randomUUID(),
  status: "Pending HR Approval" as const,
  salary,
  startDate,

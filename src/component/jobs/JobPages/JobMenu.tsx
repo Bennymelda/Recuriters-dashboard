@@ -5,10 +5,12 @@ import {
  MdVisibility,
 } from "react-icons/md";
 import { useAuthStore } from "../../../store/authStore";
+
 interface JobMenuProps {
  onView: () => void;
  onEdit: () => void;
  onDuplicate: () => void;
+ onClose:() => void;
  onDelete: () => void;
 }
 
@@ -17,6 +19,7 @@ const JobMenu = ({
  onEdit,
  onDuplicate,
  onDelete,
+  onClose,
 }: JobMenuProps) => {
 const user = useAuthStore((state) => state.user); 
 
@@ -65,6 +68,16 @@ const canDeleteJobs =
  Duplicate Job
  </button>
 )}
+
+<button
+ onClick={onClose}
+ className="flex w-full cursor-pointer items-center gap-3 px-4 py-3 text-left text-sm text-zinc-700 transition hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
+>
+ Close Job
+</button>
+
+
+
  <div className="border-t border-slate-200 dark:border-slate-700" />
 { canDeleteJobs && (
  <button

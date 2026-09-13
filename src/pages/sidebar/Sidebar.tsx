@@ -53,54 +53,60 @@ const Sidebar = ({
  * ROLE-BASED NAVIGATION
  * ---------------------------------------------
  */
+  /*
+   * ---------------------------------------------
+   * ROLE-BASED NAVIGATION
+   * ---------------------------------------------
+   */
 
- const canSeeJobs =
- userRole === "Admin" ||
- userRole === "Recruiter" ||
- userRole === "HR Manager" ||
- userRole === "Hiring Manager";
+  const isHiringManager = userRole === "Hiring Manager";
 
- const canSeeCandidates =
- userRole === "Admin" ||
- userRole === "Recruiter" ||
- userRole === "Hiring Manager" ||
- userRole === "HR Manager";
+  const canSeeJobs =
+    userRole === "Admin" ||
+    userRole === "Recruiter" ||
+    userRole === "HR Manager" ||
+    userRole === "Hiring Manager";
 
+  const canSeeCandidates =
+    userRole === "Admin" ||
+    userRole === "Recruiter" ||
+    userRole === "HR Manager" ||
+    userRole === "Hiring Manager";
 
+  const canSeeInterviews =
+    userRole === "Admin" ||
+    userRole === "Recruiter" ||
+    userRole === "HR Manager" ||
+    userRole === "Hiring Manager";
 
- const canSeeInterviews =
- userRole === "Admin" ||
- userRole === "Recruiter" ||
- userRole === "Hiring Manager" ||
- userRole === "HR Manager";
+  const canSeeAnalytics =
+    userRole === "Admin" ||
+    userRole === "Recruiter" ||
+    userRole === "HR Manager";
 
- const canSeeAnalytics =
- userRole === "Admin" ||
- userRole === "Recruiter" ||
- userRole === "HR Manager";
+  const canSeeTeam =
+    userRole === "Admin" ||
+    userRole === "HR Manager";
 
- const canSeeTeam =
- userRole === "Admin" ||
- userRole === "HR Manager";
+  const jobsPath = isHiringManager
+    ? "/hiring-manager/jobs"
+    : "/jobs";
 
-const isHiringManager = userRole === "Hiring Manager";
+  const candidatesPath = isHiringManager
+    ? "/hiring-manager/candidates"
+    : "/candidates";
 
-const jobsPath = isHiringManager
- ? "/hiring-manager/jobs"
- : "/jobs";
+  const pipelinePath = isHiringManager
+    ? "/hiring-manager/pipeline"
+    : "/pipeline";
 
-const candidatesPath = isHiringManager
- ? "/hiring-manager/candidates"
- : "/candidates";
- 
+  const interviewsPath = isHiringManager
+    ? "/hiring-manager/interviews"
+    : "/interview";
 
-const interviewsPath = isHiringManager
- ? "/hiring-manager/interviews"
- : "/interview";
-
-const dashboardPath = isHiringManager
- ? "/hiring-manager"
- : "/dashboard"; 
+  const dashboardPath = isHiringManager
+    ? "/hiring-manager"
+    : "/dashboard";
 
  return (
  <>
@@ -256,36 +262,38 @@ const dashboardPath = isHiringManager
 
  {/* Candidates */}
 
- {canSeeCandidates && (
- <SidebarDropdown
- icon={MdGroups}
- label="Candidates"
- onItemClick={closeMobileSidebar}
- isExpanded={isExpanded}
- items={
- isHiringManager
- ? [
- {
- label: "Candidate List",
- to: candidatesPath,
- },
- {
- label: "Hiring Pipeline",
- to: "hiring-manager/pipeline",
- },
- ]
- : [
- {
- label: "Candidate List",
- to: "/candidates",
- },
- {
- label: "Hiring Pipeline",
- to: "/pipeline",
- },
- ]
-}
- />
+ {/* Candidates */}
+
+{canSeeCandidates && (
+  <SidebarDropdown
+    icon={MdGroups}
+    label="Candidates"
+    onItemClick={closeMobileSidebar}
+    isExpanded={isExpanded}
+    items={
+      isHiringManager
+        ? [
+            {
+              label: "Candidate List",
+              to: candidatesPath,
+            },
+            {
+              label: "Hiring Pipeline",
+              to: pipelinePath,
+            },
+          ]
+        : [
+            {
+              label: "Candidate List",
+              to: candidatesPath,
+            },
+            {
+              label: "Hiring Pipeline",
+              to: pipelinePath,
+            },
+          ]
+    }
+  />
 )}
 
  {/* Jobs */}
@@ -304,12 +312,12 @@ const dashboardPath = isHiringManager
 
  {canSeeInterviews && (
  <SidebarItem
- icon={MdAssignment}
- label="Interview Candidate"
- to={interviewsPath}
- isExpanded={isExpanded}
- onClick={closeMobileSidebar}
- />
+  icon={MdAssignment}
+  label="Interviews"
+  to={interviewsPath}
+  isExpanded={isExpanded}
+  onClick={closeMobileSidebar}
+/>
  )}
 
  {/* Analytics */}

@@ -421,7 +421,7 @@ hiringApprovalPending && (
 )}
 
 
- {/* Recruiter: create offer */}
+
  {/* Recruiter: create offer */}
 {candidate.status === "Interview" &&
  isRecruiter &&

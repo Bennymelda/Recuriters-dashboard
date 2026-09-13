@@ -208,6 +208,7 @@ const { theme } = useThemeStore();
 
 const deleteJob = useJobStore((state) => state.deleteJob);
 const duplicateJob = useJobStore((state) => state.duplicateJob);
+const updateJob = useJobStore((state) => state.updateJob);
 
 const showToast = useToastStore(
 (state) => state.showToast
@@ -308,6 +309,7 @@ theme === "dark"
 
  {showMenu && (
  <div className="absolute right-0 z-20 -mt-10">
+    
  <JobMenu
  onView={() => {
  setShowMenu(false);
@@ -317,7 +319,7 @@ theme === "dark"
  } else {
  navigate(`/jobs/${job.id}`);
  }
-}}
+ }}
  onEdit={() => {
  setShowMenu(false);
  onEdit(job);
@@ -337,7 +339,31 @@ theme === "dark"
  setShowMenu(false);
  setDeleteOpen(true);
  }}
- />
+ onClose={async () => {
+ setShowMenu(false);
+
+ try {
+ await updateJob(job.id, {
+ status: "Closed",
+ });
+
+ showToast({
+ type: "success",
+ title: "Job Closed",
+ message: `${job.title} has been closed successfully.`,
+ });
+ } catch (error) {
+ console.error("Failed to close job:", error);
+
+ showToast({
+ type: "error",
+ title: "Failed to Close Job",
+ message: "Something went wrong while closing this job.",
+ });
+ }
+ }}
+/>
+ 
  </div>
  )}
  </div>
