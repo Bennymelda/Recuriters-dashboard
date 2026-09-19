@@ -292,8 +292,7 @@ showToast({
     return(<>
     
 
-<div className="mt-6 w-full max-w-4xl rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm sm:p-6 md:p-8 dark:border-zinc-800 dark:bg-zinc-900">
-
+<div className="mx-auto mt-6 w-full max-w-4xl rounded-2xl ...">
   {/* Header */}
   <div className="border-b border-zinc-200 pb-6 dark:border-zinc-800">
     <h2 className="text-2xl font-bold text-zinc-900 dark:text-white sm:text-3xl">
