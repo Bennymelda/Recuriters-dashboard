@@ -73,10 +73,11 @@ const alerts = [
  return (
  <section
  className="
- rounded-3xl
+ rounded-2xl
 
  bg-white
- p-6
+ md:p-6
+ p-4
 
  dark:border-zinc-700
  dark:bg-zinc-900
@@ -84,7 +85,7 @@ const alerts = [
  >
  <div className="mb-6 flex items-center gap-3">
  <div className="rounded-2xl bg-[#EEF8F3] p-3 text-[#285A48] dark:bg-[#285A48]/15 dark:text-[#B0E4CC]">
- <MdWarningAmber size={24} />
+ <MdWarningAmber size={20} />
  </div>
 
  <div>
@@ -106,19 +107,19 @@ const alerts = [
  flex
  items-center
  justify-between
- rounded-2xl
+ rounded-xl
  border
  border-zinc-100
- p-4
+ p-3
  transition
  hover:border-[#408A71]
  hover:shadow-sm
  dark:border-zinc-700
  "
  >
- <div className="flex items-start gap-4">
+ <div className="flex items-start gap-2 mad:gap-4">
  <div
- className={`flex md:h-12 md:w-12 h-10 w-10 items-center justify-center rounded-2xl ${alert.color}`}
+ className={`flex md:h-12 md:w-12 h-8 w-8 items-center justify-center rounded-xl md:rounded-2xl ${alert.color}`}
  >
  {alert.icon}
  </div>

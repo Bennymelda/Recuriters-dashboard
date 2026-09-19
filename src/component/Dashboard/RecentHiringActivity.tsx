@@ -226,7 +226,8 @@ const [activityRange, setActivityRange] = useState<7 | 14 | 30>(7);
 dark:[--chart-cursor:#3F3F46]
  dark:[--chart-grid:#202023]
  bg-white
- p-6
+ p-4
+ md:p-6
 
  dark:border-zinc-800
  dark:bg-zinc-900
@@ -235,13 +236,10 @@ dark:[--chart-cursor:#3F3F46]
  {/* Header */}
  <div className="flex items-start justify-between gap-4">
  <div>
- <h2 className="text-lg font-bold text-zinc-900 dark:text-white">
+ <h2 className="text-base md:text-lg  font-bold text-zinc-900 dark:text-white">
  Hiring Activity
  </h2>
 
- <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
- Track your team's hiring activity over the last 7 days.
- </p>
  </div>
 
  {/* Range */}
@@ -264,6 +262,9 @@ dark:[--chart-cursor:#3F3F46]
 </div>
  </div>
 
+ <p className="mt-1 w-full text-sm text-zinc-500 dark:text-zinc-400">
+ Track your team's hiring activity over the last 7 days.
+ </p>
  {/* Summary */}
  <div className="mt-6">
  <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400">

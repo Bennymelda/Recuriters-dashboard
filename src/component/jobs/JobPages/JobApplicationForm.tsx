@@ -297,7 +297,7 @@ showToast({
  Apply for {job.title}
  </h2>
 
- <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
+ <p className="mt-2 text-normal text-zinc-500 dark:text-zinc-400">
  Please provide your information below.
  </p>
 
@@ -307,7 +307,7 @@ showToast({
 >
  {/* Full Name */}
  <div>
- <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+ <label className="block  font-medium text-zinc-700 dark:text-zinc-300">
  Full Name
  </label>
 
@@ -322,7 +322,7 @@ showToast({
 
  {/* Email */}
  <div>
- <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+ <label className="block font-medium text-zinc-700 dark:text-zinc-300">
  Email Address
  </label>
 
@@ -337,7 +337,7 @@ showToast({
 
  {/* Phone */}
  <div>
- <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+ <label className="block  font-medium text-zinc-700 dark:text-zinc-300">
  Phone Number
  </label>
 
@@ -352,7 +352,7 @@ showToast({
 
  {/* CV */}
  <div>
- <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+ <label className="block  font-medium text-zinc-700 dark:text-zinc-300">
  CV / Resume
  </label>
 
@@ -362,13 +362,13 @@ showToast({
  onChange={(e) =>
  setCv(e.target.files?.[0] || null)
  }
- className="mt-2 block w-full text-sm text-zinc-500"
+ className="mt-2 block w-full text-zinc-500"
  />
  </div>
 
  {/* LinkedIn */}
  <div>
- <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+ <label className="block font-medium text-zinc-700 dark:text-zinc-300">
  LinkedIn Profile
  </label>
 
@@ -383,7 +383,7 @@ showToast({
 
  {/* Portfolio */}
  <div>
- <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+ <label className="block  font-medium text-zinc-700 dark:text-zinc-300">
  Portfolio Website
  </label>
 
@@ -397,7 +397,7 @@ showToast({
  </div>
 
 <div>
- <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+ <label className="block font-medium text-zinc-700 dark:text-zinc-300">
  Location
  </label>
 
@@ -412,7 +412,7 @@ showToast({
 
  {/* Experience */}
  <div>
- <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+ <label className="block font-medium text-zinc-700 dark:text-zinc-300">
  Years of Experience
  </label>
 
@@ -428,7 +428,7 @@ showToast({
 
  {/* Cover Letter */}
  <div>
- <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+ <label className="block  font-medium text-zinc-700 dark:text-zinc-300">
  Cover Letter
  </label>
 

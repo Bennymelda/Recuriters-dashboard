@@ -419,7 +419,7 @@ navigate("/dashboard");
 
             
             <div className="mb-8 ">
-              <h2 className="text-3xl whitespace-nowrap md:text-4xl leading-[1.25] font-semibold text-[#1d1a24] dark:text-gray-200 mb-1">
+              <h2 className="text-xl md:text-2xl whitespace-nowrap md:text-4xl leading-[1.25] font-semibold text-[#1d1a24] dark:text-gray-200 mb-1">
                 Create your account
               </h2>
 

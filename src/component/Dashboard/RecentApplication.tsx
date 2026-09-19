@@ -58,8 +58,10 @@ const DashboardRecentApplications = () => {
  }
  alt={candidate.fullName}
  className="
- h-12
- w-12
+ h-10
+ w-10
+ md:h-12
+ md:w-12
  rounded-full
  object-cover
  "
@@ -68,14 +70,16 @@ const DashboardRecentApplications = () => {
 
  <div>
 
- <h3 className="font-semibold text-zinc-900 dark:text-white">
+ <h3 className="font-semibold text-base text-zinc-900 dark:text-white">
  {candidate.fullName}
  </h3>
 
- <p className="text-sm text-zinc-500">
+ <p className="text-sm block md:hidden text-zinc-500 text-xs">
+ {candidate.department}
+ </p>
+<p className=" hidden md:block text-zinc-500 text-xs">
  {candidate.appliedRole}
  </p>
-
  </div>
 
  </div>
