@@ -115,6 +115,8 @@ const RecruiterDashboard = () => {
           }}
           onApproveOffer={() => {}}
           onRejectOffer={() => {}}
+       
+    onCreateOffer={() => {}}
           onSendOffer={async (candidateId) => {
             return await sendOffer(candidateId);
           }}

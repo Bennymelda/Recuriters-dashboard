@@ -6,6 +6,7 @@ import { useParams } from "react-router-dom";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../../firebase";
 import type { Job } from "../../../types/job";
+import { useToastStore } from "../../toast/toastStore";
 
 export default function JobApplicationForm(){
  const { jobId } = useParams();
@@ -24,35 +25,9 @@ export default function JobApplicationForm(){
     const [location, setLocation] = useState("");
     
     const [isSubmitting, setIsSubmitting] = useState(false);
-    /*
-    const uploadCV = async (file: File) => {
-     const formData = new FormData();
-    
-     formData.append("file", file);
-     formData.append(
-     "upload_preset",
-     "careerflow_cv"
-     );
-    
-     const response = await fetch(
-     "https://api.cloudinary.com/v1_1/xs1osb7m/raw/upload",
-     {
-     method: "POST",
-     body: formData,
-     }
-     );
-    
-     if (!response.ok) {
-     throw new Error("CV upload failed.");
-     }
-    
-     const data = await response.json();
-    
-     return data.secure_url;
-    };
-*/
-
-    
+   const showToast = useToastStore(
+   (state) => state.showToast
+   );
 
 
 const uploadCV = async (file: File) => {
@@ -154,27 +129,52 @@ const handleSubmit = async (e: React.FormEvent) => {
  // -----------------------------
 
  if (!fullName.trim()) {
- alert("Please enter your full name.");
+ 
+ showToast({
+ type: "warning",
+ title: "Full Name required",
+ message: "Please enter your fullName.",
+ });
  return;
  }
 
  if (!email.trim()) {
- alert("Please enter your email.");
+ 
+  showToast({
+ type: "warning",
+ title: "Email required",
+ message: "Please enter your email.",
+ });
  return;
  }
 
  if (!phone.trim()) {
- alert("Please enter your phone number.");
+    showToast({
+ type: "warning",
+ title: "Phone number required",
+ message: "Please enter your phone number.",
+ });
+
  return;
  }
 
  if (!location.trim()) {
- alert("Please enter your location.");
+
+ showToast({
+ type: "warning",
+ title: "Location required",
+ message: "Please enter your location.",
+ });
  return;
  }
 
  if (!cv) {
- alert("Please upload your CV.");
+    showToast({
+ type: "warning",
+ title: "CV required",
+ message: "Please upload your CV.",
+ });
+ 
  return;
  }
 
@@ -189,10 +189,6 @@ const handleSubmit = async (e: React.FormEvent) => {
 
  const resumeUrl = await uploadCV(cv);
 
- console.log(
- "CV upload finished. URL:",
- resumeUrl
- );
 
  const now = new Date().toISOString();
 
@@ -253,10 +249,11 @@ const handleSubmit = async (e: React.FormEvent) => {
 
  await addCandidate(newCandidate);
 
- alert(
- "Your application has been submitted successfully!"
- );
-
+showToast({
+ type: "success",
+ title: "Job Application",
+ message: "Your application has been submitted successfully!",
+ });
 
 
 // Clear form
@@ -279,10 +276,12 @@ setPortfolio("");
  error
  );
 
- alert(
- "We couldn't submit your application. Please try again."
- );
 
+showToast({
+ type: "error",
+ title: "Job application failed",
+ message: "We couldn't submit your application. Please try again.",
+ });
  } finally {
  setIsSubmitting(false);
  }
@@ -292,7 +291,7 @@ setPortfolio("");
 
     return(<>
     
- <div className="mt-6 rounded-2xl bg-white p-8 shadow-sm dark:bg-zinc-900">
+ <div className="mt-6 max-6xl rounded-2xl bg-white p-8 shadow-sm dark:bg-zinc-900">
 
  <h2 className="text-2xl font-bold text-zinc-900 dark:text-white">
  Apply for {job.title}
