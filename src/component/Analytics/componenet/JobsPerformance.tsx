@@ -47,7 +47,8 @@ const JobsPerformance = () => {
  rounded-2xl
  
  bg-white
- p-6
+ p-4
+ md:p-6
 
  dark:border-zinc-800
  dark:bg-zinc-900

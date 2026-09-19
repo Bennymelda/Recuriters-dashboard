@@ -44,10 +44,10 @@ p-5
  <div
  className="
  flex
- h-14 
- w-14
- md:h-16
- md:w-16
+ h-12
+ w-12
+ md:h-14
+ md:w-14
  items-center
  justify-center
 
@@ -61,7 +61,7 @@ p-5
  dark:text-[#B0E4CC]
  "
  >
- <MdWorkOutline size={28} />
+ <MdWorkOutline size={24} />
  </div>
 
  <div>
@@ -74,8 +74,8 @@ p-5
 
  <span
  className="
-inline-flex
-
+md:inline-flex
+hidden
 sm:w-auto
 w-fit
 items-center

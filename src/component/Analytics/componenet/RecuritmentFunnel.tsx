@@ -56,7 +56,8 @@ const RecruitmentFunnel = () => {
  bg-white
  [--chart-grid:#E4E4E7]
 dark:[--chart-grid:#27272A]
- p-6
+ p-4
+ md:p-6
 
  dark:border-zinc-800
  dark:bg-zinc-900

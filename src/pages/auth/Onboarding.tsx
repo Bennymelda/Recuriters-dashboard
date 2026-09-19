@@ -111,7 +111,7 @@ const CompleteProfile = () => {
  </div>
 
  {/* Card */}
- <div className="rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm md:p-8 dark:border-zinc-800 dark:bg-zinc-900">
+ <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm md:p-8 dark:border-zinc-800 dark:bg-zinc-900">
 
  {/* Avatar */}
  <div className="mb-8 flex flex-col items-center">

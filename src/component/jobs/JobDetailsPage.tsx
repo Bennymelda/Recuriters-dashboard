@@ -158,7 +158,6 @@ cursor-pointer
 <div  className="bg-white px-6 py-4 dark:bg-zinc-900">
 <div>
 
-    <p className="font-bold text-xl dark:text-gray-200 "> Preview</p>
 
     
     <div className="flex justify-between items-start flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
@@ -260,23 +259,23 @@ showToast({
 </button>
 <div className=" grid grid-cols-2 gap-4 md:grid-cols-2 lg:grid-cols-4 mt-10">
         
-        <div className="bg-[#f6fffc] dark:bg-zinc-800 rounded-lg p-5">
-            <p className="text-md mb-1 text-gray-800 dark:text-gray-200 font-semibold">Employment Type</p>
+        <div className="bg-[#f6fffc] dark:bg-zinc-800 rounded-lg p-3 md:p-5">
+            <p className="text-sm md:text-base mb-1 text-gray-800 dark:text-gray-200 font-semibold">Employment Type</p>
             
-            <p className="text-[#285A48] dark:text-[#B0E4CC] font-bold">{job.employmentType}</p>
+            <p className="text-[#285A48] text-sm md:text-base dark:text-[#B0E4CC] font-bold">{job.employmentType}</p>
         </div>
-        <div className="bg-[#f6fffc] dark:bg-zinc-800 rounded-xl p-5">
-            <p className="text-md mb-1 text-gray-800 font-semibold dark:text-gray-200 " >Offer Salary</p>
-            <p  className="text-[#285A48] font-bold dark:text-[#B0E4CC]">{job.salary}</p>
+        <div className="bg-[#f6fffc] dark:bg-zinc-800 rounded-xl p-3 md:p-5">
+            <p className="text-sm md:text-base mb-1 text-gray-800 font-semibold dark:text-gray-200 " >Offer Salary</p>
+            <p  className="text-sm md:text-base text-[#285A48] font-bold dark:text-[#B0E4CC]">{job.salary}</p>
         </div>
-        <div className="bg-[#f6fffc] dark:bg-zinc-800 rounded-xl p-5">
-            <p  className="text-md mb-1 text-gray-800 font-semibold dark:text-gray-200">Experience</p>
-            <p className="text-[#285A48] font-bold dark:text-[#B0E4CC]">{job.experience}</p>
+        <div className="bg-[#f6fffc] dark:bg-zinc-800 rounded-xl p-3 md:p-5">
+            <p  className="text-sm md:text-base mb-1 text-gray-800 font-semibold dark:text-gray-200">Experience</p>
+            <p className="text-sm md:text-base text-[#285A48] font-bold dark:text-[#B0E4CC]">{job.experience}</p>
         </div>
 
-        <div className="bg-[#f6fffc] dark:bg-zinc-800  rounded-xl p-5">
-            <p className="text-md mb-1 text-gray-800 font-semibold dark:text-gray-200">Work Level</p>
-            <p className="text-[#285A48] font-bold dark:text-[#B0E4CC]">{job.experienceLevel} level</p>
+        <div className="bg-[#f6fffc] dark:bg-zinc-800  rounded-xl p-3 md:p-5">
+            <p className="text-sm md:text-base text-md mb-1 text-gray-800 font-semibold dark:text-gray-200">Work Level</p>
+            <p className="text-sm md:text-base text-[#285A48] font-bold dark:text-[#B0E4CC]">{job.experienceLevel} level</p>
         </div>
     </div>
 

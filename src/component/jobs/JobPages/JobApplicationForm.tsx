@@ -291,7 +291,7 @@ showToast({
 
     return(<>
     
- <div className="mt-6 max-6xl rounded-2xl bg-white p-8 shadow-sm dark:bg-zinc-900">
+ <div className="mt-6 md:max-w-4xl rounded-2xl bg-white p-8 shadow-sm dark:bg-zinc-900">
 
  <h2 className="text-2xl font-bold text-zinc-900 dark:text-white">
  Apply for {job.title}

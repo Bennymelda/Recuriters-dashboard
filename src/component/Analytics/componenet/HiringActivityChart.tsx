@@ -280,8 +280,8 @@ const HiringActivityAnalytics = () => {
 dark:[--chart-cursor:#3F3F46]
 dark:[--chart-grid:#27272A]
  bg-white
- p-6
-
+ md:p-6
+p-4
 
  dark:border-zinc-800
  dark:bg-zinc-900
@@ -449,9 +449,10 @@ dark:[--chart-grid:#27272A]
  className="
  rounded-2xl
  border
- border-zinc-200
- bg-zinc-50
- p-4
+ border-zinc-100
+ bg-white
+ p-3
+ md:p-4
 
  dark:border-zinc-800
  dark:bg-zinc-800/50
@@ -488,9 +489,10 @@ dark:[--chart-grid:#27272A]
  className="
  rounded-2xl
  border
- border-zinc-200
- bg-zinc-50
- p-4
+ border-zinc-100
+ bg-white
+ p-3
+ md:p-4
 
  dark:border-zinc-800
  dark:bg-zinc-800/50
@@ -538,10 +540,10 @@ dark:[--chart-grid:#27272A]
  className="
  rounded-2xl
  border
- border-zinc-200
- bg-zinc-50
- p-4
-
+ border-zinc-100
+ bg-white
+ p-3
+ md:p-4
  dark:border-zinc-800
  dark:bg-zinc-800/50
  "
@@ -588,9 +590,10 @@ dark:[--chart-grid:#27272A]
  className="
  rounded-2xl
  border
- border-zinc-200
- bg-zinc-50
- p-4
+  border-zinc-100
+ bg-white
+ p-3
+ md:p-4
 
  dark:border-zinc-800
  dark:bg-zinc-800/50

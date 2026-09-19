@@ -75,11 +75,11 @@ const hasChanges =
 
  {/* Avatar */}
 
- <div className="  bg-white md:p-6 dark:border-zinc-800 dark:bg-zinc-900">
+ <div className="  bg-white p-4 md:p-6 dark:border-zinc-800 dark:bg-zinc-900">
  <div className="flex flex-col  gap-4 md:gap-8 lg:flex-row lg:items-center lg:justify-between">
 
  {/* Left */}
- <div className="flex items-center gap-5">
+ <div className="flex items-center gap-4">
 
  <input
  ref={fileInputRef}
@@ -113,7 +113,7 @@ const hasChanges =
  }
  alt={fullName}
  className="
- h-24 w-25
+ h-20 w-20
  md:h-28
  md:w-28
  rounded-full
@@ -179,7 +179,7 @@ const hasChanges =
 
  {/* Profile Info */}
  <div>
- <h1 className="text-2xl md:text-3xl font-bold text-zinc-900 dark:text-white">
+ <h1 className="text-xl md:text-2xl font-bold text-zinc-900 dark:text-white">
  {fullName || "Your Name"}
  </h1>
 
@@ -423,7 +423,7 @@ const hasChanges =
 
  {/* Footer */}
 
- <div className="mt-10 flex justify-end">
+ <div className="mt-6 md:mt-10 flex justify-end">
 
  <button
  onClick={handleSave}

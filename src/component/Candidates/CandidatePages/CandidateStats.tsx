@@ -166,7 +166,7 @@ const CandidateStats = () => {
  <p
  className={`text-sm ${
  stat.title === "Total Candidates"
- ? "text-zinc-500 dark:text-white/80"
+ ? "text-zinc-200 dark:text-white/80"
  : "text-zinc-500 dark:text-zinc-400"
  }`}
  >

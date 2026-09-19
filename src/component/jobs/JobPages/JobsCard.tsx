@@ -92,7 +92,7 @@ dark:hover:border-zinc-700
 <div className="flex items-center gap-2">
 {Icon && (
 <Icon
-size={32}
+size={30}
 className="h-6 w-6 md:h-8 md:w-8"
 style={{
 color:
@@ -104,7 +104,7 @@ theme === "dark"
 )}
 
  <div>
- <p className="break-words text-lg font-bold md:text-xl dark:text-gray-200">
+ <p className="break-words text-base md:text-lg font-bold md:text-xl dark:text-gray-200">
  {job.title}
  </p>
 
@@ -200,27 +200,27 @@ theme === "dark"
 
  <hr className="mb-4 mt-4 flex flex-col gap-4 text-gray-200 dark:text-zinc-700" />
 
- <p className="leading-6 text-gray-600 dark:text-zinc-200">
+ <p className="leading-6 text-sm md:text-base text-gray-600 dark:text-zinc-200">
  {truncateText(job.description, 120)}
  </p>
 
  <div className="mt-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
  <div className="flex flex-wrap items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
- <span className="rounded-full bg-gray-100 px-2 py-1 dark:bg-zinc-700">
+ <span className="rounded-full text-sm md:text-base bg-gray-100 px-2 py-1 dark:bg-zinc-700">
  {job.experience}
  </span>
 
- <span className="rounded-full bg-gray-100 px-2 py-1 dark:bg-zinc-700">
+ <span className="rounded-full text-sm md:text-base bg-gray-100 px-2 py-1 dark:bg-zinc-700">
  {job.employmentType}
  </span>
 
- <span className="rounded-full bg-gray-100 px-2 py-1 dark:bg-zinc-700">
+ <span className="rounded-full text-sm md:text-base bg-gray-100 px-2 py-1 dark:bg-zinc-700">
  {job.location}
  </span>
  </div>
 
  <div className="self-start sm:self-auto">
- <p className="text-base font-bold dark:text-white">
+ <p className="text-sm md:text-base font-bold dark:text-white">
  {job.salary}/yearly
  </p>
  </div>

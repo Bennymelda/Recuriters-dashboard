@@ -70,7 +70,7 @@ const DashboardRecentApplications = () => {
 
  <div>
 
- <h3 className="font-semibold text-base text-zinc-900 dark:text-white">
+ <h3 className="font-semibold text-sm md:text-base text-zinc-900 dark:text-white">
  {candidate.fullName}
  </h3>
 

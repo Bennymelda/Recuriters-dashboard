@@ -68,16 +68,14 @@ const handleEditNote = (
 };
 
  return (
-<section className="rounded-3xl border border-zinc-200 bg-white p-4 md:p-8 shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
+<section className="rounded-2xl border border-zinc-200 bg-white p-4 md:p-8 shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
 
  {/* Header */}
  <div className="flex flex-col gao-4 md:flex-row  md:items-center md:justify-between">
 
  <div>
 
- <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#408A71] dark:text-[#B0E4CC]">
- Internal Notes
- </p>
+ 
 
  <h2 className="mt-2 text-xl md:text-2xl font-bold text-zinc-900 dark:text-white">
  Recruiter Notes
@@ -102,7 +100,7 @@ const handleEditNote = (
  gap-2
  curdor-pointer
 
- rounded-2xl
+ rounded-xl
 w-full
 md:w-auto
  bg-[#408A71]
@@ -136,7 +134,7 @@ justify-center
 
  {candidate.notes.length === 0 ? (
 
- <div className="mt-8 rounded-3xl border border-dashed border-zinc-300 bg-zinc-50 py-10 md:py-14 text-center dark:border-zinc-700 dark:bg-zinc-800/50">
+ <div className="mt-8 rounded-2xl border border-dashed border-zinc-300 bg-zinc-50 py-10 md:py-14 text-center dark:border-zinc-700 dark:bg-zinc-800/50">
 
  <MdNotes
  size={34}
@@ -162,7 +160,7 @@ justify-center
  <div
  key={note.id}
  className="
- rounded-3xl
+ rounded-2xl
  border
  border-zinc-200
  p-4 md:p-6
@@ -199,7 +197,7 @@ justify-center
  <div className="flex items-center justify-between">
 
  {/* Date */}
- <div className="flex items-center gap-2 text-sm text-zinc-500 dark:text-zinc-400">
+ <div className="flex hidden md:flex items-center gap-2 text-sm text-zinc-500 dark:text-zinc-400">
  <MdCalendarToday size={16} />
  <span>{formatInterviewDate(note.date)}</span>
  </div>
@@ -312,12 +310,15 @@ justify-center
  </div>
 
  {/* Note */}
- <div className="mt-6 rounded-2xl bg-zinc-50 p-5 dark:bg-zinc-800">
+ <div className="mt-6 rounded-xl bg-zinc-50 p-5 dark:bg-zinc-800">
 
  <p className="leading-7 text-zinc-700 dark:text-zinc-300">
  {note.content}
  </p>
-
+ <div className="flex md:hidden block justify-end items-center gap-2 text-sm text-zinc-500 dark:text-zinc-400">
+ <MdCalendarToday size={16} />
+ <span>{formatInterviewDate(note.date)}</span>
+ </div>
  </div>
 
  </div>

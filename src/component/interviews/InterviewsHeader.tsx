@@ -18,7 +18,8 @@ const role = user?.role;
  rounded-2xl
  border border-zinc-100
  bg-white
- p-6
+ p-4
+ md:p-6
  shadow-xs
  dark:border-zinc-800
  dark:bg-zinc-900
@@ -34,8 +35,10 @@ const role = user?.role;
  {/* Icon */}
  <div
  className="
- flex h-12 md:h-16  w-12 md:w-16 shrink-0 items-center justify-center
- rounded-2xl
+ flex h-10 md:h-14  w-10 md:w-14 shrink-0 items-center justify-center
+ 
+ rounded-xl
+ md:rounded-2xl
  bg-[#EEF8F3]
  text-[#408A71]
  shadow-sm
@@ -44,28 +47,18 @@ const role = user?.role;
  dark:text-[#B0E4CC]
  "
  >
- <MdEvent size={30} />
+ <MdEvent size={26} />
  </div>
 
  {/* Text */}
  <div>
- <p
- className="
- text-xs
- font-semibold
- uppercase
- tracking-[0.22em]
- text-[#408A71]
- dark:text-[#B0E4CC]
- "
- >
- Recruitment Interviews
- </p>
+
 
  <h1
  className="
  mt-2
- text-3xl
+ text-2xl
+ md:text-3xl
  font-bold
  tracking-tight
  text-zinc-900

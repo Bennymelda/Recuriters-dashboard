@@ -119,7 +119,8 @@ console.table(
  rounded-2xl
  
  bg-white
- p-6
+ md:p-6
+ p-4
 
 [--chart-grid:#E4E4E7]
 dark:[--chart-grid:#27272A]
@@ -182,11 +183,12 @@ dark:[--chart-grid:#27272A]
  {/* Total Hires */}
  <div
  className="
- rounded-2xl
+ rounded-xl
  border
- border-zinc-200
- bg-zinc-50
- p-4
+ border-zinc-100
+ bg-white
+ p-3
+ md:p-4
 
  dark:border-zinc-800
  dark:bg-zinc-800/50
@@ -219,11 +221,12 @@ dark:[--chart-grid:#27272A]
  {/* Fastest */}
  <div
  className="
- rounded-2xl
+ rounded-xl
  border
- border-zinc-200
- bg-zinc-50
- p-4
+ border-zinc-100
+ bg-white
+ p-3
+ md:p-4
 
  dark:border-zinc-800
  dark:bg-zinc-800/50
@@ -259,12 +262,12 @@ dark:[--chart-grid:#27272A]
  {/* Longest */}
  <div
  className="
- rounded-2xl
+ rounded-xl
  border
- border-zinc-200
- bg-zinc-50
- p-4
-
+ border-zinc-100
+ bg-white
+ p-3
+ md:p-4
  dark:border-zinc-800
  dark:bg-zinc-800/50
  "
@@ -301,9 +304,10 @@ dark:[--chart-grid:#27272A]
  className="
  rounded-2xl
  border
- border-zinc-200
- bg-zinc-50
- p-4
+ border-zinc-100
+ bg-white
+ p-3
+ md:p-4
 
  dark:border-zinc-800
  dark:bg-zinc-800/50

@@ -199,7 +199,7 @@ shadow-sm
  {candidate.fullName}
  </h3>
 
- <p className="truncate text-sm text-zinc-500 dark:text-zinc-400">
+ <p className="truncate hidden  text-sm text-zinc-500 dark:text-zinc-400">
  {candidate.email}
  </p>
 

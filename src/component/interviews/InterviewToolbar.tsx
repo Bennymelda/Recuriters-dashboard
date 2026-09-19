@@ -34,16 +34,16 @@ const InterviewsToolbar = ({
  flex-col
  gap-4
 
- rounded-2xl
+ rounded-xl
 
  border
  border-gray-200
 
  px-3
- py-3
+ py-2
 
  dark:border-zinc-800
-
+bg-white
  md:flex-row
  md:items-center
  md:justify-between
