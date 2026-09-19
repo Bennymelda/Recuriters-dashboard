@@ -5,6 +5,7 @@ import {
  MdContentCopy,
  
  MdDelete,
+ MdLink,
 
 } from "react-icons/md";
 import { useCandidateStore } from "../../store/candidateStore";
@@ -234,29 +235,31 @@ showToast({
  )}
  </Tooltip>
 
+ <Tooltip text="Copy link">
+  <button
+    onClick={async () => {
+      await navigator.clipboard.writeText(jobLink);
+
+      showToast({
+        type: "success",
+        title: "Job Link Copied",
+        message: "Link copied to clipboard.",
+      });
+    }}
+    className="cursor-pointer rounded-xl p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+  >
+    <MdLink className="dark:text-white" size={20} />
+  </button>
+</Tooltip>
+
 </div>
+
      
         </div>
     </div>
-
-    
-
-   
 </div>
 
- <button
- onClick={async () => {
- await navigator.clipboard.writeText(jobLink);
-showToast({
- type: "success",
- title: "Job Link Copied",
- message: ` Link copied to clipboard.`,
- });
- }}
- className="rounded-xl bg-[#285A48] px-5 py-3 font-semibold text-white"
->
- Copy Job Link
-</button>
+
 <div className=" grid grid-cols-2 gap-4 md:grid-cols-2 lg:grid-cols-4 mt-10">
         
         <div className="bg-[#f6fffc] dark:bg-zinc-800 rounded-lg p-3 md:p-5">

@@ -8,7 +8,7 @@ import {
  MdAssignment,
  MdInsights,
  MdClose,
- MdDescription
+ //MdDescription
 } from "react-icons/md";
 
 import SidebarItem from "./sidebarItem";
@@ -61,7 +61,7 @@ const Sidebar = ({
    */
 
   const isHiringManager = userRole === "Hiring Manager";
-const isRecruiter = userRole === "Recruiter";
+//const isRecruiter = userRole === "Recruiter";
   const canSeeJobs =
     userRole === "Admin" ||
     userRole === "Recruiter" ||
@@ -326,7 +326,7 @@ const dashboardPath =
 
 
 {/* Offers — Recruiter */}
-
+{/*
 {isRecruiter && (
   <SidebarItem
     icon={MdDescription}
@@ -337,7 +337,7 @@ const dashboardPath =
     onClick={closeMobileSidebar}
   />
 )}
-
+*/}
 
  {/* Analytics */}
 

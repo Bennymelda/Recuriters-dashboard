@@ -8,7 +8,7 @@ import CandidateApplication from "./CandidateApplication";
 
 import CandidateInterviewHistory from "./CandidateInterviewHistory";
 import CandidateNotes from "./CandidateNotes";
-import CandidateActions from "./CandidateActions";
+//import CandidateActions from "./CandidateActions";
 import CandidateTabs from "./ActiveState";
 import Breadcrumb from "../../ui/BreadCrumb";
 import { MdArrowBack } from "react-icons/md";
@@ -140,8 +140,9 @@ useEffect(() => {
  <main>
 
  
-
+{/*
  <CandidateActions candidate={candidate} />
+ */}
  </main>
 <CandidateTabs
  activeTab={activeTab}

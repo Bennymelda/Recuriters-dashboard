@@ -29,7 +29,7 @@ import HiringManagerDashboard from './hiring-manager/HiringManagerDahboard';
 import CandidateOffer from './component/Candidates/CandidateOffer';
 import RecruiterDashboard from './Recuriter/RecuriterDashboard';
 import RecruiterOfferPage from './Recuriter/RecruiterOfferPage';
-import RecruiterOffers from './Recuriter/RecruiterOffer';
+//import RecruiterOffers from './Recuriter/RecruiterOffer';
 
 function App() {
   const { pathname } = useLocation();
@@ -109,11 +109,12 @@ function App() {
   path="/recruiter/offers/:candidateId"
   element={<RecruiterOfferPage />}
 />
-
+{/*
 <Route
   path="/recruiter/offers"
   element={<RecruiterOffers />}
 />
+*/}
         </Route>
 
         {/* HIRING MANAGER */}

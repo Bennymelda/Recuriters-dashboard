@@ -77,7 +77,7 @@ className="
 group relative rounded-2xl
 border border-zinc-200
 bg-white p-4 md:p-6
-shadow-sm
+
 transition-all duration-300 ease-out
 hover:-translate-y-1 hover:shadow-xl
 hover:border-zinc-300

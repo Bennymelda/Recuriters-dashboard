@@ -291,183 +291,197 @@ showToast({
 
     return(<>
     
- <div className="mt-6 md:max-w-4xl rounded-2xl bg-white p-8 shadow-sm dark:bg-zinc-900">
 
- <h2 className="text-2xl font-bold text-zinc-900 dark:text-white">
- Apply for {job.title}
- </h2>
+<div className="mt-6 w-full max-w-4xl rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm sm:p-6 md:p-8 dark:border-zinc-800 dark:bg-zinc-900">
 
- <p className="mt-2 text-normal text-zinc-500 dark:text-zinc-400">
- Please provide your information below.
- </p>
+  {/* Header */}
+  <div className="border-b border-zinc-200 pb-6 dark:border-zinc-800">
+    <h2 className="text-2xl font-bold text-zinc-900 dark:text-white sm:text-3xl">
+      Apply for {job.title}
+    </h2>
 
- <form
- onSubmit={handleSubmit}
- className="mt-8 space-y-6"
->
- {/* Full Name */}
- <div>
- <label className="block  font-medium text-zinc-700 dark:text-zinc-300">
- Full Name
- </label>
+    <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
+      Please provide your information below.
+    </p>
+  </div>
 
- <input
- type="text"
- value={fullName}
- onChange={(e) => setFullName(e.target.value)}
- placeholder="John Doe"
- className="mt-2 w-full rounded-xl border border-zinc-300 bg-transparent px-4 py-3 outline-none focus:border-[hashtag#285A48] dark:border-zinc-700 dark:text-white"
- />
- </div>
+  <form onSubmit={handleSubmit} className="mt-8 space-y-7">
 
- {/* Email */}
- <div>
- <label className="block font-medium text-zinc-700 dark:text-zinc-300">
- Email Address
- </label>
+    {/* Personal Information */}
+    <div>
+      <h3 className="text-sm font-semibold text-zinc-900 dark:text-white">
+        Personal Information
+      </h3>
 
- <input
- type="email"
- value={email}
- onChange={(e) => setEmail(e.target.value)}
- placeholder="john@example.com"
- className="mt-2 w-full rounded-xl border border-zinc-300 bg-transparent px-4 py-3 outline-none focus:border-[hashtag#285A48] dark:border-zinc-700 dark:text-white"
- />
- </div>
+      <div className="mt-4 grid grid-cols-1 gap-5 md:grid-cols-2">
 
- {/* Phone */}
- <div>
- <label className="block  font-medium text-zinc-700 dark:text-zinc-300">
- Phone Number
- </label>
+        {/* Full Name */}
+        <div>
+          <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+            Full Name
+          </label>
 
- <input
- type="tel"
- value={phone}
- onChange={(e) => setPhone(e.target.value)}
- placeholder="08012345678"
- className="mt-2 w-full rounded-xl border border-zinc-300 bg-transparent px-4 py-3 outline-none focus:border-[hashtag#285A48] dark:border-zinc-700 dark:text-white"
- />
- </div>
+          <input
+            type="text"
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            placeholder="John Doe"
+            className="mt-2 w-full rounded-xl border border-zinc-300 bg-transparent px-4 py-3 text-sm outline-none transition focus:border-[#285A48] focus:ring-2 focus:ring-[#285A48]/10 dark:border-zinc-700 dark:text-white"
+          />
+        </div>
 
- {/* CV */}
- <div>
- <label className="block  font-medium text-zinc-700 dark:text-zinc-300">
- CV / Resume
- </label>
+        {/* Email */}
+        <div>
+          <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+            Email Address
+          </label>
 
- <input
- type="file"
- accept=".pdf,.doc,.docx"
- onChange={(e) =>
- setCv(e.target.files?.[0] || null)
- }
- className="mt-2 block w-full text-zinc-500"
- />
- </div>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="john@example.com"
+            className="mt-2 w-full rounded-xl border border-zinc-300 bg-transparent px-4 py-3 text-sm outline-none transition focus:border-[#285A48] focus:ring-2 focus:ring-[#285A48]/10 dark:border-zinc-700 dark:text-white"
+          />
+        </div>
 
- {/* LinkedIn */}
- <div>
- <label className="block font-medium text-zinc-700 dark:text-zinc-300">
- LinkedIn Profile
- </label>
+        {/* Phone */}
+        <div>
+          <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+            Phone Number
+          </label>
 
- <input
- type="url"
- value={linkedin}
- onChange={(e) => setLinkedin(e.target.value)}
- placeholder="https://linkedin.com/in/..."
- className="mt-2 w-full rounded-xl border border-zinc-300 bg-transparent px-4 py-3 outline-none focus:border-[hashtag#285A48] dark:border-zinc-700 dark:text-white"
- />
- </div>
+          <input
+            type="tel"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            placeholder="08012345678"
+            className="mt-2 w-full rounded-xl border border-zinc-300 bg-transparent px-4 py-3 text-sm outline-none transition focus:border-[#285A48] focus:ring-2 focus:ring-[#285A48]/10 dark:border-zinc-700 dark:text-white"
+          />
+        </div>
 
- {/* Portfolio */}
- <div>
- <label className="block  font-medium text-zinc-700 dark:text-zinc-300">
- Portfolio Website
- </label>
+        {/* Location */}
+        <div>
+          <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+            Location
+          </label>
 
- <input
- type="url"
- value={portfolio}
- onChange={(e) => setPortfolio(e.target.value)}
- placeholder="https://yourportfolio.com"
- className="mt-2 w-full rounded-xl border border-zinc-300 bg-transparent px-4 py-3 outline-none focus:border-[hashtag#285A48] dark:border-zinc-700 dark:text-white"
- />
- </div>
+          <input
+            type="text"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            placeholder="Enugu, Nigeria"
+            className="mt-2 w-full rounded-xl border border-zinc-300 bg-transparent px-4 py-3 text-sm outline-none transition focus:border-[#285A48] focus:ring-2 focus:ring-[#285A48]/10 dark:border-zinc-700 dark:text-white"
+          />
+        </div>
 
-<div>
- <label className="block font-medium text-zinc-700 dark:text-zinc-300">
- Location
- </label>
+      </div>
+    </div>
 
- <input
- type="text"
- value={location}
- onChange={(e) => setLocation(e.target.value)}
- placeholder="Enugu, Nigeria"
- className="mt-2 w-full rounded-xl border border-zinc-300 bg-transparent px-4 py-3 outline-none focus:border-[hashtag#285A48] dark:border-zinc-700 dark:text-white"
- />
+
+    {/* Professional Information */}
+    <div>
+      <h3 className="text-sm font-semibold text-zinc-900 dark:text-white">
+        Professional Information
+      </h3>
+
+      <div className="mt-4 grid grid-cols-1 gap-5 md:grid-cols-2">
+
+        {/* LinkedIn */}
+        <div>
+          <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+            LinkedIn Profile
+          </label>
+
+          <input
+            type="url"
+            value={linkedin}
+            onChange={(e) => setLinkedin(e.target.value)}
+            placeholder="https://linkedin.com/in/..."
+            className="mt-2 w-full rounded-xl border border-zinc-300 bg-transparent px-4 py-3 text-sm outline-none transition focus:border-[#285A48] focus:ring-2 focus:ring-[#285A48]/10 dark:border-zinc-700 dark:text-white"
+          />
+        </div>
+
+        {/* Portfolio */}
+        <div>
+          <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+            Portfolio Website
+          </label>
+
+          <input
+            type="url"
+            value={portfolio}
+            onChange={(e) => setPortfolio(e.target.value)}
+            placeholder="https://yourportfolio.com"
+            className="mt-2 w-full rounded-xl border border-zinc-300 bg-transparent px-4 py-3 text-sm outline-none transition focus:border-[#285A48] focus:ring-2 focus:ring-[#285A48]/10 dark:border-zinc-700 dark:text-white"
+          />
+        </div>
+
+        {/* Experience */}
+        <div>
+          <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+            Years of Experience
+          </label>
+
+          <input
+            type="number"
+            min="0"
+            value={experience}
+            onChange={(e) => setExperience(e.target.value)}
+            placeholder="2"
+            className="mt-2 w-full rounded-xl border border-zinc-300 bg-transparent px-4 py-3 text-sm outline-none transition focus:border-[#285A48] focus:ring-2 focus:ring-[#285A48]/10 dark:border-zinc-700 dark:text-white"
+          />
+        </div>
+
+        {/* CV */}
+        <div>
+          <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+            CV / Resume
+          </label>
+
+          <input
+            type="file"
+            accept=".pdf,.doc,.docx"
+            onChange={(e) => setCv(e.target.files?.[0] || null)}
+            className="mt-2 block w-full cursor-pointer rounded-xl border border-zinc-300 bg-transparent text-sm text-zinc-500 file:mr-4 file:border-0 file:bg-zinc-100 file:px-4 file:py-3 file:text-sm file:font-medium file:text-zinc-700 hover:file:bg-zinc-200 dark:border-zinc-700 dark:text-zinc-400 dark:file:bg-zinc-800 dark:file:text-zinc-200"
+          />
+        </div>
+
+      </div>
+    </div>
+
+
+    {/* Cover Letter */}
+    <div>
+      <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+        Cover Letter
+      </label>
+
+      <textarea
+        value={coverLetter}
+        onChange={(e) => setCoverLetter(e.target.value)}
+        rows={6}
+        placeholder="Tell us why you're a good fit for this role..."
+        className="mt-2 w-full resize-none rounded-xl border border-zinc-300 bg-transparent px-4 py-3 text-sm outline-none transition focus:border-[#285A48] focus:ring-2 focus:ring-[#285A48]/10 dark:border-zinc-700 dark:text-white"
+      />
+    </div>
+
+
+    {/* Submit */}
+    <div className="flex justify-end border-t border-zinc-200 pt-6 dark:border-zinc-800">
+      <button
+        type="submit"
+        disabled={isSubmitting}
+        className="w-full rounded-xl bg-[#285A48] px-7 py-3 font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+      >
+        {isSubmitting ? "Submitting..." : "Submit Application"}
+      </button>
+    </div>
+
+  </form>
 </div>
 
- {/* Experience */}
- <div>
- <label className="block font-medium text-zinc-700 dark:text-zinc-300">
- Years of Experience
- </label>
 
- <input
- type="number"
- min="0"
- value={experience}
- onChange={(e) => setExperience(e.target.value)}
- placeholder="2"
- className="mt-2 w-full rounded-xl border border-zinc-300 bg-transparent px-4 py-3 outline-none focus:border-[hashtag#285A48] dark:border-zinc-700 dark:text-white"
- />
- </div>
-
- {/* Cover Letter */}
- <div>
- <label className="block  font-medium text-zinc-700 dark:text-zinc-300">
- Cover Letter
- </label>
-
- <textarea
- value={coverLetter}
- onChange={(e) => setCoverLetter(e.target.value)}
- rows={6}
- placeholder="Tell us why you're a good fit for this role..."
- className="mt-2 w-full rounded-xl border border-zinc-300 bg-transparent px-4 py-3 outline-none focus:border-[hashtag#285A48] dark:border-zinc-700 dark:text-white"
- />
- </div>
-
-<div className="flex  justify-end">
- <button
-  type="submit"
- disabled={isSubmitting}
- className="
-
- w-full
- rounded-xl
- bg-[#285A48]
- px-6
- py-3
- font-semibold
- text-white
- transition
- hover:opacity-90
- disabled:cursor-not-allowed
- disabled:opacity-60
- "
->
- {isSubmitting ? "submitting..." : "Submit Application"}
-</button>
-</div>
-
-
-
- </form>
- </div>
 
     </>)
 }
