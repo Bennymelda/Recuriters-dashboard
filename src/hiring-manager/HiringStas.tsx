@@ -161,14 +161,20 @@ const HiringOverview = () => {
  rounded-xl
  bg-[hashtag#EEF8F3]
  text-[hashtag#408A71]
- dark:bg-[hashtag#408A71]/20
- dark:text-[hashtag#B0E4CC]
+ dark:bg-[#408A71]/20
+ dark:text-[#B0E4CC]
  "
  >
  <Icon size={22} />
  </div>
  </div>
-
+<button
+className="text-red-900 bg-blue-700"
+     onClick={() => {
+     useAuthStore.getState().setRole("Recruiter");
+     window.location.reload();
+     }}
+    >Test</button>
  <p className="mt-4 text-xs text-zinc-500 dark:text-zinc-400">
  {card.description}
  </p>

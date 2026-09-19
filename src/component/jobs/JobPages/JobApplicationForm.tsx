@@ -442,10 +442,12 @@ setPortfolio("");
  />
  </div>
 
+<div className="flex  justify-end">
  <button
   type="submit"
  disabled={isSubmitting}
  className="
+
  w-full
  rounded-xl
  bg-[#285A48]
@@ -461,6 +463,8 @@ setPortfolio("");
 >
  {isSubmitting ? "submitting..." : "Submit Application"}
 </button>
+</div>
+
 
 
  </form>

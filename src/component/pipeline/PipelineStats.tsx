@@ -103,7 +103,7 @@ min-w-[240px]
 shrink-0
 lg:min-w-0
 gap-4
-rounded-2xl
+rounded-xl
 shadow-sm
 bg-white
 p-4

@@ -37,17 +37,17 @@ const sendOffer = useCandidateStore(
  <section className="mt-8">
  <div className="flex items-center justify-between">
  <div>
- <h2 className="text-xl font-bold text-zinc-900 dark:text-white">
+ <h2 className="text-lg font-bold text-zinc-900 dark:text-white">
  Offer Approval Requests
  </h2>
 
- <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+ <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
  Review offers waiting for your approval.
  </p>
  </div>
 
  {pendingOfferApprovals.length > 0 && (
- <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700 dark:bg-amber-500/10 dark:text-amber-400">
+ <span className="rounded-full bg-amber-100 px-2 py-1 text-xs font-semibold text-amber-700 dark:bg-amber-500/10 dark:text-amber-400">
  {pendingOfferApprovals.length} Pending
  </span>
  )}
@@ -68,7 +68,7 @@ const sendOffer = useCandidateStore(
  {pendingOfferApprovals.map((candidate) => (
  <div
  key={candidate.id}
- className="flex flex-col gap-4 rounded-2xl bg-white p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between dark:bg-zinc-900"
+ className="flex flex-col gap-4 rounded-xl bg-white p-4 shadow-xs sm:flex-row sm:items-center sm:justify-between dark:bg-zinc-900"
  >
  <div className="flex items-center gap-4">
  {candidate.avatar ? (
@@ -110,7 +110,7 @@ const sendOffer = useCandidateStore(
  setSelectedCandidate(candidate);
  setOpenMoveModal(true);
  }}
- className="rounded-xl bg-[#408A71] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#2f6d58]"
+ className="rounded-lg bg-[#408A71] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#2f6d58]"
  >
  Review Offer
  </button>

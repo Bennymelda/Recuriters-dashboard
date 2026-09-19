@@ -15,7 +15,7 @@ const members = useTeamStore((state) => state.members);
 const candidates = useCandidateStore(
 (state) => state.candidates
 );
-console.log("🚨 PIPELINE CANDIDATES:", candidates);
+
 // Find current team member (matches both email AND companyId)
 const currentMember = findCurrentMember(members, user);
 

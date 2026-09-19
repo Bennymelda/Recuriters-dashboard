@@ -28,7 +28,7 @@ const RecruiterMyJobs = ({
   };
 
   return (
-    <section className="mt-8">
+    <section className="mt-8 ">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -42,7 +42,7 @@ const RecruiterMyJobs = ({
         </div>
 
         {jobs.length > 0 && (
-          <span className="rounded-full bg-zinc-100 px-3 py-1 text-xs font-semibold text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
+          <span className="rounded-full text-amber-800 bg-amber-100 px-3 py-1 text-xs font-semibold  dark:bg-zinc-800 dark:text-zinc-300">
             {jobs.length} {jobs.length === 1 ? "Job" : "Jobs"}
           </span>
         )}
@@ -65,9 +65,9 @@ const RecruiterMyJobs = ({
         </div>
       ) : (
         /* Jobs Table */
-        <div className="mt-5 overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm dark:border-white/10 dark:bg-zinc-900">
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[900px]">
+        <div className="mt-5 overflow-hidden rounded-2xl border border-zinc-100 bg-white  dark:border-white/10 dark:bg-zinc-900">
+          <div className="overflow-x-auto border-t rounded-2xl border-zinc-200">
+            <table className="w-full min-w-[900px] ">
               <thead>
                 <tr className="border-b border-zinc-200 bg-zinc-50/70 dark:border-white/10 dark:bg-zinc-800/40">
                   <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
@@ -124,9 +124,7 @@ const RecruiterMyJobs = ({
                             {job.title}
                           </p>
 
-                          <p className="mt-1 text-xs text-zinc-400 dark:text-zinc-500">
-                            {job.department}
-                          </p>
+                          
 
                           <p className="mt-1 text-xs text-zinc-400 dark:text-zinc-500">
                             {job.location} · {job.employmentType}

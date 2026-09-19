@@ -162,7 +162,7 @@ const member = useTeamStore((state) =>
  w-full
  min-w-0
 
- rounded-3xl
+ rounded-2xl
 
  border
  border-zinc-200
@@ -418,14 +418,14 @@ dark:text-zinc-300
 <div
 className="
 mt-5
-rounded-2xl
+rounded-lg
 
 border
 border-[#408A71]/20
 
 bg-[#EEF8F3]
 
-p-4
+p-3
 
 transition-all
 duration-300
@@ -443,13 +443,13 @@ dark:bg-[#285A48]/10
 <div
 className="
 flex
-h-10
-w-10
+h-8
+w-8
 shrink-0
 items-center
 justify-center
 
-rounded-xl
+rounded-lg
 
 bg-[#408A71]
 
@@ -517,7 +517,7 @@ day:"numeric"
 <div
 className="
 mt-8
-rounded-2xl
+rounded-xl
 
 
 
@@ -539,13 +539,13 @@ dark:bg-[#285A48]/10
 <div
 className="
 flex
-h-10
-w-10
+h-8
+w-8
 shrink-0
 items-center
 justify-center
 
-rounded-xl
+rounded-lg
 
 bg-[#285A48]
 

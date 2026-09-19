@@ -101,7 +101,9 @@ console.log("PARENT OFFER DATA:", {
  onHireCandidate={() => {}}
  />
 )}
+
 <HiringOverview />
+
 <HiringApprovalRequests
  candidates={assignedCandidates}
  onReview={(candidate) => {

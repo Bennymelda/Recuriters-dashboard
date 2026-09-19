@@ -1,11 +1,10 @@
 import { MdClose } from "react-icons/md";
 import type { Candidate } from "../../types/candidate";
-import { useState } from "react";
-//import { useCandidateStore } from "../../store/candidateStore";
-//import { useTeamStore } from "../../store/teamStore";
+import { useState, useEffect} from "react";
+
 import CustomSelect from "../ui/CustomSelect";
 import { useAuthStore } from "../../store/authStore";
-//import { useCandidateStore } from "../../store/candidateStore";
+
 interface MoveStageModalProps {
  open: boolean;
  candidate: Candidate | null;
@@ -61,6 +60,18 @@ const [salary, setSalary] = useState("");
 const [startDate, setStartDate] = useState("");
 const [employmentType, setEmploymentType] = useState("");
 const [description, setDescription] = useState("");
+
+const [isSendingOffer, setIsSendingOffer] = useState(false);
+const [isEditingRejectedOffer, setIsEditingRejectedOffer] = useState(false);
+useEffect(() => {
+  if (candidate?.offer?.status === "Draft" && isEditingRejectedOffer) {
+    setSalary(candidate.offer.salary?.toString() ?? "");
+    setStartDate(candidate.offer.startDate ?? "");
+    setEmploymentType(candidate.offer.employmentType ?? "");
+    setDescription(candidate.offer.description ?? "");
+  }
+}, [candidate, isEditingRejectedOffer]);
+
 const stageOptions: Candidate["status"][] = (() => {
  if (!candidate || !user) return [];
 
@@ -109,7 +120,7 @@ const latestFinalInterview = candidate?.interviewHistory.find(
 
 const hasPassedFinalInterview =
  latestFinalInterview?.result === "Passed";
-const [isSendingOffer, setIsSendingOffer] = useState(false);
+
 const isWorkflowAction =
  candidate?.status === "Interview" ||
  hasPassedFinalInterview ||
@@ -166,13 +177,8 @@ overflow-y-auto
  {/* Header */}
  <div className="flex items-center justify-between">
 
- <div>
-
- <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#408A71] dark:text-[#B0E4CC]">
- Hiring Pipeline
- </p>
-
- <h2 className="mt-2 text-2xl font-bold text-zinc-900 dark:text-white">
+ <div className="">
+ <h2 className="mt-2 text-xl font-bold text-zinc-900 dark:text-white">
  Move Candidate
  </h2>
 
@@ -336,7 +342,7 @@ onMove(
 {candidate.status === "Interview" &&
  isRecruiter &&
  hiringApprovalPending && (
- <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 dark:border-amber-500/20 dark:bg-amber-500/10">
+ <div className="rounded-xl text-center border border-amber-100 bg-amber-50 p-3 dark:border-amber-500/20 dark:bg-amber-500/10">
  <p className="font-semibold text-amber-700 dark:text-amber-300">
  Hiring Manager Approval Pending
  </p>
@@ -399,7 +405,9 @@ hiringApprovalPending && (
   !candidate.offer && (
   <div className="mt-4 rounded-2xl border border-green-200 bg-green-50 p-5 dark:border-green-500/30 dark:bg-green-500/10">
     <h3 className="text-lg font-semibold text-green-700 dark:text-green-400">
-      ✓ Candidate Approved
+      
+      
+       Candidate Approved
     </h3>
 
     <p className="mt-1 text-sm text-green-600 dark:text-green-300">
@@ -409,9 +417,9 @@ hiringApprovalPending && (
 )}
 
 {candidate.offer?.status === "Pending HR Approval" && isRecruiter && (
-  <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-5 dark:border-amber-500/30 dark:bg-amber-500/10">
+  <div className="mt-4 text center rounded-xl border border-amber-100 text-center bg-amber-50 p-3 dark:border-amber-500/30 dark:bg-amber-500/10">
     <h3 className="text-lg font-semibold text-amber-700 dark:text-amber-400">
-      ⏳ Waiting for HR Approval
+      Waiting for HR Approval
     </h3>
 
     <p className="mt-1 text-sm text-amber-600 dark:text-amber-300">
@@ -424,18 +432,22 @@ hiringApprovalPending && (
 
  {/* Recruiter: create offer */}
 {candidate.status === "Interview" &&
- isRecruiter &&
- hiringApproved &&
- !candidate.offer && (
- <div className="mt-4 rounded-2xl border border-zinc-200 bg-zinc-50 p-5 dark:border-zinc-700 dark:bg-zinc-800">
+  isRecruiter &&
+  hiringApproved &&
+  (!candidate.offer || (candidate.offer.status === "Draft" && isEditingRejectedOffer  )) &&  (
+ <div className="mt-4 px-2">
 
- <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">
- Create Offer
- </h3>
+<h3 className="text-lg font-semibold text-zinc-900 dark:text-white">
+  {candidate.offer?.status === "Draft"
+    ? "Edit Offer"
+    : "Create Offer"}
+</h3>
 
- <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
- Enter the offer details for this candidate.
- </p>
+<p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+  {candidate.offer?.status === "Draft"
+    ? "Update the offer details and resubmit it for HR approval."
+    : "Enter the offer details for this candidate."}
+</p>
 
 <div className="mt-4">
  <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
@@ -446,7 +458,7 @@ hiringApprovalPending && (
  type="text"
  value={user?.companyName ?? ""}
  readOnly
- className="mt-2 w-full rounded-xl border border-zinc-200 bg-zinc-100 px-4 py-3 text-zinc-600 outline-none dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300"
+ className="mt-2 w-full  text-zinc-600 outline-none  dark:text-zinc-300"
  />
 </div>
 
@@ -549,7 +561,9 @@ hiringApprovalPending && (
  disabled={!salary || !startDate || !employmentType || !description.trim()}
  className="mt-5 w-full rounded-2xl bg-[#408A71] px-6 py-3 font-semibold text-white transition hover:bg-[#2f6d58] disabled:cursor-not-allowed disabled:opacity-50"
  >
- Create Offer
+  {candidate.offer?.status === "Rejected"
+    ? "Resubmit for HR Approval"
+    : "Create Offer"}
  </button>
 
  </div>
@@ -558,7 +572,7 @@ hiringApprovalPending && (
  {/* HR: approve offer */}
 
 {(offerPendingHRApproval && isHRManager  || candidate.offer?.status === "Draft") && (
-  <div className="mt-4 rounded-2xl border border-zinc-200 bg-zinc-50 p-5 dark:border-zinc-700 dark:bg-zinc-800">
+  <div className="mt-4  bg-white p-4 dark:border-zinc-700 dark:bg-zinc-800">
 
     <div>
       <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">
@@ -572,7 +586,7 @@ hiringApprovalPending && (
 
     {/* Company */}
     <div className="mt-5">
-      <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+      <p className="text-xs font-semibold uppercase tracking-wide text-zinc-700 dark:text-zinc-400">
         Company
       </p>
 
@@ -583,22 +597,22 @@ hiringApprovalPending && (
 
     {/* Offer Message */}
     <div className="mt-4">
-      <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+      <p className="text-base font-normal font-semibold text-zinc-700 dark:text-zinc-400">
         Offer Message
       </p>
 
-      <div className="mt-2 rounded-xl border border-zinc-200 bg-white p-4 text-sm leading-6 text-zinc-700 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300">
+      <div className="mt-1 text-sm  bg-white  text-sm leading-4 text-zinc-700 dark:text-zinc-300">
         {candidate.offer?.description || "No offer message provided."}
       </div>
     </div>
 
     {/* Salary */}
     <div className="mt-4">
-      <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+      <p className="text-base font-normal font-semibold text-zinc-700 dark:text-zinc-400">
         Salary
       </p>
 
-      <p className="mt-1 font-medium text-zinc-900 dark:text-white">
+      <p className="mt-1 text-sm font-medium text-zinc-900 dark:text-white">
         {candidate.offer?.salary
           ? `₦${candidate.offer.salary.toLocaleString()}`
           : "—"}
@@ -607,33 +621,33 @@ hiringApprovalPending && (
 
     {/* Start Date */}
     <div className="mt-4">
-      <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+      <p className="text-base font-normal font-semibold text-zinc-700 dark:text-zinc-400">
         Start Date
       </p>
 
-      <p className="mt-1 font-medium text-zinc-900 dark:text-white">
+      <p className="mt-1 text-sm font-medium text-zinc-900 dark:text-white">
         {candidate.offer?.startDate || "—"}
       </p>
     </div>
 
     {/* Employment Type */}
     <div className="mt-4">
-      <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+      <p className="text-base font-normal font-semibold text-zinc-700 dark:text-zinc-400">
         Employment Type
       </p>
 
-      <p className="mt-1 font-medium text-zinc-900 dark:text-white">
+      <p className="mt-1 text-sm font-medium text-zinc-900 dark:text-white">
         {candidate.offer?.employmentType || "—"}
       </p>
     </div>
 
     {/* Created By */}
     <div className="mt-4">
-      <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+      <p className="text-base font-normal font-semibold text-zinc-700 dark:text-zinc-400">
         Created By
       </p>
 
-      <p className="mt-1 font-medium text-zinc-900 dark:text-white">
+      <p className="mt-1 text-sm font-medium text-zinc-900 dark:text-white">
         {candidate.offer?.createdByName || "Recruiter"}
       </p>
     </div>
@@ -664,17 +678,30 @@ hiringApprovalPending && (
     )}
 
     {/* Offer Rejected */}
-    {candidate.offer?.status === "Draft" && (
-      <div className="mt-6 rounded-2xl border border-red-200 bg-red-50 p-5 dark:border-red-500/20 dark:bg-red-500/10">
-        <p className="font-semibold text-red-700 dark:text-red-400">
-          Offer Rejected
-        </p>
+    {candidate.status === "Interview" &&
+  isRecruiter &&
+  hiringApproved &&
+  candidate.offer?.status === "Draft" &&
+  !isEditingRejectedOffer && (
+    <div className="mt-6  ">
+      <h3 className="text-base font-semibold text-red-700 dark:text-red-400">
+        Offer Rejected
+      </h3>
 
-        <p className="mt-1 text-sm text-red-600 dark:text-red-300">
-          This offer has been rejected by HR and cannot be sent to the candidate.
-        </p>
-      </div>
-    )}
+      <p className="mt-1 text-xs text-red-600 dark:text-red-300">
+        HR rejected this offer. You can edit the offer and resubmit it for
+        approval.
+      </p>
+
+      <button
+        type="button"
+        onClick={() => setIsEditingRejectedOffer(true)}
+        className="mt-4 w-full rounded-xl bg-[#408A71] px-6 py-3 font-semibold text-white transition hover:bg-[#2f6d58]"
+      >
+        Edit Offer
+      </button>
+    </div>
+  )}
 
   </div>
 )}
@@ -729,23 +756,19 @@ hiringApprovalPending && (
 {candidate.status === "Offer" &&
  candidate.offer?.status === "Sent" &&
  isRecruiter && (
- <div className="mt-4 rounded-2xl border border-blue-200 bg-blue-50 p-5 dark:border-blue-500/20 dark:bg-blue-500/10">
+ <div className="mt-4">
  <div>
- <h3 className="text-lg font-semibold text-blue-800 dark:text-blue-300">
+ <h3 className="text-lg text-center font-semibold text-green-800 dark:text-green-700">
  Offer Sent
  </h3>
 
- <p className="mt-1 text-sm text-blue-700 dark:text-blue-400">
+ <p className="mt-1 text-sm text-gray-700 text-center dark:text-gray-300">
  The offer has been sent to the candidate. You can copy the
  candidate's offer link below.
  </p>
  </div>
 
- <div className="mt-4 rounded-xl bg-white p-3 dark:bg-zinc-900">
- <p className="break-all text-sm text-zinc-600 dark:text-zinc-300">
- {`${window.location.origin}/candidate/offer/${candidate.offer.id}`}
- </p>
- </div>
+
 
 <button
  type="button"
@@ -756,9 +779,7 @@ hiringApprovalPending && (
 ).replace(/\/$/, "");
 
 const offerLink = `${publicAppUrl}/candidate/offer/${candidate.offer?.id}`;
-console.log("OFFER LINK CANDIDATE:", candidate);
-console.log("OFFER OBJECT:", candidate.offer);
-console.log("OFFER ID:", candidate.offer?.id);
+
  try {
  await navigator.clipboard.writeText(offerLink);
 
@@ -773,7 +794,7 @@ console.log("OFFER ID:", candidate.offer?.id);
  }}
  className="mt-4 w-full rounded-2xl bg-[#408A71] px-6 py-3 font-semibold text-white transition hover:bg-[#2f6d58]"
 >
- {linkCopied ? "✓ Link Copied!" : "Copy Offer Link"}
+ {linkCopied ? " Copied" : "Copy Offer Link"}
 </button>
 
  </div>

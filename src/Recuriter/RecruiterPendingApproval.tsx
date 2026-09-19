@@ -32,10 +32,12 @@ const RecruiterPendingApprovals = ({
     pendingHiringManagerApproval.length +
     pendingHRApproval.length;
 
+    
+
   return (
-    <section className="mt-8">
+    <section className="mt-8 bg-white py-2 px-4">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className=" flex items-center justify-between">
         <div>
           <h2 className="text-xl font-bold text-zinc-900 dark:text-white">
             Pending Approvals
@@ -47,7 +49,7 @@ const RecruiterPendingApprovals = ({
         </div>
 
         {totalPending > 0 && (
-          <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700 dark:bg-amber-500/10 dark:text-amber-400">
+          <span className="rounded-full whitespace-nowrap bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700 dark:bg-amber-500/10 dark:text-amber-400">
             {totalPending} Pending
           </span>
         )}
@@ -68,9 +70,9 @@ const RecruiterPendingApprovals = ({
           </p>
         </div>
       ) : (
-        <div className="mt-5 grid gap-5 lg:grid-cols-2">
+        <div className="mt-5 py-2 rounded-xl grid gap-5 ">
           {/* Hiring Manager Approval */}
-          <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm dark:border-white/10 dark:bg-zinc-900">
+          <div className="overflow-hidden rounded-xl border-0 shadow-xs bg-white  dark:border-white/10 dark:bg-zinc-900">
             <div className="border-b border-zinc-100 px-5 py-4 dark:border-white/10">
               <div className="flex items-center justify-between">
                 <div>
@@ -82,10 +84,11 @@ const RecruiterPendingApprovals = ({
                     Candidates waiting for a hiring decision.
                   </p>
                 </div>
-
+                {/*
                 <span className="rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-700 dark:bg-amber-500/10 dark:text-amber-400">
                   {pendingHiringManagerApproval.length}
                 </span>
+                */}
               </div>
             </div>
 
@@ -96,7 +99,7 @@ const RecruiterPendingApprovals = ({
                 </p>
               </div>
             ) : (
-              <div className="divide-y divide-zinc-100 dark:divide-white/10">
+              <div className="divide-y  divide-zinc-100 dark:divide-white/10">
                 {pendingHiringManagerApproval
                   .slice(0, 4)
                   .map((candidate) => (
@@ -104,12 +107,12 @@ const RecruiterPendingApprovals = ({
                       key={candidate.id}
                       className="flex items-center justify-between gap-4 p-4"
                     >
-                      <div className="flex min-w-0 items-center gap-3">
+                      <div className=" flex min-w-0 items-center gap-3">
                         {candidate.avatar ? (
                           <img
                             src={candidate.avatar}
                             alt={candidate.fullName}
-                            className="h-10 w-10 shrink-0 rounded-full object-cover"
+                            className="h-10  w-10 shrink-0 rounded-full object-cover"
                           />
                         ) : (
                           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-zinc-100 text-xs font-semibold text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
@@ -144,7 +147,7 @@ const RecruiterPendingApprovals = ({
           </div>
 
           {/* HR Approval */}
-          <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm dark:border-white/10 dark:bg-zinc-900">
+          <div className="overflow-hidden rounded-xl border-0 bg-white shadow-sm dark:border-white/10 dark:bg-zinc-900">
             <div className="border-b border-zinc-100 px-5 py-4 dark:border-white/10">
               <div className="flex items-center justify-between">
                 <div>
@@ -156,10 +159,11 @@ const RecruiterPendingApprovals = ({
                     Offers waiting for HR Manager approval.
                   </p>
                 </div>
-
+                {/*
                 <span className="rounded-full bg-blue-100 px-2.5 py-1 text-xs font-semibold text-blue-700 dark:bg-blue-500/10 dark:text-blue-400">
                   {pendingHRApproval.length}
                 </span>
+                */}
               </div>
             </div>
 
@@ -201,6 +205,9 @@ const RecruiterPendingApprovals = ({
                           </p>
                         </div>
                       </div>
+
+
+                     
 
                       <button
                         type="button"

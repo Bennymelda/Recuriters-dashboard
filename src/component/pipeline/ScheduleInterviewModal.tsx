@@ -168,20 +168,8 @@ if (interviewDate <= now) {
 
 
 
-console.log("SELECTED MEMBER BEFORE UPDATE:", selectedMember);
-console.log(
- "UNDEFINED FIELDS:",
- Object.entries(selectedMember).filter(
- ([, value]) => value === undefined
- )
-);
-console.log("SELECTED MEMBER BEFORE UPDATE:", selectedMember);
-console.log(
- "UNDEFINED FIELDS:",
- Object.entries(selectedMember).filter(
- ([, value]) => value === undefined
- )
-);
+
+
     updateMember({
       ...selectedMember,
       lastActive: new Date().toISOString(),

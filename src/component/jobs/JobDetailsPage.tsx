@@ -248,7 +248,11 @@ showToast({
  <button
  onClick={async () => {
  await navigator.clipboard.writeText(jobLink);
- alert("Job link copied!");
+showToast({
+ type: "success",
+ title: "Job Link Copied",
+ message: ` Link copied to clipboard.`,
+ });
  }}
  className="rounded-xl bg-[#285A48] px-5 py-3 font-semibold text-white"
 >

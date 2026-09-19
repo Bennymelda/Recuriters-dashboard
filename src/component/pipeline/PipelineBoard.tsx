@@ -68,10 +68,7 @@ const PipelineBoard = ({
  ),
  },
  ];
-console.log(
-  "HIRED COLUMN:",
-  columns.find((column) => column.title === "Hired")?.candidates
-);
+
  const [activeCandidate, setActiveCandidate] =
  useState<Candidate | null>(null);
 

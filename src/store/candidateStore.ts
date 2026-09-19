@@ -216,6 +216,14 @@ acceptOffer: (candidateId: string) => Promise<void>;
 
 declineOffer: (candidateId: string, note?: string) => Promise<void>;
 subscribeToCandidates: () => () => void;
+
+resubmitOffer: (
+  candidateId: string,
+  salary: number,
+  startDate: string,
+  employmentType: string,
+  description: string
+) => void;
 }
 
 const removeUndefined = <T extends Record<string, any>>(obj: T): T => {
@@ -1650,5 +1658,69 @@ subscribeToCandidates: () => {
   return unsubscribe;
 },
 
+resubmitOffer: (
+  candidateId,
+  salary,
+  startDate,
+  employmentType,
+  description
+) =>
+  set((state) => {
+    const currentUser = useAuthStore.getState().user;
 
+    if (!currentUser) return state;
+
+    if (currentUser.role !== "Recruiter") return state;
+
+    const candidate = state.candidates.find(
+      (candidate) => candidate.id === candidateId
+    );
+
+    if (!candidate) return state;
+
+    // Candidate must have an existing Draft offer
+    if (
+      candidate.status !== "Interview" ||
+      candidate.hiringApproval?.status !== "Approved" ||
+      candidate.offer?.status !== "Draft"
+    ) {
+      return state;
+    }
+
+    const now = new Date().toISOString();
+
+    const updatedCandidates: Candidate[] = state.candidates.map(
+      (candidate) =>
+        candidate.id !== candidateId
+          ? candidate
+          : {
+              ...candidate,
+              offer: {
+                ...candidate.offer!,
+                id: candidate.offer!.id,
+                status: "Pending HR Approval" as const,
+                salary,
+                startDate,
+                employmentType,
+                description,
+                createdBy: currentUser.id,
+                createdByName: currentUser.fullName,
+                companyName: currentUser.companyName,
+                approvedBy: undefined,
+                approvedByName: undefined,
+                approvedAt: undefined,
+                sentAt: undefined,
+                respondedAt: undefined,
+              },
+              updatedAt: now,
+            }
+    );
+
+    persistCandidates(updatedCandidates);
+
+    return {
+      candidates: updatedCandidates,
+      isLoading: false,
+    };
+  }),
 }));

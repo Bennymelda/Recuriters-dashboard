@@ -8,6 +8,7 @@ import {
  MdAssignment,
  MdInsights,
  MdClose,
+ MdDescription
 } from "react-icons/md";
 
 import SidebarItem from "./sidebarItem";
@@ -60,7 +61,7 @@ const Sidebar = ({
    */
 
   const isHiringManager = userRole === "Hiring Manager";
-
+const isRecruiter = userRole === "Recruiter";
   const canSeeJobs =
     userRole === "Admin" ||
     userRole === "Recruiter" ||
@@ -104,9 +105,12 @@ const Sidebar = ({
     ? "/hiring-manager/interviews"
     : "/interview";
 
-  const dashboardPath = isHiringManager
+const dashboardPath =
+  userRole === "Hiring Manager"
     ? "/hiring-manager"
-    : "/dashboard";
+    : userRole === "Recruiter"
+      ? "/recruiter"
+      : "/dashboard";
 
  return (
  <>
@@ -319,6 +323,21 @@ const Sidebar = ({
   onClick={closeMobileSidebar}
 />
  )}
+
+
+{/* Offers — Recruiter */}
+
+{isRecruiter && (
+  <SidebarItem
+    icon={MdDescription}
+    label="Offers"
+    
+    to="/recruiter/offers"
+    isExpanded={isExpanded}
+    onClick={closeMobileSidebar}
+  />
+)}
+
 
  {/* Analytics */}
 

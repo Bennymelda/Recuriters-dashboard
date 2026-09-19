@@ -27,6 +27,9 @@ import AcceptInvitation from './component/team/AcceptInvitaton';
 import JobApplicationForm from './component/jobs/JobPages/JobApplicationForm';
 import HiringManagerDashboard from './hiring-manager/HiringManagerDahboard';
 import CandidateOffer from './component/Candidates/CandidateOffer';
+import RecruiterDashboard from './Recuriter/RecuriterDashboard';
+import RecruiterOfferPage from './Recuriter/RecruiterOfferPage';
+import RecruiterOffers from './Recuriter/RecruiterOffer';
 
 function App() {
   const { pathname } = useLocation();
@@ -97,6 +100,20 @@ function App() {
           <Route path="/pipeline" element={<PipelinePage />} />
           <Route path="/interview" element={<InterviewsPage />} />
           <Route path="/analytics" element={<AnalyticsPage />} />
+          <Route
+  path="/recruiter"
+  element={<RecruiterDashboard />}
+
+/>
+<Route
+  path="/recruiter/offers/:candidateId"
+  element={<RecruiterOfferPage />}
+/>
+
+<Route
+  path="/recruiter/offers"
+  element={<RecruiterOffers />}
+/>
         </Route>
 
         {/* HIRING MANAGER */}

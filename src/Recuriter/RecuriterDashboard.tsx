@@ -1,5 +1,5 @@
 import RecruiterMyJobs from "./MyAssignedJobs";
-import CandidatesNeedingAttention from "./NeedsAttention";
+
 import RecruiterPendingApprovals from "./RecruiterPendingApproval";
 import RecruiterPipelineSnapshot from "./RecuriterPipelineSnapshot";
 import RecruiterRecentActivity from "./RecuriterRecentActivity";
@@ -62,6 +62,41 @@ const RecruiterDashboard = () => {
 
   return (
     <>
+    <button
+ onClick={() => {
+ useAuthStore.getState().setRole("Admin");
+ window.location.reload();
+ }}
+>
+ Test as Admin
+</button>
+
+<button
+ onClick={() => {
+ useAuthStore.getState().setRole("HR Manager");
+ window.location.reload();
+ }}
+>
+ Test as HR Manager
+</button>
+
+<button
+ onClick={() => {
+ useAuthStore.getState().setRole("Recruiter");
+ window.location.reload();
+ }}
+>
+ Test as Recruiter
+</button>
+
+<button
+ onClick={() => {
+ useAuthStore.getState().setRole("Hiring Manager");
+ window.location.reload();
+ }}
+>
+ Test as Hiring Manager
+</button>
       {latestSelectedCandidate && (
         <MoveStageModal
           open={openMoveModal}
@@ -89,6 +124,30 @@ const RecruiterDashboard = () => {
 
       <RecruiterOverview />
 
+      <div
+  className="
+ grid
+ grid-cols-1
+ gap-6
+ lg:grid-cols-2
+
+ items-stretch
+"
+>
+ <RecruiterRecentActivity
+        candidates={assignedCandidates}
+        jobs={assignedJobs}
+      />
+ <RecruiterUpcomingInterviews
+        candidates={assignedCandidates}
+        jobs={assignedJobs}
+        onManageInterview={(candidate) => {
+          setSelectedCandidate(candidate);
+          setOpenMoveModal(true);
+        }}
+      />
+</div>
+{/*
       <CandidatesNeedingAttention
         candidates={assignedCandidates}
         jobs={assignedJobs}
@@ -97,17 +156,23 @@ const RecruiterDashboard = () => {
           setOpenMoveModal(true);
         }}
       />
+      */}
 
-      <RecruiterUpcomingInterviews
-        candidates={assignedCandidates}
-        jobs={assignedJobs}
-        onManageInterview={(candidate) => {
-          setSelectedCandidate(candidate);
-          setOpenMoveModal(true);
-        }}
-      />
+     
 
-      <RecruiterPendingApprovals
+      
+
+      <div
+ className="
+ grid
+ grid-cols-1
+ gap-6
+ lg:grid-cols-2
+ xl:grid-cols-[minmax(0,1.7fr)_minmax(320px,1fr)]
+ items-stretch
+"
+>
+<RecruiterPendingApprovals
         candidates={assignedCandidates}
         onReviewCandidate={(candidate) => {
           setSelectedCandidate(candidate);
@@ -115,14 +180,18 @@ const RecruiterDashboard = () => {
         }}
       />
 
-      <RecruiterPipelineSnapshot
+      <div className="w-full min-w-0">
+ <RecruiterPipelineSnapshot
         candidates={assignedCandidates}
       />
+ </div>
 
-      <RecruiterRecentActivity
-        candidates={assignedCandidates}
-        jobs={assignedJobs}
-      />
+      
+</div>
+
+      
+
+      
 
       <RecruiterMyJobs
         jobs={assignedJobs}

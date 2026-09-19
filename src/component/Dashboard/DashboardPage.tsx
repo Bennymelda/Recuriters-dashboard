@@ -17,7 +17,7 @@ const DashboardPage = () => {
  return (
  <div className="w-full space-y-6 overflow-hidden sm:space-y-8">
 <button
- onClick​={() => {
+ onClick={() => {
  useAuthStore.getState().setRole("Admin");
  window.location.reload();
  }}
@@ -26,7 +26,7 @@ const DashboardPage = () => {
 </button>
 
 <button
- onClick​={() => {
+ onClick={() => {
  useAuthStore.getState().setRole("HR Manager");
  window.location.reload();
  }}
@@ -35,7 +35,7 @@ const DashboardPage = () => {
 </button>
 
 <button
- onClick​={() => {
+ onClick={() => {
  useAuthStore.getState().setRole("Recruiter");
  window.location.reload();
  }}
@@ -44,7 +44,7 @@ const DashboardPage = () => {
 </button>
 
 <button
- onClick​={() => {
+ onClick={() => {
  useAuthStore.getState().setRole("Hiring Manager");
  window.location.reload();
  }}

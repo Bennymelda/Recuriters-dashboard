@@ -56,6 +56,7 @@ offer?: {
  status:
  | "Draft"
  | "Pending HR Approval"
+ | "Rejected"
  | "Approved"
  | "Sent"
  | "Accepted"
