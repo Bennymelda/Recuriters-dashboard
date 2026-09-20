@@ -35,7 +35,7 @@ const RecruiterPendingApprovals = ({
     
 
   return (
-    <section className="mt-8 bg-white py-2 px-4">
+    <section className="mt-8 bg-white dark:bg-zinc-900 py-2 px-4">
       {/* Header */}
       <div className=" flex items-center justify-between">
         <div>
@@ -73,7 +73,7 @@ const RecruiterPendingApprovals = ({
         <div className="mt-5 py-2 rounded-xl grid gap-5 ">
           {/* Hiring Manager Approval */}
           <div className="overflow-hidden rounded-xl border-0 shadow-xs bg-white  dark:border-white/10 dark:bg-zinc-900">
-            <div className="border-b border-zinc-100 px-5 py-4 dark:border-white/10">
+            <div className="border-b border-zinc-100 px-5 py-4 dark:border-white/5">
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="font-semibold text-zinc-900 dark:text-white">
@@ -136,7 +136,7 @@ const RecruiterPendingApprovals = ({
                         onClick={() =>
                           onReviewCandidate(candidate)
                         }
-                        className="shrink-0 rounded-lg border border-zinc-200 px-3 py-2 text-xs font-semibold text-zinc-700 transition hover:bg-zinc-50 dark:border-white/10 dark:text-zinc-300 dark:hover:bg-white/5"
+                        className="shrink-0 rounded-lg border border-zinc-200 px-3 py-2 text-xs font-semibold text-zinc-700 transition hover:bg-zinc-50 dark:border-white/5 dark:text-zinc-300 dark:hover:bg-white/5"
                       >
                         View
                       </button>
@@ -148,7 +148,7 @@ const RecruiterPendingApprovals = ({
 
           {/* HR Approval */}
           <div className="overflow-hidden rounded-xl border-0 bg-white shadow-sm dark:border-white/10 dark:bg-zinc-900">
-            <div className="border-b border-zinc-100 px-5 py-4 dark:border-white/10">
+            <div className="border-b border-zinc-100 px-5 py-4 dark:border-white/5">
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="font-semibold text-zinc-900 dark:text-white">

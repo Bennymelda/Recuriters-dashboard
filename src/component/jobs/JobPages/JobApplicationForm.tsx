@@ -25,9 +25,7 @@ export default function JobApplicationForm(){
     const [location, setLocation] = useState("");
     
     const [isSubmitting, setIsSubmitting] = useState(false);
-   const showToast = useToastStore(
-   (state) => state.showToast
-   );
+   const showToast = useToastStore((state) => state.showToast);
 
 
 const uploadCV = async (file: File) => {
@@ -254,7 +252,7 @@ showToast({
  title: "Job Application",
  message: "Your application has been submitted successfully!",
  });
-
+alert("Your application has been submitted successfully!");
 
 // Clear form
 setFullName("");

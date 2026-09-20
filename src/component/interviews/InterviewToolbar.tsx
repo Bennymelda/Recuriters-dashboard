@@ -44,6 +44,7 @@ const InterviewsToolbar = ({
 
  dark:border-zinc-800
 bg-white
+dark:bg-zinc-900
  md:flex-row
  md:items-center
  md:justify-between

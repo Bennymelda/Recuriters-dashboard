@@ -42,7 +42,7 @@ const RecruiterMyJobs = ({
         </div>
 
         {jobs.length > 0 && (
-          <span className="rounded-full text-amber-800 bg-amber-100 px-3 py-1 text-xs font-semibold  dark:bg-zinc-800 dark:text-zinc-300">
+          <span className="rounded-full whitespace-nowrap text-amber-800 bg-amber-100 px-3 py-1 text-xs font-semibold  dark:bg-amber-700 dark:text-amber-100">
             {jobs.length} {jobs.length === 1 ? "Job" : "Jobs"}
           </span>
         )}
@@ -65,8 +65,8 @@ const RecruiterMyJobs = ({
         </div>
       ) : (
         /* Jobs Table */
-        <div className="mt-5 overflow-hidden rounded-2xl border border-zinc-100 bg-white  dark:border-white/10 dark:bg-zinc-900">
-          <div className="overflow-x-auto border-t rounded-2xl border-zinc-200">
+        <div className="mt-5 overflow-hidden rounded-2xl border border-zinc-100 bg-white  dark:border-white/5 dark:bg-zinc-900">
+          <div className="overflow-x-auto border-t rounded-2xl border-zinc-200 dark:border-zinc-700">
             <table className="w-full min-w-[900px] ">
               <thead>
                 <tr className="border-b border-zinc-200 bg-zinc-50/70 dark:border-white/10 dark:bg-zinc-800/40">

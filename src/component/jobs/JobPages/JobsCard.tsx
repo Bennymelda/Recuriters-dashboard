@@ -206,15 +206,15 @@ theme === "dark"
 
  <div className="mt-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
  <div className="flex flex-wrap items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
- <span className="rounded-full text-sm md:text-base bg-gray-100 px-2 py-1 dark:bg-zinc-700">
+ <span className="rounded-full dark:bg-zinc-800 text-sm md:text-base bg-gray-100 px-2 py-1 dark:bg-zinc-700">
  {job.experience}
  </span>
 
- <span className="rounded-full text-sm md:text-base bg-gray-100 px-2 py-1 dark:bg-zinc-700">
+ <span className="rounded-full dark:bg-zinc-800 text-sm md:text-base bg-gray-100 px-2 py-1 dark:bg-zinc-700">
  {job.employmentType}
  </span>
 
- <span className="rounded-full text-sm md:text-base bg-gray-100 px-2 py-1 dark:bg-zinc-700">
+ <span className="rounded-full text-sm md:text-base bg-gray-100  dark:bg-zinc-800 px-2 py-1 dark:bg-zinc-700">
  {job.location}
  </span>
  </div>

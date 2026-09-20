@@ -23,7 +23,7 @@ const PipelineEmpty = ({
  p-6
  text-center
  dark:border-zinc-700
- dark:bg-zinc-800
+ dark:bg-zinc-900
  "
  >
  <div className="flex h-14 w-14 items-center justify-center rounded-full bg-zinc-100 dark:bg-zinc-700">

@@ -1,3 +1,5 @@
+/*
+
 import { useMemo } from "react";
 import type { Candidate } from "../types/candidate";
 import type { Job } from "../types/job";
@@ -238,6 +240,408 @@ const RecentHiringActivity = ({
  )}
  </section>
  );
+};
+
+export default RecentHiringActivity;
+*/
+import { useMemo } from "react";
+import { useState } from "react";
+import type { Candidate } from "../types/candidate";
+import type { Job } from "../types/job";
+import {
+  ResponsiveContainer,
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+} from "recharts";
+
+interface RecentHiringActivityProps {
+  candidates: Candidate[];
+  jobs: Job[];
+}
+
+interface Activity {
+  id: string;
+  type:
+    | "stage"
+    | "approval"
+    | "offer"
+    | "hired"
+    | "rejected";
+  title: string;
+  description: string;
+  date: string;
+}
+
+const RecentHiringActivity = ({
+  candidates,
+  jobs,
+}: RecentHiringActivityProps) => {
+
+    const [timeRange, setTimeRange] = useState<7 | 14 | 30>(7);
+
+    
+ const activities = useMemo(() => {
+  const activityList: Activity[] = [];
+
+  candidates.forEach((candidate) => {
+    const job = jobs.find((job) => job.id === candidate.jobId);
+    const jobTitle = job?.title ?? candidate.appliedRole;
+
+    if (candidate.stageUpdatedAt) {
+      activityList.push({
+        id: `${candidate.id}-stage`,
+        type: "stage",
+        title: "Candidate moved",
+        description: `${candidate.fullName} moved to ${candidate.status} for ${jobTitle}.`,
+        date: candidate.stageUpdatedAt,
+      });
+    }
+
+    if (
+      candidate.hiringApproval?.status === "Approved" &&
+      candidate.hiringApproval.reviewedAt
+    ) {
+      activityList.push({
+        id: `${candidate.id}-approval-approved`,
+        type: "approval",
+        title: "Hiring decision approved",
+        description: `${candidate.fullName} was approved for ${jobTitle}.`,
+        date: candidate.hiringApproval.reviewedAt,
+      });
+    }
+
+    if (
+      candidate.hiringApproval?.status === "Rejected" &&
+      candidate.hiringApproval.reviewedAt
+    ) {
+      activityList.push({
+        id: `${candidate.id}-approval-rejected`,
+        type: "approval",
+        title: "Hiring decision rejected",
+        description: `${candidate.fullName} was not approved for ${jobTitle}.`,
+        date: candidate.hiringApproval.reviewedAt,
+      });
+    }
+
+    if (candidate.offer?.status === "Sent" && candidate.offer.sentAt) {
+      activityList.push({
+        id: `${candidate.id}-offer-sent`,
+        type: "offer",
+        title: "Offer sent",
+        description: `An offer was sent to ${candidate.fullName} for ${jobTitle}.`,
+        date: candidate.offer.sentAt,
+      });
+    }
+
+    if (
+      candidate.offer?.status === "Accepted" &&
+      candidate.offer.respondedAt
+    ) {
+      activityList.push({
+        id: `${candidate.id}-offer-accepted`,
+        type: "offer",
+        title: "Offer accepted",
+        description: `${candidate.fullName} accepted the offer for ${jobTitle}.`,
+        date: candidate.offer.respondedAt,
+      });
+    }
+
+    if (candidate.hiredAt) {
+      activityList.push({
+        id: `${candidate.id}-hired`,
+        type: "hired",
+        title: "Candidate hired",
+        description: `${candidate.fullName} was hired for ${jobTitle}.`,
+        date: candidate.hiredAt,
+      });
+    }
+
+    if (candidate.rejection?.date) {
+      activityList.push({
+        id: `${candidate.id}-rejected`,
+        type: "rejected",
+        title: "Candidate rejected",
+        description: `${candidate.fullName} was rejected from ${jobTitle}.`,
+        date: candidate.rejection.date,
+      });
+    }
+  });
+
+  return activityList
+    .filter((activity) => {
+      const time = new Date(activity.date).getTime();
+      return !Number.isNaN(time);
+    })
+    .sort(
+      (a, b) =>
+        new Date(a.date).getTime() -
+        new Date(b.date).getTime()
+    );
+}, [candidates, jobs]);
+
+      const filteredActivities = useMemo(() => {
+  const now = new Date();
+
+  const startDate = new Date();
+  startDate.setDate(now.getDate() - (timeRange - 1));
+
+  return activities.filter((activity) => {
+    const activityDate = new Date(activity.date);
+
+    return activityDate >= startDate && activityDate <= now;
+  });
+}, [activities, timeRange]);
+
+
+
+
+ const chartData = useMemo(() => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const getDateKey = (date: Date) => {
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
+      2,
+      "0"
+    )}-${String(date.getDate()).padStart(2, "0")}`;
+  };
+
+  // Create every day in the selected range
+  const days = Array.from({ length: timeRange }, (_, index) => {
+    const date = new Date(today);
+
+    date.setDate(today.getDate() - (timeRange - 1 - index));
+
+    return {
+      date: getDateKey(date),
+      label: date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      }),
+      activity: 0,
+    };
+  });
+
+  // Add activities to their correct day
+  filteredActivities.forEach((activity) => {
+    const activityDate = new Date(activity.date);
+    const key = getDateKey(activityDate);
+
+    const day = days.find((item) => item.date === key);
+
+    if (day) {
+      day.activity += 1;
+    }
+  });
+
+  return days;
+}, [filteredActivities, timeRange]);
+
+const totalActivity = filteredActivities.length;
+
+const hiredCount = filteredActivities.filter(
+  (activity) => activity.type === "hired"
+).length;
+
+const offersCount = filteredActivities.filter(
+  (activity) => activity.type === "offer"
+).length;
+
+const rejectedCount = filteredActivities.filter(
+  (activity) => activity.type === "rejected"
+).length;
+
+
+
+  return (
+    <section className="mt-8 rounded-2xl bg-white p-6 shadow-sm dark:bg-zinc-900">
+      {/* Header */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h2 className="text-lg font-bold text-zinc-900 dark:text-white">
+            Hiring Activity
+          </h2>
+
+          <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+            Candidate and hiring activity over time.
+          </p>
+        </div>
+
+        <div className="rounded-xl bg-zinc-50 px-4 py-2 dark:bg-zinc-800">
+          <p className="text-xs text-zinc-500 dark:text-zinc-400">
+            Total activity
+          </p>
+
+          <p className="text-lg font-bold text-zinc-900 dark:text-white">
+            {totalActivity}
+          </p>
+        </div>
+      </div>
+
+      <div className="mt-6 flex w-fit rounded-xl bg-zinc-100 p-1 dark:bg-zinc-800">
+  {[7, 14, 30].map((days) => (
+    <button
+      key={days}
+      type="button"
+      onClick={() => setTimeRange(days as 7 | 14 | 30)}
+      className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
+        timeRange === days
+          ? "bg-white text-zinc-900 shadow-sm dark:bg-zinc-700 dark:text-white"
+          : "text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"
+      }`}
+    >
+      {days} Days
+    </button>
+  ))}
+</div>
+
+      {chartData.length === 0 ? (
+        <div className="mt-6 rounded-2xl border border-dashed border-zinc-200 p-8 text-center dark:border-white/10">
+          <p className="font-medium text-zinc-700 dark:text-zinc-300">
+            No recent activity
+          </p>
+
+          <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+            Candidate and hiring activity will appear here.
+          </p>
+        </div>
+      ) : (
+        <>
+          {/* Graph */}
+          <div className="mt-8 h-[280px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart
+                data={chartData}
+                margin={{
+                  top: 10,
+                  right: 10,
+                  left: -20,
+                  bottom: 0,
+                }}
+              >
+                <defs>
+                  <linearGradient
+                    id="activityGradient"
+                    x1="0"
+                    y1="0"
+                    x2="0"
+                    y2="1"
+                  >
+                    <stop
+                      offset="0%"
+                      stopColor="#408A71"
+                      stopOpacity={0.35}
+                    />
+
+                    <stop
+                      offset="100%"
+                      stopColor="#408A71"
+                      stopOpacity={0.02}
+                    />
+                  </linearGradient>
+                </defs>
+
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  vertical={false}
+                  stroke="#e4e4e7"
+                />
+
+                <XAxis
+                  dataKey="label"
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{
+                    fontSize: 12,
+                    fill: "#a1a1aa",
+                  }}
+                />
+
+                <YAxis
+                  allowDecimals={false}
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{
+                    fontSize: 12,
+                    fill: "#a1a1aa",
+                  }}
+                />
+
+                <Tooltip
+                  contentStyle={{
+                    borderRadius: "12px",
+                    border: "1px solid #e4e4e7",
+                    boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
+                  }}
+                  labelStyle={{
+                    fontWeight: 600,
+                  }}
+                  formatter={(value) => [
+                    `${value} activities`,
+                    "Hiring Activity",
+                  ]}
+                />
+
+                <Area
+                  type="monotone"
+                  dataKey="activity"
+                  stroke="#408A71"
+                  strokeWidth={3}
+                  fill="url(#activityGradient)"
+                  dot={{
+                    r: 4,
+                    fill: "#408A71",
+                    strokeWidth: 2,
+                    stroke: "#ffffff",
+                  }}
+                  activeDot={{
+                    r: 6,
+                  }}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Summary */}
+          <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <div className="rounded-2xl bg-zinc-50 p-4 dark:bg-zinc-800">
+              <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+                Hired
+              </p>
+
+              <p className="mt-1 text-xl font-bold text-zinc-900 dark:text-white">
+                {hiredCount}
+              </p>
+            </div>
+
+            <div className="rounded-2xl bg-zinc-50 p-4 dark:bg-zinc-800">
+              <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+                Offers
+              </p>
+
+              <p className="mt-1 text-xl font-bold text-zinc-900 dark:text-white">
+                {offersCount}
+              </p>
+            </div>
+
+            <div className="rounded-2xl bg-zinc-50 p-4 dark:bg-zinc-800">
+              <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+                Rejected
+              </p>
+
+              <p className="mt-1 text-xl font-bold text-zinc-900 dark:text-white">
+                {rejectedCount}
+              </p>
+            </div>
+          </div>
+        </>
+      )}
+    </section>
+  );
 };
 
 export default RecentHiringActivity;

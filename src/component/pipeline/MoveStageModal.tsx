@@ -401,6 +401,7 @@ hiringApprovalPending && (
  </button>
  </div>
  )}
+
 {candidate.hiringApproval?.status === "Approved" &&
   !candidate.offer && (
   <div className="mt-4 rounded-2xl border border-green-200 bg-green-50 p-5 dark:border-green-500/30 dark:bg-green-500/10">
@@ -430,7 +431,7 @@ hiringApprovalPending && (
 
 
 
- {/* Recruiter: create offer */}
+
 {candidate.status === "Interview" &&
   isRecruiter &&
   hiringApproved &&
@@ -476,7 +477,7 @@ hiringApprovalPending && (
  className="mt-2 w-full resize-none rounded-xl border border-zinc-200 bg-white px-4 py-3 outline-none transition focus:border-[#408A71] dark:border-zinc-700 dark:bg-zinc-900 dark:text-white"
  />
 </div>
- {/* Salary */}
+
 
 <div className="mt-5">
  <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
@@ -504,7 +505,7 @@ hiringApprovalPending && (
  </div>
 </div>
 
- {/* Start Date */}
+
  <div className="mt-4">
  <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
  Start Date
@@ -519,7 +520,7 @@ hiringApprovalPending && (
 />
  </div>
 
- {/* Employment Type */}
+
  <div className="mt-4">
  <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
  Employment Type
@@ -538,7 +539,7 @@ hiringApprovalPending && (
  </select>
  </div>
 
- {/* Create Offer Button */}
+
  <button
  onClick={() => {
 
@@ -569,9 +570,8 @@ hiringApprovalPending && (
  </div>
  )}
 
- {/* HR: approve offer */}
 
-{(offerPendingHRApproval && isHRManager  || candidate.offer?.status === "Draft") && (
+{(offerPendingHRApproval && isHRManager || candidate.offer?.status === "Draft") && (
   <div className="mt-4  bg-white p-4 dark:border-zinc-700 dark:bg-zinc-800">
 
     <div>
@@ -584,7 +584,7 @@ hiringApprovalPending && (
       </p>
     </div>
 
-    {/* Company */}
+    
     <div className="mt-5">
       <p className="text-xs font-semibold uppercase tracking-wide text-zinc-700 dark:text-zinc-400">
         Company
@@ -595,7 +595,7 @@ hiringApprovalPending && (
       </p>
     </div>
 
-    {/* Offer Message */}
+
     <div className="mt-4">
       <p className="text-base font-normal font-semibold text-zinc-700 dark:text-zinc-400">
         Offer Message
@@ -606,7 +606,7 @@ hiringApprovalPending && (
       </div>
     </div>
 
-    {/* Salary */}
+  
     <div className="mt-4">
       <p className="text-base font-normal font-semibold text-zinc-700 dark:text-zinc-400">
         Salary
@@ -619,7 +619,7 @@ hiringApprovalPending && (
       </p>
     </div>
 
-    {/* Start Date */}
+    
     <div className="mt-4">
       <p className="text-base font-normal font-semibold text-zinc-700 dark:text-zinc-400">
         Start Date
@@ -630,7 +630,7 @@ hiringApprovalPending && (
       </p>
     </div>
 
-    {/* Employment Type */}
+
     <div className="mt-4">
       <p className="text-base font-normal font-semibold text-zinc-700 dark:text-zinc-400">
         Employment Type
@@ -641,7 +641,7 @@ hiringApprovalPending && (
       </p>
     </div>
 
-    {/* Created By */}
+   
     <div className="mt-4">
       <p className="text-base font-normal font-semibold text-zinc-700 dark:text-zinc-400">
         Created By
@@ -652,7 +652,7 @@ hiringApprovalPending && (
       </p>
     </div>
 
-    {/* Decision buttons */}
+    
     {candidate.offer?.status === "Pending HR Approval" && (
       <div className="mt-6 flex flex-col gap-3 sm:flex-row">
         <button
@@ -677,6 +677,258 @@ hiringApprovalPending && (
       </div>
     )}
 
+
+
+ {/* Recruiter: create offer */}
+ {/*
+{candidate.status === "Interview" &&
+  isRecruiter &&
+  hiringApproved &&
+  (!candidate.offer || (candidate.offer.status === "Draft" && isEditingRejectedOffer  )) &&  (
+ <div className="mt-4 px-2">
+
+<h3 className="text-lg font-semibold text-zinc-900 dark:text-white">
+  {candidate.offer?.status === "Draft"
+    ? "Edit Offer"
+    : "Create Offer"}
+</h3>
+
+<p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+  {candidate.offer?.status === "Draft"
+    ? "Update the offer details and resubmit it for HR approval."
+    : "Enter the offer details for this candidate."}
+</p>
+
+<div className="mt-4">
+ <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+ Company Name
+ </label>
+
+ <input
+ type="text"
+ value={user?.companyName ?? ""}
+ readOnly
+ className="mt-2 w-full  text-zinc-600 outline-none  dark:text-zinc-300"
+ />
+</div>
+
+
+<div className="mt-4">
+ <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+ Offer Message
+ </label>
+
+ <textarea
+ value={description}
+ onChange={(e) => setDescription(e.target.value)}
+ rows={5}
+ placeholder="We are pleased to offer you the position of..."
+ className="mt-2 w-full resize-none rounded-xl border border-zinc-200 bg-white px-4 py-3 outline-none transition focus:border-[#408A71] dark:border-zinc-700 dark:bg-zinc-900 dark:text-white"
+ />
+</div>
+
+
+<div className="mt-5">
+ <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+ Salary
+ </label>
+
+ <div className="mt-2 flex items-center rounded-xl border border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-900">
+ <span className="px-3 text-sm font-medium text-zinc-500 dark:text-zinc-400">
+ ₦
+ </span>
+
+<input
+  type="text"
+  value={salary ? Number(salary).toLocaleString("en-NG") : ""}
+  onChange={(e) => {
+    const value = e.target.value.replace(/,/g, "");
+    
+    if (!/^\d*$/.test(value)) return;
+    
+    setSalary(value);
+  }}
+  placeholder="Enter salary"
+  className="w-full bg-transparent px-3 py-3 text-sm text-zinc-900 outline-none dark:text-white"
+/>
+ </div>
+</div>
+
+
+ <div className="mt-4">
+ <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+ Start Date
+ </label>
+
+ <input
+  type="date"
+  value={startDate}
+  min={new Date().toISOString().split("T")[0]}
+  onChange={(e) => setStartDate(e.target.value)}
+  className="mt-2 w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 outline-none transition focus:border-[#408A71] dark:border-zinc-700 dark:bg-zinc-900 dark:text-white"
+/>
+ </div>
+
+
+ <div className="mt-4">
+ <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+ Employment Type
+ </label>
+
+ <select
+ value={employmentType}
+ onChange={(e) => setEmploymentType(e.target.value)}
+ className="mt-2 w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 outline-none transition focus:border-[#408A71] dark:border-zinc-700 dark:bg-zinc-900 dark:text-white"
+ >
+ <option value="">Select employment type</option>
+ <option value="Full-time">Full-time</option>
+ <option value="Part-time">Part-time</option>
+ <option value="Contract">Contract</option>
+ <option value="Internship">Internship</option>
+ </select>
+ </div>
+
+
+ <button
+ onClick={() => {
+
+ 
+
+ if (!salary || !startDate || !employmentType) {
+ return;
+ }
+
+ onCreateOffer(
+ candidate.id,
+ Number(salary),
+ startDate,
+ employmentType,
+ description,
+ );
+
+ onClose();
+ }}
+ disabled={!salary || !startDate || !employmentType || !description.trim()}
+ className="mt-5 w-full rounded-2xl bg-[#408A71] px-6 py-3 font-semibold text-white transition hover:bg-[#2f6d58] disabled:cursor-not-allowed disabled:opacity-50"
+ >
+  {candidate.offer?.status === "Rejected"
+    ? "Resubmit for HR Approval"
+    : "Create Offer"}
+ </button>
+
+ </div>
+ )}
+
+/*}
+
+ {/* HR: approve offer */}
+{/*
+{(offerPendingHRApproval && isHRManager  || candidate.offer?.status === "Draft") && (
+  <div className="mt-4  bg-white p-4 dark:border-zinc-700 dark:bg-zinc-800">
+
+    <div>
+      <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">
+        Review Offer
+      </h3>
+
+      <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+        Review the offer details before making your decision.
+      </p>
+    </div>
+
+    
+    <div className="mt-5">
+      <p className="text-xs font-semibold uppercase tracking-wide text-zinc-700 dark:text-zinc-400">
+        Company
+      </p>
+
+      <p className="mt-1 font-medium text-zinc-900 dark:text-white">
+        {candidate.offer?.companyName || "—"}
+      </p>
+    </div>
+
+
+    <div className="mt-4">
+      <p className="text-base font-normal font-semibold text-zinc-700 dark:text-zinc-400">
+        Offer Message
+      </p>
+
+      <div className="mt-1 text-sm  bg-white  text-sm leading-4 text-zinc-700 dark:text-zinc-300">
+        {candidate.offer?.description || "No offer message provided."}
+      </div>
+    </div>
+
+  
+    <div className="mt-4">
+      <p className="text-base font-normal font-semibold text-zinc-700 dark:text-zinc-400">
+        Salary
+      </p>
+
+      <p className="mt-1 text-sm font-medium text-zinc-900 dark:text-white">
+        {candidate.offer?.salary
+          ? `₦${candidate.offer.salary.toLocaleString()}`
+          : "—"}
+      </p>
+    </div>
+
+    
+    <div className="mt-4">
+      <p className="text-base font-normal font-semibold text-zinc-700 dark:text-zinc-400">
+        Start Date
+      </p>
+
+      <p className="mt-1 text-sm font-medium text-zinc-900 dark:text-white">
+        {candidate.offer?.startDate || "—"}
+      </p>
+    </div>
+
+
+    <div className="mt-4">
+      <p className="text-base font-normal font-semibold text-zinc-700 dark:text-zinc-400">
+        Employment Type
+      </p>
+
+      <p className="mt-1 text-sm font-medium text-zinc-900 dark:text-white">
+        {candidate.offer?.employmentType || "—"}
+      </p>
+    </div>
+
+   
+    <div className="mt-4">
+      <p className="text-base font-normal font-semibold text-zinc-700 dark:text-zinc-400">
+        Created By
+      </p>
+
+      <p className="mt-1 text-sm font-medium text-zinc-900 dark:text-white">
+        {candidate.offer?.createdByName || "Recruiter"}
+      </p>
+    </div>
+
+    
+    {candidate.offer?.status === "Pending HR Approval" && (
+      <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+        <button
+          onClick={() => {
+            onApproveOffer(candidate.id);
+            onClose();
+          }}
+          className="w-full rounded-2xl bg-[#408A71] px-6 py-3 font-semibold text-white transition hover:bg-[#2f6d58]"
+        >
+          Approve Offer
+        </button>
+
+        <button
+          onClick={() => {
+            onRejectOffer(candidate.id);
+            onClose();
+          }}
+          className="w-full rounded-2xl border border-red-300 px-6 py-3 font-semibold text-red-600 transition hover:bg-red-50 dark:border-red-500/40 dark:hover:bg-red-500/10"
+        >
+          Reject Offer
+        </button>
+      </div>
+    )}
+*/}
     {/* Offer Rejected */}
     {candidate.status === "Interview" &&
   isRecruiter &&

@@ -77,7 +77,7 @@ const CandidatesNeedingAttention = ({
   };
 
   return (
-    <section className="mt-8">
+    <section className="mt-8 ">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-xl font-bold text-zinc-900 dark:text-white">

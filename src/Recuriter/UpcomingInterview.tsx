@@ -60,6 +60,7 @@ const RecruiterUpcomingInterviews = ({
         mt-8
         rounded-3xl
         bg-white
+        dark:bg-zinc-900
         p-4
         dark:bg-zinc-900
       "
@@ -91,16 +92,18 @@ const RecruiterUpcomingInterviews = ({
               className="
                 flex
                 mt-4
+              
                 border-l-5
                 items-center
                 justify-between
                 rounded-2xl
                 
-                border-purple-500
+                border-[#285A48]
+                dark:border-[#B0E4CC]
                 p-2
                 transition
                 shadow-sm
-                dark:border-zinc-700
+                
               "
             >
               {/* Candidate information */}
