@@ -17,7 +17,7 @@ return (
 
 {/* Logo */}
 
-<div className="text-xl font-bold text-[#285A48] dark:text-[#B0E4CC]">CareerFlow</div>
+<div className="text-xl font-bold text-[#285A48] dark:text-[#B0E4CC]">Seamless</div>
 
 
 

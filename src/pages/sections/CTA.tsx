@@ -30,7 +30,7 @@ const CTA = () => {
  </h2>
 
  <p className="text-gray-700 lg:text-lg max-w-xl mx-auto relative z-10">
- Join the thousands of teams finding their next great hire with CareerFlow.
+ Join the thousands of teams finding their next great hire with Seamless.
  </p>
 
  <div className="pt-2 mt-10 relative z-10">

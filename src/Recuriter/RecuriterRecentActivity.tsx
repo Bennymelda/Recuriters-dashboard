@@ -242,7 +242,7 @@ const RecruiterRecentActivity = ({
 export default RecruiterRecentActivity;
 */
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
   AreaChart,
   Area,
@@ -278,6 +278,7 @@ const RecruiterRecentActivity = ({
   candidates,
   jobs,
 }: RecruiterRecentActivityProps) => {
+  const [timeRange, setTimeRange] = useState<7 | 14 | 30>(7);
   const activities = useMemo(() => {
     const activityList: Activity[] = [];
 
@@ -389,20 +390,30 @@ const RecruiterRecentActivity = ({
   /*
    * Build chart data from the actual recent activities.
    */
-  const chartData = useMemo(() => {
-    const now = new Date();
+ const chartData = useMemo(() => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
-    const days = Array.from({ length: 7 }, (_, index) => {
-      const date = new Date(now);
+  const getDateKey = (date: Date) => {
+    return `${date.getFullYear()}-${String(
+      date.getMonth() + 1
+    ).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+  };
 
-      date.setDate(now.getDate() - (6 - index));
+  const days = Array.from(
+    { length: timeRange },
+    (_, index) => {
+      const date = new Date(today);
 
-      const dateKey = date.toISOString().split("T")[0];
+      date.setDate(
+        today.getDate() - (timeRange - 1 - index)
+      );
 
       return {
-        date: dateKey,
-        day: date.toLocaleDateString("en-US", {
-          weekday: "short",
+        date: getDateKey(date),
+        label: date.toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
         }),
         total: 0,
         moved: 0,
@@ -411,114 +422,113 @@ const RecruiterRecentActivity = ({
         hired: 0,
         rejected: 0,
       };
-    });
+    }
+  );
 
-    const activityList: Activity[] = [];
+  const activityList: Activity[] = [];
 
-    candidates.forEach((candidate) => {
-      if (candidate.stageUpdatedAt) {
-        activityList.push({
-          id: `${candidate.id}-stage`,
-          type: "stage",
-          title: "",
-          description: "",
-          date: candidate.stageUpdatedAt,
-        });
-      }
+  candidates.forEach((candidate) => {
+    if (candidate.stageUpdatedAt) {
+      activityList.push({
+        id: `${candidate.id}-stage`,
+        type: "stage",
+        title: "",
+        description: "",
+        date: candidate.stageUpdatedAt,
+      });
+    }
 
-      if (candidate.hiringApproval?.reviewedAt) {
-        activityList.push({
-          id: `${candidate.id}-approval`,
-          type: "approval",
-          title: "",
-          description: "",
-          date: candidate.hiringApproval.reviewedAt,
-        });
-      }
+    if (candidate.hiringApproval?.reviewedAt) {
+      activityList.push({
+        id: `${candidate.id}-approval`,
+        type: "approval",
+        title: "",
+        description: "",
+        date: candidate.hiringApproval.reviewedAt,
+      });
+    }
 
-      if (candidate.offer?.sentAt) {
-        activityList.push({
-          id: `${candidate.id}-offer`,
-          type: "offer",
-          title: "",
-          description: "",
-          date: candidate.offer.sentAt,
-        });
-      }
+    if (candidate.offer?.sentAt) {
+      activityList.push({
+        id: `${candidate.id}-offer`,
+        type: "offer",
+        title: "",
+        description: "",
+        date: candidate.offer.sentAt,
+      });
+    }
 
-      if (candidate.offer?.respondedAt) {
-        activityList.push({
-          id: `${candidate.id}-offer-response`,
-          type: "offer",
-          title: "",
-          description: "",
-          date: candidate.offer.respondedAt,
-        });
-      }
+    if (candidate.offer?.respondedAt) {
+      activityList.push({
+        id: `${candidate.id}-offer-response`,
+        type: "offer",
+        title: "",
+        description: "",
+        date: candidate.offer.respondedAt,
+      });
+    }
 
-      if (candidate.hiredAt) {
-        activityList.push({
-          id: `${candidate.id}-hired`,
-          type: "hired",
-          title: "",
-          description: "",
-          date: candidate.hiredAt,
-        });
-      }
+    if (candidate.hiredAt) {
+      activityList.push({
+        id: `${candidate.id}-hired`,
+        type: "hired",
+        title: "",
+        description: "",
+        date: candidate.hiredAt,
+      });
+    }
 
-      if (candidate.rejection?.date) {
-        activityList.push({
-          id: `${candidate.id}-rejected`,
-          type: "rejected",
-          title: "",
-          description: "",
-          date: candidate.rejection.date,
-        });
-      }
-    });
+    if (candidate.rejection?.date) {
+      activityList.push({
+        id: `${candidate.id}-rejected`,
+        type: "rejected",
+        title: "",
+        description: "",
+        date: candidate.rejection.date,
+      });
+    }
+  });
 
-    activityList.forEach((activity) => {
-      const activityDate = new Date(activity.date);
+  activityList.forEach((activity) => {
+    const activityDate = new Date(activity.date);
 
-      if (Number.isNaN(activityDate.getTime())) return;
+    if (Number.isNaN(activityDate.getTime())) return;
 
-      const dateKey = activityDate
-        .toISOString()
-        .split("T")[0];
+    const dateKey = getDateKey(activityDate);
 
-      const day = days.find(
-        (item) => item.date === dateKey
-      );
+    const day = days.find(
+      (item) => item.date === dateKey
+    );
 
-      if (!day) return;
+    if (!day) return;
 
-      day.total += 1;
+    day.total += 1;
 
-      switch (activity.type) {
-        case "stage":
-          day.moved += 1;
-          break;
+    switch (activity.type) {
+      case "stage":
+        day.moved += 1;
+        break;
 
-        case "approval":
-          day.approved += 1;
-          break;
+      case "approval":
+        day.approved += 1;
+        break;
 
-        case "offer":
-          day.offers += 1;
-          break;
+      case "offer":
+        day.offers += 1;
+        break;
 
-        case "hired":
-          day.hired += 1;
-          break;
+      case "hired":
+        day.hired += 1;
+        break;
 
-        case "rejected":
-          day.rejected += 1;
-          break;
-      }
-    });
+      case "rejected":
+        day.rejected += 1;
+        break;
+    }
+  });
 
-    return days;
-  }, [candidates]);
+  return days;
+}, [candidates, timeRange]);
 
   const totals = useMemo(() => {
     return chartData.reduce(
@@ -568,15 +578,17 @@ const RecruiterRecentActivity = ({
 
         <div className="rounded-2xl bg-[#EEF8F3] px-4 py-2.5 dark:bg-[#285A48]/20">
           <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
-            Last 7 days
-          </p>
+  Last {timeRange} days
+</p>
 
           <p className="mt-0.5 text-xl font-bold text-[#285A48] dark:text-[#B0E4CC]">
             {totals.total}
           </p>
         </div>
       </div>
+      
 
+     
       {/* Activity summary */}
       <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
         <div className="rounded-2xl bg-zinc-50 p-4 dark:bg-zinc-800/50">
@@ -619,6 +631,26 @@ const RecruiterRecentActivity = ({
           </p>
         </div>
       </div>
+
+       <div className="mt-6  flex w-fit rounded-xl bg-zinc-100 p-1 dark:bg-zinc-800">
+  {[7, 14, 30].map((days) => (
+    <button
+      key={days}
+      type="button"
+      onClick={() =>
+        setTimeRange(days as 7 | 14 | 30)
+      }
+      className={`rounded-lg cursor-pointer px-4 py-2 text-sm font-medium transition ${
+        timeRange === days
+          ? "bg-white text-zinc-900 shadow-sm dark:bg-zinc-700 dark:text-white"
+          : "text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"
+      }`}
+    >
+      {days} Days
+    </button>
+  ))}
+</div>
+
 
       {/* Chart */}
       {activities.length === 0 ? (
@@ -672,18 +704,19 @@ const RecruiterRecentActivity = ({
                 <CartesianGrid
                   vertical={false}
                   strokeDasharray="4 4"
-                  className="stroke-zinc-200 dark:stroke-zinc-800"
+                  className="stroke-zinc-200 dark:stroke-zinc-700"
                 />
 
                 <XAxis
-                  dataKey="day"
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{
-                    fontSize: 12,
-                  }}
-                  className="fill-zinc-400"
-                />
+  dataKey="label"
+  axisLine={false}
+  tickLine={false}
+  tick={{
+    fontSize: 12,
+  }}
+  className="fill-zinc-400"
+  interval={timeRange === 30 ? 4 : 0}
+/>
 
                 <YAxis
                   allowDecimals={false}
@@ -697,24 +730,29 @@ const RecruiterRecentActivity = ({
                 />
 
                 <Tooltip
-                  cursor={{
-                    stroke: "#408A71",
-                    strokeWidth: 1,
-                    strokeDasharray: "4 4",
-                  }}
-                  contentStyle={{
-                    borderRadius: "16px",
-                    border: "1px solid #e4e4e7",
-                    backgroundColor: "#ffffff",
-                    padding: "12px 14px",
-                    boxShadow:
-                      "0 10px 30px rgba(0,0,0,0.08)",
-                  }}
-                  labelStyle={{
-                    fontWeight: 600,
-                    marginBottom: 6,
-                  }}
-                />
+  cursor={{
+    stroke: "#408A71",
+    strokeWidth: 1,
+    strokeDasharray: "4 4",
+  }}
+  contentStyle={{
+    borderRadius: "16px",
+    border: "1px solid #e4e4e7",
+    backgroundColor: "#ffffff",
+    padding: "12px 14px",
+    boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
+  }}
+  labelStyle={{
+    fontWeight: 600,
+    marginBottom: 6,
+  }}
+  formatter={(value, name) => [
+    value,
+    name === "total"
+      ? "Total activity"
+      : name,
+  ]}
+/>
 
                 <Area
                   type="monotone"

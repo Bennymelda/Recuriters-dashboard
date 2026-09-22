@@ -18,6 +18,7 @@ import {
   getVisibleJobs,
   getVisibleCandidates,
 } from "../utils/roleBasedDataFiltering";
+import { AiOutlineRise } from "react-icons/ai";
 
 const RecruiterOverview = () => {
   const user = useAuthStore((state) => state.user);
@@ -89,61 +90,68 @@ const RecruiterOverview = () => {
     };
   }, [visibleJobs, visibleCandidates]);
 
-  const cards = [
-    {
-      title: "Active Jobs",
-      value: stats.activeJobs,
-      icon: MdWorkOutline,
-      description: "Active positions",
-    },
-    {
-      title: "Total Candidates",
-      value: stats.totalCandidates,
-      icon: MdPeopleOutline,
-      description: "Across your assigned jobs",
-    },
-    {
-      title: "Candidates to Screen",
-      value: stats.candidatesToScreen,
-      icon: MdPersonSearch,
-      description: "Awaiting screening",
-    },
-    {
-      title: "Interviews Today",
-      value: stats.interviewsToday,
-      icon: MdEvent,
-      description: "Scheduled for today",
-    },
-    {
-      title: "Pending Hiring Approval",
-      value: stats.pendingHiringApprovals,
-      icon: MdGavel,
-      description: "Awaiting Hiring Manager",
-    },
-    {
-      title: "Offers Pending HR",
-      value: stats.offersPendingHR,
-      icon: MdDescription,
-      description: "Awaiting HR approval",
-    },
-  ];
+ const cards = [
+  {
+    title: "Active Jobs",
+    value: stats.activeJobs,
+    icon: MdWorkOutline,
+    description: "Active positions",
+    num: "25%",
+    iconBg: "bg-blue-50 dark:bg-blue-500/15",
+    iconColor: "text-blue-600 dark:text-blue-400",
+  },
+  {
+    title: "Total Candidates",
+    value: stats.totalCandidates,
+    icon: MdPeopleOutline,
+    description: "Across your assigned jobs",
+    num: "15%",
+    iconBg: "bg-violet-50 dark:bg-violet-500/15",
+    iconColor: "text-violet-600 dark:text-violet-400",
+  },
+  {
+    title: "Candidates to Screen",
+    value: stats.candidatesToScreen,
+    icon: MdPersonSearch,
+    description: "Awaiting screening",
+    num: "20%",
+    iconBg: "bg-amber-50 dark:bg-amber-500/15",
+    iconColor: "text-amber-600 dark:text-amber-400",
+  },
+  {
+    title: "Interviews Today",
+    value: stats.interviewsToday,
+    icon: MdEvent,
+    description: "Scheduled for today",
+    num: "60%",
+    iconBg: "bg-cyan-50 dark:bg-cyan-500/15",
+    iconColor: "text-cyan-600 dark:text-cyan-400",
+  },
+  {
+    title: "Pending Hiring Approval",
+    value: stats.pendingHiringApprovals,
+    icon: MdGavel,
+    description: "Awaiting Hiring Manager",
+    num: "50%",
+    iconBg: "bg-orange-50 dark:bg-orange-500/15",
+    iconColor: "text-orange-600 dark:text-orange-400",
+  },
+  {
+    title: "Offers Pending HR",
+    value: stats.offersPendingHR,
+    icon: MdDescription,
+    description: "Awaiting HR approval",
+    num: "10%",
+    iconBg: "bg-pink-50 dark:bg-pink-500/15",
+    iconColor: "text-pink-600 dark:text-pink-400",
+  },
+];
 
   return (
     <section className="space-y-6">
-      {/* Welcome */}
-      <div>
-        <h1 className="text-2xl font-bold text-zinc-900 dark:text-white md:text-3xl">
-          Good morning,{" "}
-          {user?.fullName?.split(" ")[0] || "there"} 👋
-        </h1>
-
-        <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400 md:text-base">
-          Here’s what’s happening with your recruitment pipeline.
-        </p>
-      </div>
-
+   
       {/* Stat Cards */}
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+ <div className="flex gap-4 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {cards.map((card) => {
           const Icon = card.icon;
 
@@ -151,16 +159,17 @@ const RecruiterOverview = () => {
             <div
               key={card.title}
               className="
-                rounded-2xl
-                border
-                border-zinc-200
+                rounded-xl
+                 min-w-[250px]
+  shrink-0
+  shadow-sm
                 bg-white
+                dark:bg-zinc-900
                 p-5
                 transition
                 hover:-translate-y-0.5
                 hover:shadow-sm
-                dark:border-zinc-800
-                dark:bg-zinc-900
+                
               "
             >
               <div className="flex items-start justify-between">
@@ -175,26 +184,69 @@ const RecruiterOverview = () => {
                 </div>
 
                 <div
-                  className="
-                    flex
-                    h-11
-                    w-11
-                    items-center
-                    justify-center
-                    rounded-xl
-                    bg-[#EEF8F3]
-                    text-[#408A71]
-                    dark:bg-[#408A71]/20
-                    dark:text-[#B0E4CC]
-                  "
-                >
-                  <Icon size={22} />
-                </div>
+  className={`
+    flex
+    h-11
+    w-11
+    items-center
+    justify-center
+    rounded-xl
+    ${card.iconBg}
+    ${card.iconColor}
+  `}
+>
+  <Icon size={22} />
+</div>
               </div>
 
               <p className="mt-4 text-xs text-zinc-500 dark:text-zinc-400">
                 {card.description}
               </p>
+              {/* Bottom */}
+               <div
+               className="
+               mt-5
+               flex
+               items-center
+               justify-between
+               gap-3
+               "
+               >
+               <div
+               className="
+               flex
+               items-center
+               gap-1
+               rounded-full
+               bg-green-100
+               px-2
+               py-1
+               text-xs
+               text-green-700
+              
+               dark:bg-green-500/15
+               dark:text-green-400
+               "
+               >
+               <AiOutlineRise />
+              
+               <p className="text-xs">
+               {card.num}
+               </p>
+               </div>
+              
+               <p
+               className="
+               whitespace-nowrap
+               text-xs
+               font-semibold
+               text-gray-600
+               dark:text-gray-300
+               "
+               >
+               {card.description}
+               </p>
+               </div>
             </div>
           );
         })}

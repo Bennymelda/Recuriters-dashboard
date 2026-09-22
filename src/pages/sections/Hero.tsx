@@ -9,7 +9,7 @@ const Hero = () => {
                         Hire smarter. Build stronger teams faster.
                     </h1>
 <p className="text-gray-700 text-sm md:text-md xl:text-lg max-w-lg dark:text-gray-300">
-                        CareerFlow helps modern companies manage candidates, automate hiring workflows, and find the right talent with confidence.
+                        Seamless helps modern companies manage candidates, automate hiring workflows, and find the right talent with confidence.
                     </p>
 <div className="flex flex-row  gap-2  pt-5">
 <Link

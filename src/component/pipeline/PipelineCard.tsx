@@ -262,6 +262,7 @@ dark:ring-zinc-900
  hover:bg-zinc-100
  cursor-pointer
  dark:hover:bg-zinc-700
+ dark:text-white
  "
  >
  <MdMoreHoriz size={20} />
@@ -282,6 +283,7 @@ dark:ring-zinc-900
  border
  border-zinc-200
  bg-white
+ dark:text-zinc-300
  p-2
  shadow-xl
  dark:border-zinc-700

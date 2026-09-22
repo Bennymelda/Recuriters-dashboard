@@ -238,7 +238,7 @@ if (interviewDate <= now) {
  </div>
 
  <button onClick={onClose}>
- <MdClose size={24} />
+ <MdClose size={24} className="dark:text-zinc-300" />
  </button>
  </div>
 

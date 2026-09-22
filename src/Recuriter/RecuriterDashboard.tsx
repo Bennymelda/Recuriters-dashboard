@@ -140,13 +140,8 @@ const RecruiterDashboard = () => {
         candidates={assignedCandidates}
         jobs={assignedJobs}
       />
- <RecruiterUpcomingInterviews
+<RecruiterPipelineSnapshot
         candidates={assignedCandidates}
-        jobs={assignedJobs}
-        onManageInterview={(candidate) => {
-          setSelectedCandidate(candidate);
-          setOpenMoveModal(true);
-        }}
       />
 </div>
 {/*
@@ -170,7 +165,7 @@ const RecruiterDashboard = () => {
  grid-cols-1
  gap-6
  lg:grid-cols-2
- xl:grid-cols-[minmax(0,1.7fr)_minmax(320px,1fr)]
+
  items-stretch
 "
 >
@@ -182,12 +177,15 @@ const RecruiterDashboard = () => {
         }}
       />
 
-      <div className="w-full min-w-0">
- <RecruiterPipelineSnapshot
+ <RecruiterUpcomingInterviews
         candidates={assignedCandidates}
+        jobs={assignedJobs}
+        onManageInterview={(candidate) => {
+          setSelectedCandidate(candidate);
+          setOpenMoveModal(true);
+        }}
       />
- </div>
-
+     
       
 </div>
 

@@ -46,7 +46,7 @@ const RejectCandidateModal = ({
  </p>
  </div>
 
- <button onClick={onClose}>
+ <button onClick={onClose} className="dark:text-gray-300">
  <MdClose size={24} />
  </button>
  </div>
@@ -93,7 +93,7 @@ const RejectCandidateModal = ({
 
  <button
  onClick={onClose}
- className="rounded-xl border px-5 py-3 font-semibold"
+ className="rounded-xl border px-5 py-3 font-semibold dark:text-gray-300"
  >
  Cancel
  </button>

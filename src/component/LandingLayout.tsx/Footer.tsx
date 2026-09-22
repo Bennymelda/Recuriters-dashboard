@@ -5,7 +5,7 @@ export default function Footer() {
 
  {/* Brand */}
  <div>
- <h2 className="text-black text-xl font-bold">CareerFlow</h2>
+ <h2 className="text-black text-xl font-bold">Seamless</h2>
  <p className="text-sm mt-3 dark:text-gray-300 text-gray-700">
  A modern recruitment dashboard for managing jobs, candidates, and hiring workflows.
  </p>
@@ -47,7 +47,7 @@ export default function Footer() {
 
  {/* Bottom */}
  <div className="border-t dark:text-gray-400 border-gray-300 dark:border-gray-700 mt-10 pt-6 text-center text-sm text-gray-500">
- © {new Date().getFullYear()} CareerFlow. Built for modern hiring teams.
+ © {new Date().getFullYear()} Seamless. Built for modern hiring teams.
  </div>
  </footer>
  );

@@ -356,7 +356,7 @@ navigate("/dashboard");
  dark:text-[#E8F7F0]
  "
  >
- RecuriterPro
+Seamless
  </h1>
  </div>
 
@@ -413,7 +413,7 @@ navigate("/dashboard");
                 ></span>
               </div>
               <span className="text-[24px] lg:hidden  leading-[1.3] font-bold text-[#285A48] dark:text-[#89D9B4]/90 tracking-tight">
-                RecuriterPro
+                Seamless
               </span>{" "}
             </div>
 

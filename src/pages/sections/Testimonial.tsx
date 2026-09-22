@@ -6,7 +6,7 @@ const Testimonial = () => {
  name: "Sarah Jenkins",
  role: "Head of People at Velocity",
  text:
- "CareerFlow reduced our time-to-hire by 40%. The automated scheduling alone saved our HR team 10 hours a week.",
+ "Seamless reduced our time-to-hire by 40%. The automated scheduling alone saved our HR team 10 hours a week.",
  img: "https://lh3.googleusercontent.com/aida-public/AB6AXuCjLTRQ1tHwNRDkJJA342FKTxkm2-f2WoADwUvaH2WAn1IBMJIEym5fwy_-FmRRqonX29E9rF0jM22JclvwQ5tOfY6Pb-UvPryJTk-_T6AB-jSNLkYDdd5XRe5b8kzZpDQyRTeQNF3AhuL9E5VvM79NYPEBntz3AZpL7CM5Xoe9BGnLAVZNUspQVnBwKyO6LUw75KGJwqLuwJEI5KjcMC7_HbrSIQaXZQXpVjAncl23GxXN6ESSayRRDXYbfdg9Zs0cvOb7Ulg4IMs",
  stars: 6,
  },
@@ -35,7 +35,7 @@ const Testimonial = () => {
  {/* Heading */}
  <div className="text-center mb-5">
  <h2 className=" text-2xl lg:text-3xl font-semibold">
- Recruiters love CareerFlow
+ Recruiters love Seamless
  </h2>
  </div>
 

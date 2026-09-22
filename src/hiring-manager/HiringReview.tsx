@@ -16,7 +16,7 @@ const HiringApprovalRequests = ({
  );
 
  return (
- <section className="mt-8">
+ <section className="mt-8 bg-white dark:bg-zinc-900 rounded-xl p-4">
  {/* Header */}
  <div className="flex items-center justify-between">
  <div>
@@ -38,7 +38,7 @@ const HiringApprovalRequests = ({
 
  {/* Empty state */}
  {pendingHiringApprovals.length === 0 ? (
- <div className="mt-4 rounded-2xl bg-white p-8 text-center shadow-sm dark:bg-zinc-900">
+ <div className="mt-4 rounded-xl bg-white p-8 text-center  dark:bg-zinc-900">
  <p className="font-medium text-zinc-700 dark:text-zinc-300">
  No pending hiring approval requests.
  </p>
@@ -52,7 +52,7 @@ const HiringApprovalRequests = ({
  {pendingHiringApprovals.map((candidate) => (
  <div
  key={candidate.id}
- className="flex flex-col gap-4 rounded-2xl bg-white p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between dark:bg-zinc-900"
+ className="flex flex-col gap-4 rounded-xl border border-zinc-100 bg-white p-5 sm:flex-row sm:items-center sm:justify-between dark:bg-zinc-900 dark:border-zinc-800"
  >
  {/* Candidate */}
  <div className="flex items-center gap-4">

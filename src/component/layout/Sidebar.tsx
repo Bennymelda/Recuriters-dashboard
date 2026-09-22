@@ -29,7 +29,7 @@ const Sidebar = () => {
  {/* Logo */}
  <div className="px-6 py-5 border-b border-gray-800">
  <h1 className="text-white text-xl font-bold">
- CareerFlow
+Seamless
  </h1>
  <p className="text-xs text-gray-500">
  Recruiter Dashboard

@@ -572,7 +572,7 @@ hiringApprovalPending && (
 
 
 {(offerPendingHRApproval && isHRManager || candidate.offer?.status === "Draft") && (
-  <div className="mt-4  bg-white p-4 dark:border-zinc-700 dark:bg-zinc-800">
+  <div className="mt-4  bg-white p-4 dark:border-zinc-700 dark:bg-zinc-900">
 
     <div>
       <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">
@@ -601,7 +601,7 @@ hiringApprovalPending && (
         Offer Message
       </p>
 
-      <div className="mt-1 text-sm  bg-white  text-sm leading-4 text-zinc-700 dark:text-zinc-300">
+      <div className="mt-1 text-sm   bg-white  text-sm leading-4 text-zinc-700 dark:text-zinc-300 dark:bg-zinc-900">
         {candidate.offer?.description || "No offer message provided."}
       </div>
     </div>

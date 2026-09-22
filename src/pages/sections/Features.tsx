@@ -11,7 +11,7 @@ const Features = () => {
     <section id="features" className="py-5  mt-10 lg:mt-10 max-w-container-max mx-auto px-gutter">
 <div className="text-center max-w-2xl mx-auto mb-10">
 <h2 className="xl:text-4xl mb-2 text-2xl font-bold text-gray-900 mb-sm dark:text-white">Everything you need to hire the best</h2>
-<p className="font-body-md text-gray-700 text-sm md:text-lg dark:text-gray-300">Say goodbye to spreadsheets. CareerFlow provides a centralized platform for your entire hiring lifecycle.</p>
+<p className="font-body-md text-gray-700 text-sm md:text-lg dark:text-gray-300">Say goodbye to spreadsheets. Seamless provides a centralized platform for your entire hiring lifecycle.</p>
 </div>
 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
 <div 

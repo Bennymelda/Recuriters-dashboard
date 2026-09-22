@@ -76,50 +76,60 @@ const JobsToolbar = ({
  
 }: CandidatesToolbarProps) => {
  return (
- <div className="mt-10 md:mt-12 mb-5 flex flex-col gap-4 rounded-xl border border-slate-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
-<p className="font-semibold dark:text-white text-lg">Filter Jobs</p>
- {/* Filters */}
-<div className="flex gap-3 overflow-x-auto pb-2 md:grid md:grid-cols-2 md:gap-4 md:overflow-visible lg:grid-cols-5">
-  <CustomSelect
- placeholder="All Status"
- value={status}
- options={statusOptions}
- onChange={setStatus}
- />
+  <div className="mt-10 mb-5 flex flex-col gap-4 rounded-xl border border-slate-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
+    <p className="text-lg font-semibold dark:text-white">
+      Filter Jobs
+    </p>
 
- <CustomSelect
- placeholder="All Department"
- value={department}
- options={Department}
- onChange={setDepartment}
- />
+    {/* Filters */}
+   <div className="flex gap-3 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-2 md:gap-4 lg:grid-cols-5">
+  <div className="w-[180px] shrink-0 md:w-auto">
+    <CustomSelect
+      placeholder="All Status"
+      value={status}
+      options={statusOptions}
+      onChange={setStatus}
+    />
+  </div>
 
- <CustomSelect
- placeholder="All Experience"
- value={experience}
- options={experienceOptions}
- onChange={setExperience}
- />
+  <div className="w-[180px] shrink-0 md:w-auto">
+    <CustomSelect
+      placeholder="All Department"
+      value={department}
+      options={Department}
+      onChange={setDepartment}
+    />
+  </div>
 
- <CustomSelect
- placeholder="All Locations"
- value={location}
- options={locationOptions}
- onChange={setLocation}
- />
+  <div className="w-[180px] shrink-0 md:w-auto">
+    <CustomSelect
+      placeholder="All Experience"
+      value={experience}
+      options={experienceOptions}
+      onChange={setExperience}
+    />
+  </div>
 
- <CustomSelect
- placeholder="Sort By"
- value={sort}
- options={sortOptions}
- onChange={setSort}
- />
+  <div className="w-[180px] shrink-0 md:w-auto">
+    <CustomSelect
+      placeholder="All Locations"
+      value={location}
+      options={locationOptions}
+      onChange={setLocation}
+    />
+  </div>
 
-
+  <div className="w-[180px] shrink-0 md:w-auto">
+    <CustomSelect
+      placeholder="Sort By"
+      value={sort}
+      options={sortOptions}
+      onChange={setSort}
+    />
+  </div>
 </div>
-
- </div>
- );
+  </div>
+);
 };
 
 export default JobsToolbar;

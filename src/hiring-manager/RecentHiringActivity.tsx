@@ -458,7 +458,7 @@ const rejectedCount = filteredActivities.filter(
 
 
   return (
-    <section className="mt-8 rounded-2xl bg-white p-6 shadow-sm dark:bg-zinc-900">
+    <section className="mt-8 rounded-xl bg-white p-6 dark:bg-zinc-900">
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -480,15 +480,15 @@ const rejectedCount = filteredActivities.filter(
             {totalActivity}
           </p>
         </div>
+        
       </div>
-
-      <div className="mt-6 flex w-fit rounded-xl bg-zinc-100 p-1 dark:bg-zinc-800">
+        <div className="mt-6 flex text-sm w-fit rounded-xl bg-zinc-50 p-1 dark:bg-zinc-800">
   {[7, 14, 30].map((days) => (
     <button
       key={days}
       type="button"
       onClick={() => setTimeRange(days as 7 | 14 | 30)}
-      className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
+      className={`rounded-lg px-4 text-sm py-2 text-sm font-medium transition ${
         timeRange === days
           ? "bg-white text-zinc-900 shadow-sm dark:bg-zinc-700 dark:text-white"
           : "text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"
@@ -499,6 +499,8 @@ const rejectedCount = filteredActivities.filter(
   ))}
 </div>
 
+
+    
       {chartData.length === 0 ? (
         <div className="mt-6 rounded-2xl border border-dashed border-zinc-200 p-8 text-center dark:border-white/10">
           <p className="font-medium text-zinc-700 dark:text-zinc-300">
@@ -548,7 +550,7 @@ const rejectedCount = filteredActivities.filter(
                 <CartesianGrid
                   strokeDasharray="3 3"
                   vertical={false}
-                  stroke="#e4e4e7"
+                   className="stroke-[#e4e4e7] dark:stroke-zinc-700"
                 />
 
                 <XAxis

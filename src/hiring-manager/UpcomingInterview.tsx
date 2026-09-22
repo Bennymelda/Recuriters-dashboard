@@ -93,7 +93,7 @@ const UpcomingInterviews = ({
  };
 
  return (
- <section className="mt-8 rounded-3xl bg-white p-6 shadow-sm dark:bg-zinc-900">
+ <section className="mt-8 rounded-xl bg-white p-6 dark:bg-zinc-900">
  {/* Header */}
  <div className="flex items-center justify-between">
  <div>
@@ -107,7 +107,7 @@ const UpcomingInterviews = ({
  </div>
 
  {upcomingInterviews.length > 0 && (
- <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700 dark:bg-blue-500/10 dark:text-blue-400">
+ <span className="rounded-full whitespace-nowrap bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700 dark:bg-blue-500/10 dark:text-blue-400">
  {upcomingInterviews.length} Upcoming
  </span>
  )}
@@ -129,88 +129,121 @@ const UpcomingInterviews = ({
  </p>
  </div>
  ) : (
- <div className="mt-5 space-y-3">
- {upcomingInterviews.map(({ candidate, interview }) => (
- <div
- key={`${candidate.id}-${interview.date}-${interview.stage}`}
- className="flex flex-col gap-4 rounded-2xl border border-zinc-200 p-4 transition hover:border-zinc-300 dark:border-white/10 dark:hover:border-white/20 md:flex-row md:items-center md:justify-between"
- >
- {/* Candidate */}
- <div className="flex min-w-0 items-center gap-4">
- {candidate.avatar ? (
- <img
- src={candidate.avatar}
- alt={candidate.fullName}
- className="h-12 w-12 shrink-0 rounded-full object-cover"
- />
- ) : (
- <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-zinc-100 font-semibold text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
- {getInitials(candidate.fullName)}
- </div>
- )}
+<div className="mt-5 space-y-4">
+  {upcomingInterviews.map(({ candidate, interview }) => {
+    const initials = candidate.fullName
+      .split(" ")
+      .map((name) => name[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase();
 
- <div className="min-w-0">
- <h3 className="truncate font-semibold text-zinc-900 dark:text-white">
- {candidate.fullName}
- </h3>
+    return (
+      <div
+        key={`${candidate.id}-${interview.date}-${interview.stage}`}
+        className="
+          mt-4
+          flex
+          items-center
+          justify-between
+          rounded-2xl
+          border-l-5
+          border-[#285A48]
+          p-2
+          shadow-xs
+          transition
+          dark:border-[#B0E4CC]
+        "
+      >
+        {/* Candidate information */}
+        <div className="flex min-w-0 items-center gap-4">
+          {candidate.avatar ? (
+            <img
+              src={candidate.avatar}
+              alt={candidate.fullName}
+              className="h-12 w-12 shrink-0 rounded-full object-cover"
+            />
+          ) : (
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-zinc-100 text-sm font-semibold text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
+              {initials}
+            </div>
+          )}
 
- <p className="truncate text-sm text-zinc-500 dark:text-zinc-400">
- {getJobTitle(candidate.jobId)}
- </p>
- </div>
- </div>
+          <div className="min-w-0">
+            <h3 className="truncate font-semibold text-zinc-900 dark:text-white">
+              {candidate.fullName}
+            </h3>
 
- {/* Interview Information */}
- <div className="grid grid-cols-2 gap-x-8 gap-y-3 text-sm md:grid-cols-3">
- {/* Stage */}
- <div>
- <p className="text-xs text-zinc-400 dark:text-zinc-500">
- Interview
- </p>
+            <p className="truncate text-sm text-zinc-500 dark:text-gray-300">
+              {getJobTitle(candidate.jobId)}
+            </p>
 
- <p className="mt-1 font-medium text-zinc-700 dark:text-zinc-300">
- {interview.stage}
- </p>
- </div>
+            <div className="mt-2 flex items-center gap-2 text-xs text-zinc-500 dark:text-gray-300">
+              <span className="font-medium">
+                {interview.stage}
+              </span>
+            </div>
+          </div>
+        </div>
 
- {/* Date */}
- <div>
- <p className="text-xs text-zinc-400 dark:text-zinc-500">
- Date
- </p>
+        {/* Date + Action */}
+        <div className="ml-4 flex shrink-0 items-center gap-3">
+          <div
+            className="
+              flex
+              items-center
+              gap-2
+              whitespace-nowrap
+              rounded-3xl
+              bg-gray-100
+              px-3
+              py-1
+              dark:bg-[#285A48]/20
+            "
+          >
+            <p className="text-xs text-zinc-500 dark:text-gray-200">
+              {new Date(interview.date).toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+              })}
+            </p>
 
- <p className="mt-1 font-medium text-zinc-700 dark:text-zinc-300">
- {formatInterviewDate(interview.date)}
- </p>
+            <span className="text-xs text-zinc-400 dark:text-zinc-500">
+              •
+            </span>
 
- <p className="text-xs text-zinc-500 dark:text-zinc-400">
- {formatInterviewTime(interview.date)}
- </p>
- </div>
+            <p className="text-xs text-zinc-500 dark:text-gray-200">
+              {new Date(interview.date).toLocaleTimeString("en-US", {
+                hour: "numeric",
+                minute: "2-digit",
+              })}
+            </p>
+          </div>
 
- {/* Status */}
- <div>
- <p className="text-xs text-zinc-400 dark:text-zinc-500">
- Status
- </p>
+        </div>
+      </div>
+    );
+  })}
 
- <span className="mt-1 inline-flex rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400">
- Scheduled
- </span>
- </div>
- </div>
-
- {/* View Candidate */}
- <button
- type="button"
- onClick={() => onViewCandidate(candidate)}
- className="shrink-0 rounded-xl border border-zinc-200 px-4 py-2.5 text-sm font-semibold text-zinc-700 transition hover:bg-zinc-50 dark:border-white/10 dark:text-zinc-300 dark:hover:bg-white/5"
- >
- View Candidate
- </button>
- </div>
- ))}
- </div>
+  {/* Empty State */}
+  {upcomingInterviews.length === 0 && (
+    <div
+      className="
+        rounded-2xl
+        border
+        border-dashed
+        border-zinc-300
+        p-6
+        text-center
+        text-sm
+        text-zinc-500
+        dark:border-zinc-700
+      "
+    >
+      No upcoming interviews.
+    </div>
+  )}
+</div>
  )}
  </section>
  );

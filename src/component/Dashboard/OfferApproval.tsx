@@ -54,7 +54,7 @@ const sendOffer = useCandidateStore(
  </div>
 
  {pendingOfferApprovals.length === 0 ? (
- <div className="mt-4 rounded-2xl bg-white p-8 text-center shadow-sm dark:bg-zinc-900">
+ <div className="mt-4 rounded-xl bg-white p-8 text-center shadow-xs dark:bg-zinc-900">
  <p className="font-medium text-zinc-700 dark:text-zinc-300">
  No pending offer approval requests.
  </p>

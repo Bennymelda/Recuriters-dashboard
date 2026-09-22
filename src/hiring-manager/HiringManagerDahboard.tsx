@@ -101,9 +101,36 @@ console.log("PARENT OFFER DATA:", {
  onHireCandidate={() => {}}
  />
 )}
-
 <HiringOverview />
+<div
+ className="
+ grid
+ grid-cols-1
+ gap-6
+ lg:grid-cols-2
+ xl:grid-cols-[minmax(0,1.7fr)_minmax(320px,1fr)]
+ items-stretch
+"
+>
+<RecentHiringActivity
+ candidates={assignedCandidates}
+ jobs={assignedJobs}
+/>
+<HiringPipelineSnapshot
+ candidates={assignedCandidates}
+/>
+</div>
 
+ <div
+ className="
+ grid
+ grid-cols-1
+ gap-6
+ lg:grid-cols-2
+
+ items-stretch
+"
+>
 <HiringApprovalRequests
  candidates={assignedCandidates}
  onReview={(candidate) => {
@@ -119,13 +146,11 @@ console.log("PARENT OFFER DATA:", {
  setOpenMoveModal(true);
  }}
 />
-<HiringPipelineSnapshot
- candidates={assignedCandidates}
-/>
-<RecentHiringActivity
- candidates={assignedCandidates}
- jobs={assignedJobs}
-/>
+
+</div>
+
+
+
 <MyAssignedJobs
   jobs={assignedJobs}
   candidates={assignedCandidates}

@@ -78,17 +78,16 @@ icon: <MdCheckCircle size={38} />,
     <>
     <div  key={stat.title}
  className="
- rounded-3xl
- border
- border-zinc-200
+ rounded-xl
+
  bg-white
  p-4 
  md:p-6
- 
+ shadow-sm
  transition
  hover:-translate-y-1
  hover:shadow-lg
- dark:border-zinc-700
+
  dark:bg-zinc-900
  ">
         <div className="flex justify-between">
