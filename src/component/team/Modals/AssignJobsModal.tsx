@@ -276,8 +276,8 @@ assignJobs(member.id, normalizedSelectedJobs);
  transition
  ${
  isSelected
- ? "border-[hashtag#408A71] bg-[hashtag#408A71]/5 dark:border-[hashtag#B0E4CC] dark:bg-[hashtag#B0E4CC]/5"
- : "border-zinc-200 hover:border-[hashtag#408A71] dark:border-zinc-700 dark:hover:border-[hashtag#B0E4CC]"
+ ? "border-[#408A71] bg-[#408A71]/5 dark:border-[#B0E4CC] dark:bg-[#B0E4CC]/5"
+ : "border-zinc-200 hover:border-[#408A71] dark:border-zinc-700 dark:hover:border-[#B0E4CC]"
  }
  `}
  >
@@ -305,7 +305,7 @@ assignJobs(member.id, normalizedSelectedJobs);
  h-5
  w-5
  cursor-pointer
- accent-[hashtag#408A71]
+ accent-[#408A71]
  "
  />
  </label>
@@ -372,14 +372,14 @@ assignJobs(member.id, normalizedSelectedJobs);
  onClick={handleAssignJobs}
  className="
  rounded-xl
- bg-[hashtag#408A71]
+ bg-[#408A71]
  px-5
  py-2.5
  text-sm
  font-semibold
  text-white
  transition
- hover:bg-[hashtag#35745E]
+ hover:bg-[#35745E]
  "
  >
  Save Assignments

@@ -562,7 +562,7 @@ hiringApprovalPending && (
  disabled={!salary || !startDate || !employmentType || !description.trim()}
  className="mt-5 w-full rounded-2xl bg-[#408A71] px-6 py-3 font-semibold text-white transition hover:bg-[#2f6d58] disabled:cursor-not-allowed disabled:opacity-50"
  >
-  {candidate.offer?.status === "Rejected"
+  {candidate.offer?.status === "Draft"
     ? "Resubmit for HR Approval"
     : "Create Offer"}
  </button>
@@ -571,7 +571,7 @@ hiringApprovalPending && (
  )}
 
 
-{(offerPendingHRApproval && isHRManager || candidate.offer?.status === "Draft") && (
+{isHRManager && candidate.offer?.status === "Pending HR Approval" && (
   <div className="mt-4  bg-white p-4 dark:border-zinc-700 dark:bg-zinc-900">
 
     <div>
@@ -676,6 +676,38 @@ hiringApprovalPending && (
         </button>
       </div>
     )}
+
+  
+
+  </div>
+)}
+
+
+  {/* Offer Rejected */}
+    {candidate.status === "Interview" &&
+  isRecruiter &&
+  hiringApproved &&
+  candidate.offer?.status === "Draft" &&
+  !isEditingRejectedOffer && (
+    <div className="mt-6  ">
+      <h3 className="text-base font-semibold text-red-700 dark:text-red-400">
+        Offer Rejected
+      </h3>
+
+      <p className="mt-1 text-sm text-red-600 dark:text-red-300">
+        HR rejected this offer. You can edit the offer and resubmit it for
+        approval.
+      </p>
+
+      <button
+        type="button"
+        onClick={() => setIsEditingRejectedOffer(true)}
+        className="mt-4 w-full rounded-xl bg-[#408A71] px-6 py-3 font-semibold text-white transition hover:bg-[#2f6d58]"
+      >
+        Edit Offer
+      </button>
+    </div>
+  )}
 
 
 
@@ -919,7 +951,7 @@ hiringApprovalPending && (
 
         <button
           onClick={() => {
-            onRejectOffer(candidate.id);
+            onoffer(candidate.id);
             onClose();
           }}
           className="w-full rounded-2xl border border-red-300 px-6 py-3 font-semibold text-red-600 transition hover:bg-red-50 dark:border-red-500/40 dark:hover:bg-red-500/10"
@@ -929,41 +961,6 @@ hiringApprovalPending && (
       </div>
     )}
 */}
-    {/* Offer Rejected */}
-    {candidate.status === "Interview" &&
-  isRecruiter &&
-  hiringApproved &&
-  candidate.offer?.status === "Draft" &&
-  !isEditingRejectedOffer && (
-    <div className="mt-6  ">
-      <h3 className="text-base font-semibold text-red-700 dark:text-red-400">
-        Offer Rejected
-      </h3>
-
-      <p className="mt-1 text-xs text-red-600 dark:text-red-300">
-        HR rejected this offer. You can edit the offer and resubmit it for
-        approval.
-      </p>
-
-      <button
-        type="button"
-        onClick={() => setIsEditingRejectedOffer(true)}
-        className="mt-4 w-full rounded-xl bg-[#408A71] px-6 py-3 font-semibold text-white transition hover:bg-[#2f6d58]"
-      >
-        Edit Offer
-      </button>
-    </div>
-  )}
-
-  </div>
-)}
-
-
-
-
-
-
-
  {/* Recruiter: send approved offer */}
  
 {offerApproved && isRecruiter && (

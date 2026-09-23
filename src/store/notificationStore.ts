@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 export type NotificationType =
  | "candidate"
@@ -37,54 +38,61 @@ interface NotificationStore {
  unreadCount: () => number;
 }
 
-export const useNotificationStore = create<NotificationStore>((set, get) => ({
- notifications: [],
+export const useNotificationStore = create<NotificationStore>()(
+ persist(
+  (set, get) => ({
+   notifications: [],
 
- addNotification: (notification) => {
- console.log("ADDING NOTIFICATION:", notification);
+   addNotification: (notification) => {
+    console.log("ADDING NOTIFICATION:", notification);
 
- set((state) => ({
- notifications: [
- {
- id: crypto.randomUUID(),
- createdAt: new Date().toISOString(),
- read: false,
- ...notification,
- },
- ...state.notifications,
- ],
- }));
-},
+    set((state) => ({
+     notifications: [
+      {
+       id: crypto.randomUUID(),
+       createdAt: new Date().toISOString(),
+       read: false,
+       ...notification,
+      },
+      ...state.notifications,
+     ],
+    }));
+   },
 
- markAsRead: (id) =>
- set((state) => ({
- notifications: state.notifications.map((notification) =>
- notification.id === id
- ? { ...notification, read: true }
- : notification
- ),
- })),
+   markAsRead: (id) =>
+    set((state) => ({
+     notifications: state.notifications.map((notification) =>
+      notification.id === id
+       ? { ...notification, read: true }
+       : notification
+     ),
+    })),
 
- markAllAsRead: () =>
- set((state) => ({
- notifications: state.notifications.map((notification) => ({
- ...notification,
- read: true,
- })),
- })),
+   markAllAsRead: () =>
+    set((state) => ({
+     notifications: state.notifications.map((notification) => ({
+      ...notification,
+      read: true,
+     })),
+    })),
 
- deleteNotification: (id) =>
- set((state) => ({
- notifications: state.notifications.filter(
- (notification) => notification.id !== id
- ),
- })),
+   deleteNotification: (id) =>
+    set((state) => ({
+     notifications: state.notifications.filter(
+      (notification) => notification.id !== id
+     ),
+    })),
 
- clearNotifications: () =>
- set({
- notifications: [],
- }),
+   clearNotifications: () =>
+    set({
+     notifications: [],
+    }),
 
- unreadCount: () =>
- get().notifications.filter((notification) => !notification.read).length,
-}));
+   unreadCount: () =>
+    get().notifications.filter((notification) => !notification.read).length,
+  }),
+  {
+   name: "careerflow-notifications",
+  }
+ )
+);

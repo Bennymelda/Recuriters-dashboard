@@ -131,19 +131,14 @@ const UpcomingInterviews = ({
  ) : (
 <div className="mt-5 space-y-4">
   {upcomingInterviews.map(({ candidate, interview }) => {
-    const initials = candidate.fullName
-      .split(" ")
-      .map((name) => name[0])
-      .join("")
-      .slice(0, 2)
-      .toUpperCase();
-
     return (
       <div
         key={`${candidate.id}-${interview.date}-${interview.stage}`}
+        onClick={() => onViewCandidate(candidate)}
         className="
           mt-4
           flex
+          cursor-pointer
           items-center
           justify-between
           rounded-2xl
@@ -152,7 +147,9 @@ const UpcomingInterviews = ({
           p-2
           shadow-xs
           transition
+          hover:bg-zinc-50
           dark:border-[#B0E4CC]
+          dark:hover:bg-zinc-800/50
         "
       >
         {/* Candidate information */}
@@ -165,7 +162,7 @@ const UpcomingInterviews = ({
             />
           ) : (
             <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-zinc-100 text-sm font-semibold text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
-              {initials}
+              {getInitials(candidate.fullName)}
             </div>
           )}
 
@@ -202,10 +199,7 @@ const UpcomingInterviews = ({
             "
           >
             <p className="text-xs text-zinc-500 dark:text-gray-200">
-              {new Date(interview.date).toLocaleDateString("en-US", {
-                month: "short",
-                day: "numeric",
-              })}
+              {formatInterviewDate(interview.date)}
             </p>
 
             <span className="text-xs text-zinc-400 dark:text-zinc-500">
@@ -213,10 +207,7 @@ const UpcomingInterviews = ({
             </span>
 
             <p className="text-xs text-zinc-500 dark:text-gray-200">
-              {new Date(interview.date).toLocaleTimeString("en-US", {
-                hour: "numeric",
-                minute: "2-digit",
-              })}
+              {formatInterviewTime(interview.date)}
             </p>
           </div>
 

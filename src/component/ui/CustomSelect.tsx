@@ -16,6 +16,7 @@ const CustomSelect = <T extends string>({
   onChange,
 }: CustomSelectProps<T>) => {
   const [open, setOpen] = useState(false);
+
   const [position, setPosition] = useState({
     top: 0,
     left: 0,
@@ -29,8 +30,22 @@ const CustomSelect = <T extends string>({
 
     const rect = buttonRef.current.getBoundingClientRect();
 
+    const dropdownHeight = Math.min(
+      options.length * 48,
+      300
+    );
+
+    const spaceBelow = window.innerHeight - rect.bottom;
+    const spaceAbove = rect.top;
+
+    const shouldOpenUp =
+      spaceBelow < dropdownHeight + 16 &&
+      spaceAbove > spaceBelow;
+
     setPosition({
-      top: rect.bottom + 8,
+      top: shouldOpenUp
+        ? rect.top - dropdownHeight - 8
+        : rect.bottom + 8,
       left: rect.left,
       width: rect.width,
     });
@@ -52,7 +67,7 @@ const CustomSelect = <T extends string>({
       window.removeEventListener("scroll", handleScroll, true);
       window.removeEventListener("resize", updatePosition);
     };
-  }, [open]);
+  }, [open, options.length]);
 
   return (
     <div className="relative w-full">
@@ -64,13 +79,34 @@ const CustomSelect = <T extends string>({
           updatePosition();
           setOpen((prev) => !prev);
         }}
-        className="flex w-full cursor-pointer items-center justify-between rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-zinc-700 transition hover:border-teal-500 dark:border-zinc-800 dark:bg-zinc-900 dark:text-white"
+        className="
+          flex
+          w-full
+          cursor-pointer
+          items-center
+          justify-between
+          rounded-xl
+          border
+          border-slate-300
+          bg-white
+          px-4
+          py-2.5
+          text-sm
+          text-zinc-700
+          transition
+          hover:border-teal-500
+          dark:border-zinc-800
+          dark:bg-zinc-900
+          dark:text-white
+        "
       >
         <span>{value || placeholder}</span>
 
         <MdKeyboardArrowDown
           size={20}
-          className={`transition ${open ? "rotate-180" : ""}`}
+          className={`transition ${
+            open ? "rotate-180" : ""
+          }`}
         />
       </button>
 
@@ -83,8 +119,19 @@ const CustomSelect = <T extends string>({
               top: position.top,
               left: position.left,
               width: position.width,
+              maxHeight: "300px",
+              overflowY: "auto",
             }}
-            className="z-[9999] rounded-xl border border-slate-200 bg-white shadow-xl dark:border-zinc-700 dark:bg-zinc-900"
+            className="
+              z-[9999]
+              rounded-xl
+              border
+              border-slate-200
+              bg-white
+              shadow-xl
+              dark:border-zinc-700
+              dark:bg-zinc-900
+            "
           >
             {options.map((option) => (
               <button
@@ -94,7 +141,19 @@ const CustomSelect = <T extends string>({
                   onChange(option);
                   setOpen(false);
                 }}
-                className="flex w-full cursor-pointer items-center justify-between px-4 py-3 text-left text-sm hover:bg-slate-100 dark:hover:bg-zinc-800"
+                className="
+                  flex
+                  w-full
+                  cursor-pointer
+                  items-center
+                  justify-between
+                  px-4
+                  py-3
+                  text-left
+                  text-sm
+                  hover:bg-slate-100
+                  dark:hover:bg-zinc-800
+                "
               >
                 <span className="dark:text-white">
                   {option}

@@ -168,11 +168,7 @@ const PipelineBoard = ({
   candidates={column.candidates}
 />
 
-{column.title === "Hired" && (
-  <div className="text-red-500">
-    DEBUG: {column.candidates.map((c) => c.fullName).join(", ")}
-  </div>
-)}
+
 
  </div>
  ))}

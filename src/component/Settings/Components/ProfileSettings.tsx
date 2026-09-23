@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useAuthStore } from "../../../store/authStore";
+import { useToastStore } from "../../../store/toastStore";
 
 import { useRef} from "react";
 import { MdCameraAlt } from "react-icons/md";
@@ -39,18 +40,27 @@ const [timeZone, setTimeZone] = useState(
  (state) => state.updateProfile
 );
 
-const handleSave = () => {
- updateProfile({
- fullName,
- phoneNumber,
- jobTitle,
- department,
- bio,
- location,
- timeZone,
- avatar,
-});
-};
+  const showToast = useToastStore((state) => state.showToast);
+
+  const handleSave = () => {
+    updateProfile({
+      fullName: fullName.trim(),
+      phoneNumber: phoneNumber.trim(),
+      jobTitle: jobTitle.trim(),
+      department: department.trim(),
+      bio: bio.trim(),
+      location: location.trim(),
+      timeZone: timeZone.trim(),
+      avatar,
+    });
+
+    if (showToast) {
+      showToast(
+        "Your profile and Team Member record have been updated successfully.",
+        "success"
+      );
+    }
+  };
 
 
 const [avatar, setAvatar] = useState(user?.avatar ?? "");
@@ -102,80 +112,100 @@ const hasChanges =
  />
 
  {/* Clickable Avatar */}
- <div
- onClick={() => fileInputRef.current?.click()}
- className="group relative cursor-pointer"
- >
- <img
- src={
- avatar ||
- `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}`
- }
- alt={fullName}
- className="
- h-20 w-20
- md:h-28
- md:w-28
- rounded-full
- border
- border-zinc-200
- object-cover
- transition
- duration-300
- group-hover:brightness-75
- dark:border-zinc-800
- "
- />
+ 
+{/* Clickable Avatar */}
+<div
+  onClick={() => fileInputRef.current?.click()}
+  className="
+    group
+    relative
+    cursor-pointer
+    rounded-full
+    transition-all
+    duration-200
+    ease-out
+    hover:scale-[1.03]
+    hover:shadow-lg
+    active:scale-95
+    focus:outline-none
+  "
+>
+  {/* Avatar */}
+  <img
+    src={
+      avatar ||
+      `https://ui-avatars.com/api/?name=${encodeURIComponent(
+        fullName
+      )}`
+    }
+    alt={fullName}
+    className="
+      h-20
+      w-20
+      rounded-full
+      border
+      border-zinc-200
+      object-cover
+      transition-all
+      duration-300
+      group-hover:border-[#408A71]
+      group-hover:brightness-75
+      dark:border-zinc-800
+      dark:group-hover:border-[#B0E4CC]
+    "
+  />
 
- {/* Camera Badge */}
- <div
- className="
- absolute
- bottom-0
- right-0
- flex
- h-8 w-8
- md:h-10
- md:w-10
- items-center
- justify-center
- rounded-full
- border-2
- border-white
- bg-[#285A48]
- text-white
- transition
- duration-300
- group-hover:scale-110
- dark:border-zinc-900
- dark:bg-[#B0E4CC]
- dark:text-zinc-900
- "
- >
- <MdCameraAlt size={18} />
- </div>
+  {/* Camera Badge */}
+  <div
+    className="
+      absolute
+      bottom-0
+      right-0
+      flex
+      h-8
+      w-8
+      items-center
+      justify-center
+      rounded-full
+      border-2
+      border-white
+      bg-[#285A48]
+      text-white
+      shadow-md
+      transition-all
+      duration-200
+      group-hover:scale-110
+      group-active:scale-95
+      dark:border-zinc-900
+      dark:bg-[#B0E4CC]
+      dark:text-zinc-900
+    "
+  >
+    <MdCameraAlt size={18} />
+  </div>
 
- {/* Hover Overlay */}
- <div
- className="
- absolute
- inset-0
- flex
- items-center
- justify-center
- rounded-full
- bg-black/40
- opacity-0
- transition
- duration-300
- group-hover:opacity-100
- "
- >
- <span className="text-sm font-medium text-white">
- Change Photo
- </span>
- </div>
- </div>
+  {/* Hover Overlay */}
+  <div
+    className="
+      absolute
+      inset-0
+      flex
+      items-center
+      justify-center
+      rounded-full
+      bg-black/40
+      opacity-0
+      transition-all
+      duration-300
+      group-hover:opacity-100
+    "
+  >
+    <span className="text-sm font-medium text-white">
+      Change Photo
+    </span>
+  </div>
+</div>
+
 
  {/* Profile Info */}
  <div>

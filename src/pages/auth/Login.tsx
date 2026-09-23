@@ -133,6 +133,7 @@ if (invitationId) {
  // - If no pending member found, create a new one
  await createTeamMemberInFirestore({
  id: currentUser?.id ?? crypto.randomUUID(),
+ userId: currentUser?.id ?? crypto.randomUUID(),
  companyId: invitation.companyId,
  invitationId,
  fullName: currentUser?.fullName ?? invitation.fullName,

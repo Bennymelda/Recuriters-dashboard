@@ -95,8 +95,8 @@ const CompleteProfile = () => {
  };
 
  return (
- <div className="min-h-screen bg-zinc-50 px-4 py-10 dark:bg-zinc-950">
- <div className="mx-auto w-full max-w-2xl">
+ <div className="min-h-screen  bg-zinc-50 px-4 py-10 dark:bg-zinc-950">
+ <div className="mx-auto w-full max-w-2xl bg-white dark:bg-zinc-900 p-4">
 
  {/* Header */}
  <div className="mb-8 text-center">
@@ -106,12 +106,12 @@ const CompleteProfile = () => {
 
  <p className="mt-2 text-sm leading-6 text-zinc-500 dark:text-zinc-400">
  Add a few details to personalize your profile.
- You can always update this later from Settings.
+
  </p>
  </div>
 
  {/* Card */}
- <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm md:p-8 dark:border-zinc-800 dark:bg-zinc-900">
+ <div className="  p-6 md:p-8 ">
 
  {/* Avatar */}
  <div className="mb-8 flex flex-col items-center">
@@ -147,8 +147,8 @@ const CompleteProfile = () => {
  border-white
  object-cover
  shadow-md
- ring-2
- ring-[hashtag#408A71]/20
+ ring-4
+ ring-[#408A71]
  transition
  group-hover:brightness-75
  dark:border-zinc-900
@@ -168,10 +168,10 @@ const CompleteProfile = () => {
  rounded-full
  border-2
  border-white
- bg-[hashtag#285A48]
+ bg-[#285A48]
  text-white
  dark:border-zinc-900
- dark:bg-[hashtag#B0E4CC]
+ dark:bg-[#B0E4CC]
  dark:text-zinc-900
  "
  >
@@ -179,9 +179,7 @@ const CompleteProfile = () => {
  </span>
  </button>
 
- <p className="mt-3 text-sm text-zinc-500 dark:text-zinc-400">
- Profile photo is optional
- </p>
+
  </div>
 
  {/* Form */}
@@ -207,7 +205,7 @@ const CompleteProfile = () => {
  px-4
  py-3
  outline-none
- focus:border-[hashtag#408A71]
+ focus:border-[#408A71]
  dark:border-zinc-700
  dark:bg-zinc-800
  dark:text-white
@@ -235,7 +233,7 @@ const CompleteProfile = () => {
  px-4
  py-3
  outline-none
- focus:border-[hashtag#408A71]
+ focus:border-[#408A71]
  dark:border-zinc-700
  dark:bg-zinc-800
  dark:text-white
@@ -263,7 +261,7 @@ const CompleteProfile = () => {
  px-4
  py-3
  outline-none
- focus:border-[hashtag#408A71]
+ focus:border-[#408A71]
  dark:border-zinc-700
  dark:bg-zinc-800
  dark:text-white
@@ -291,7 +289,7 @@ const CompleteProfile = () => {
  px-4
  py-3
  outline-none
- focus:border-[hashtag#408A71]
+ focus:border-[#408A71]
  dark:border-zinc-700
  dark:bg-zinc-800
  dark:text-white
@@ -321,7 +319,7 @@ const CompleteProfile = () => {
  px-4
  py-3
  outline-none
- focus:border-[hashtag#408A71]
+ focus:border-[#408A71]
  dark:border-zinc-700
  dark:bg-zinc-800
  dark:text-white
@@ -338,6 +336,7 @@ const CompleteProfile = () => {
  onClick={handleSkip}
  className="
  rounded-2xl
+ cursor-pointer
  border
  border-zinc-200
  px-6
@@ -363,14 +362,15 @@ const CompleteProfile = () => {
  bg-[#285A48]
  px-6
  py-3
+ cursor-pointer
  text-sm
  font-semibold
  text-white
  transition
- hover:bg-[hashtag#35745E]
- dark:bg-[hashtag#B0E4CC]
+ hover:bg-[#35745E]
+ dark:bg-[#B0E4CC]
  dark:text-zinc-900
- dark:hover:bg-[hashtag#89D9B4]
+ dark:hover:bg-[#89D9B4]
  "
  >
  Complete Profile
@@ -379,9 +379,7 @@ const CompleteProfile = () => {
  </div>
  </div>
 
- <p className="mt-5 text-center text-xs text-zinc-400">
- You can update these details anytime from Settings.
- </p>
+
  </div>
  </div>
  );

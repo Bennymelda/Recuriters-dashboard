@@ -789,6 +789,245 @@ const TeamCard = ({ member }: TeamCardProps) => {
  </td>
 </tr>
 
+
+{/*mobile */}
+
+<div
+ className="
+ xl:hidden
+relative
+ rounded-2xl
+
+
+ bg-white
+
+ p-4
+
+shadow-sm
+
+ dark:border-zinc-700
+ dark:bg-zinc-900
+ "
+>
+ 
+ <div className="flex items-start justify-between">
+
+ <div className="flex items-center gap-3">
+
+ <div className="relative">
+ <img
+ src={
+ member.avatar ||
+ `https://ui-avatars.com/api/?name=${member.fullName}`
+ }
+ alt={member.fullName}
+ className="h-14 w-14 rounded-2xl border-2 border-[#285A48] object-cover dark:border-[#B0E4CC]"
+ />
+
+ <span
+ className={`absolute bottom-0 right-0 h-3.5 w-3.5 rounded-full border-2 border-white dark:border-zinc-900 ${presenceColors[member.presenceStatus]}`}
+ />
+ </div>
+
+ <div>
+ <h3 className="font-bold text-zinc-900 dark:text-white">
+ {member.fullName}
+ </h3>
+
+ 
+
+ <p className="mt-1 text-sm font-medium text-zinc-700 dark:text-zinc-300">
+ {member.role}
+ </p>
+ </div>
+
+ </div>
+
+ <button
+ onClick={() => setOpenMenu(!openMenu)}
+ className="rounded-xl cursor-pointer p-2 hover:bg-zinc-100 dark:text-white dark:hover:bg-zinc-800"
+ >
+ <MdMoreHoriz size={22} />
+ </button>
+
+ </div>
+
+ 
+ <div className="mt-5 space-y-3">
+
+ <div className="flex justify-between">
+ <span className="text-zinc-500 dark:text-zinc-400">
+ Department
+ </span>
+
+ <span className="rounded-full bg-[#EEF8F3] px-3 py-1 text-xs font-semibold text-[#285A48] dark:bg-[#285A48]/20 dark:text-[#B0E4CC]">
+ {member.department}
+ </span>
+ </div>
+
+ <div className="flex justify-between">
+ <span className="text-zinc-500 dark:text-zinc-400">
+ Status
+ </span>
+
+ <span
+ className={`
+ rounded-full
+ px-3
+ py-1
+ text-xs
+ font-semibold
+ ${
+ membershipBadgeColors[
+ member.membershipStatus
+ ]
+ }
+ `}
+ >
+ {member.membershipStatus}
+ </span>
+ </div>
+
+ <div className="flex justify-between">
+ <span className="text-zinc-500 dark:text-zinc-400">
+ Assigned Jobs
+ </span>
+
+ <span className="font-semibold text-zinc-900 dark:text-white">
+ {assignedJobsCount}
+ </span>
+ </div>
+
+ <div className="flex justify-between">
+ <span className="text-zinc-500 dark:text-zinc-400">
+ Last Active
+ </span>
+
+ <div className="flex items-center gap-2">
+ <span className="h-2 w-2 rounded-full bg-emerald-500" />
+
+  {member.membershipStatus === "Pending" ? (
+ <span className="whitespace-nowrap text-sm text-zinc-400 dark:text-zinc-500">
+ Not joined
+ </span>
+ ) : (
+ <span className="whitespace-nowrap text-sm text-zinc-600 dark:text-zinc-300">
+ {member.lastActive
+ ? formatLastActive(member.lastActive)
+ : "Never active"}
+ </span>
+ )}
+ </div>
+ </div>
+
+ </div>
+
+ 
+ <button
+ onClick={() => {
+ selectMember(member.id);
+ navigate(`/team/${member.id}`);
+ }}
+ className="
+ mt-5
+
+ w-full
+
+ rounded-2xl
+
+ bg-[#285A48]
+
+ py-3
+
+ font-semibold
+
+ text-white
+
+ transition
+cursor-pointer
+ hover:bg-[#35745E]
+ "
+ >
+ View Profile
+ </button>
+
+
+ {openMenu && (
+ <div
+ className="
+ mt-4
+
+ rounded-2xl
+
+ border
+
+ border-zinc-200
+
+ bg-white
+right-6
+ top-7
+ z-30
+ absolute
+ w-56
+ p-2
+
+ shadow-xl
+
+ dark:border-zinc-700
+ dark:bg-zinc-900
+ "
+ >
+
+
+<button
+ onClick={() => {
+ selectMember(member.id);
+ navigate(`/team/${member.id}`);
+ }}
+ className="flex cursor-pointer w-full dark:text-white rounded-xl px-3 py-3 text-sm hover:bg-zinc-100 dark:hover:bg-zinc-800"
+ >
+ View Profile
+ </button>
+{canManageTeam && (
+ <button
+ onClick={() => {
+ setOpenMenu(false);
+ setOpenEditModal(true);
+ }}
+ className="cursor-pointer flex w-full dark:text-white rounded-xl px-3 py-3 text-sm hover:bg-zinc-100 dark:hover:bg-zinc-800"
+ >
+ Edit Member
+ </button>
+ )}
+{canManageTeam && (
+ <button
+ onClick={() => {
+ setOpenMenu(false);
+ setOpenAssignModal(true);
+ }}
+ className="flex cursor-pointer w-full dark:text-white rounded-xl px-3 py-3 text-sm hover:bg-zinc-100 dark:hover:bg-zinc-800"
+ >
+ Assign Jobs
+ </button>
+)}
+ <hr className="my-2 border-zinc-200 dark:border-zinc-700" />
+{canManageTeam && (
+ <button
+ onClick={() => {
+ setOpenMenu(false);
+ setOpenDeleteModal(true);
+
+ }}
+ className="cursor-pointer flex w-full dark:text-red-700 rounded-xl px-3 py-3 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10"
+ >
+ Remove Member
+ </button>
+)}
+
+
+ </div>
+ )}
+</div>
  {/* ---------------------------------- */}
  {/* Modals */}
  {/* ---------------------------------- */}

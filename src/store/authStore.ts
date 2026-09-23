@@ -8,15 +8,7 @@ import type {
  UserRole,
 } from "../types/auth";
 
-import {
- collection,
- query,
- where,
- getDocs,
- updateDoc,
- doc,
-} from "firebase/firestore";
-import { db } from "../firebase";
+import { useTeamStore } from "./teamStore";
 interface AuthStore {
  user: User | null;
  isAuthenticated: boolean;
@@ -339,39 +331,19 @@ export const useAuthStore = create<AuthStore>()(
  );
 
  /*
- * Sync the user's name with their TeamMember.
+ * Sync profile changes with corresponding TeamMember in Firestore & Zustand.
  */
- const syncTeamMember = async () => {
- try {
- const q = query(
- collection(db, "teamMembers"),
- where("userId", "==", updatedUser.id)
- );
-
- const snapshot = await getDocs(q);
-   console.log("Profile sync userId:", updatedUser.id);
-console.log("TeamMember matches:", snapshot.size);
- if (snapshot.empty) {
- return;
- }
-
- const memberDoc = snapshot.docs[0];
-
- await updateDoc(
- doc(db, "teamMembers", memberDoc.id),
- {
- fullName: updatedUser.fullName,
- }
- );
- } catch (error) {
- console.error(
- "Error syncing team member profile:",
- error
- );
- }
- };
-
- syncTeamMember();
+ useTeamStore.getState().syncTeamMemberProfile({
+   userId: updatedUser.id,
+   email: updatedUser.email,
+   fullName: updatedUser.fullName,
+   avatar: updatedUser.avatar,
+   phone: updatedUser.phoneNumber,
+   department: updatedUser.department,
+   role: updatedUser.role,
+ }).catch((error) => {
+   console.error("Error in syncTeamMemberProfile from updateProfile:", error);
+ });
 
  return {
  ...state,

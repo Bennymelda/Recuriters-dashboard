@@ -127,6 +127,9 @@ formData={formData}
 
 export default EditTeamMemberModal;
 */
+
+
+/*
 import { useEffect, useState } from "react";
 import Modal from "../../ui/Modal";
 import TeamForm from "../TeamForm/TeamForm";
@@ -175,10 +178,7 @@ const EditTeamMemberModal = ({
  department: member.department,
  });
 
- /*
- * Reset the form whenever
- * the selected member changes.
- */
+ 
  useEffect(() => {
  setFormData({
  fullName: member.fullName,
@@ -192,9 +192,7 @@ const EditTeamMemberModal = ({
  setImage(null);
  }, [member]);
 
- /*
- * Save changes
- */const user = useAuthStore((state) => state.user);
+ const user = useAuthStore((state) => state.user);
 const isHRManager = user?.role === "HR Manager";
 const isEditingAdmin = member.role === "Admin";
 
@@ -215,9 +213,7 @@ const handleUpdateMember = () => {
  const fullName = formData.fullName.trim();
  const phone = formData.phone.trim();
 
- /*
- * Basic validation
- */
+ 
  if (!fullName) {
  showToast({
  type: "error",
@@ -241,9 +237,7 @@ const handleUpdateMember = () => {
  const updatedMember: TeamMember = {
  ...member,
 
- /*
- * Profile information
- */
+ 
  fullName,
 
  // Email cannot be changed from Team Edit.
@@ -253,9 +247,7 @@ const handleUpdateMember = () => {
 
  avatar: preview ?? member.avatar,
 
- /*
- * Organization information
- */
+ 
  role: formData.role,
 
  department: formData.department,
@@ -263,9 +255,7 @@ const handleUpdateMember = () => {
 
  updateMember(updatedMember);
 
- /*
- * Notify when the role changes.
- */
+ 
  if (member.role !== updatedMember.role) {
  addNotification({
  title: "Role Changed",
@@ -274,9 +264,7 @@ const handleUpdateMember = () => {
  });
  }
 
- /*
- * Success feedback
- */
+
  showToast({
  type: "success",
  title: "Team Member Updated",
@@ -311,6 +299,191 @@ const handleUpdateMember = () => {
  </div>
  </Modal>
  );
+};
+
+export default EditTeamMemberModal;
+
+*/
+
+
+
+
+
+import { useEffect, useState } from "react";
+import Modal from "../../ui/Modal";
+import TeamForm from "../TeamForm/TeamForm";
+import type { TeamFormData } from "../TeamForm/TeamForm";
+import TeamFormFooter from "../TeamForm/TeamFormFooter";
+import { useTeamStore } from "../../../store/teamStore";
+import type { TeamMember } from "../../../types/team";
+import { useToastStore } from "../../toast/toastStore";
+import { useNotificationStore } from "../../../store/notificationStore";
+import { useAuthStore } from "../../../store/authStore";
+
+interface EditTeamMemberModalProps {
+  open: boolean;
+  onClose: () => void;
+  member: TeamMember;
+}
+
+const EditTeamMemberModal = ({
+  open,
+  onClose,
+  member,
+}: EditTeamMemberModalProps) => {
+  const updateMember = useTeamStore(
+    (state) => state.updateMember
+  );
+
+  const addNotification = useNotificationStore(
+    (state) => state.addNotification
+  );
+
+  const showToast = useToastStore(
+    (state) => state.showToast
+  );
+
+  const user = useAuthStore((state) => state.user);
+
+  const isHRManager = user?.role === "HR Manager";
+  const isEditingAdmin = member.role === "Admin";
+
+  const [image, setImage] = useState<File | null>(null);
+
+  const [preview, setPreview] = useState<string | null>(
+    member.avatar ?? null
+  );
+
+  const [formData, setFormData] = useState<TeamFormData>({
+    fullName: member.fullName,
+    email: member.email,
+    phone: member.phone ?? "",
+    role: member.role,
+    department: member.department,
+  });
+
+  /*
+   * Reset the form whenever
+   * the selected member changes.
+   */
+  useEffect(() => {
+    setFormData({
+      fullName: member.fullName,
+      email: member.email,
+      phone: member.phone ?? "",
+      role: member.role,
+      department: member.department,
+    });
+
+    setPreview(member.avatar ?? null);
+    setImage(null);
+  }, [member]);
+
+  /*
+   * Save changes
+   */
+  const handleUpdateMember = () => {
+    /*
+     * HR Managers cannot edit an Admin
+     * or assign the Admin role.
+     */
+    if (
+      isHRManager &&
+      (isEditingAdmin || formData.role === "Admin")
+    ) {
+      showToast({
+        type: "error",
+        title: "Permission Denied",
+        message:
+          "HR Managers cannot change or assign the Admin role.",
+      });
+
+      return;
+    }
+
+    /*
+     * Role is required.
+     */
+    if (!formData.role) {
+      showToast({
+        type: "error",
+        title: "Role Required",
+        message:
+          "Please select a role for this team member.",
+      });
+
+      return;
+    }
+
+    /*
+     * Only organization-related fields
+     * are changed from the edit modal.
+     *
+     * Profile information such as:
+     * - name
+     * - email
+     * - phone
+     * - avatar
+     *
+     * remains unchanged.
+     */
+    const updatedMember: TeamMember = {
+      ...member,
+      role: formData.role,
+      department: formData.department,
+    };
+
+    updateMember(updatedMember);
+
+    /*
+     * Notify when the role changes.
+     */
+    if (member.role !== updatedMember.role) {
+      addNotification({
+        title: "Role Changed",
+        message: `${member.fullName}'s role was changed to ${updatedMember.role}.`,
+        type: "team",
+      });
+    }
+
+    /*
+     * Success feedback
+     */
+    showToast({
+      type: "success",
+      title: "Team Member Updated",
+      message: `${member.fullName} has been updated successfully.`,
+    });
+
+    onClose();
+  };
+
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      title="Edit Team Member"
+    >
+      <div className="space-y-8">
+        <TeamForm
+          formData={formData}
+          setFormData={setFormData}
+          image={image}
+          setImage={setImage}
+          preview={preview}
+          setPreview={setPreview}
+          isHRManager={isHRManager}
+          isEditMode={true}
+        />
+
+        <TeamFormFooter
+          submitLabel="Save Changes"
+          onCancel={onClose}
+          onSubmit={handleUpdateMember}
+        />
+      </div>
+    </Modal>
+  );
 };
 
 export default EditTeamMemberModal;

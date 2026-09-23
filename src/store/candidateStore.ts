@@ -16,6 +16,7 @@ import {
 
 import { db } from "../firebase";
 import { useAuthStore } from "./authStore";
+import { useNotificationStore } from "./notificationStore";
 import type { TeamRole } from "../types/team";
 const STORAGE_KEY = "careerflow-candidates";
 const STORAGE_VERSION = 3;
@@ -481,6 +482,7 @@ updateCandidateStatus: (id, status) =>
  return state;
  }
 
+ const previousStatus = candidate.status;
  const remainingCandidates = state.candidates.filter(
  (candidate) => candidate.id !== id
  );
@@ -502,11 +504,21 @@ updateCandidateStatus: (id, status) =>
 
  persistCandidates(updatedCandidates);
 
+ if (previousStatus !== status) {
+  useNotificationStore.getState().addNotification({
+   title: `Candidate Stage Updated: ${status}`,
+   message: `${candidate.fullName}'s stage was updated from ${previousStatus} to ${status}.`,
+   type: "candidate",
+   link: `/candidates/${candidate.id}`,
+  });
+ }
+
  return {
  candidates: updatedCandidates,
  isLoading: false,
  };
  }),
+
  addNote: (candidateId, note) =>
  set((state) => {
  const updatedCandidates = state.candidates.map((candidate) =>
@@ -639,6 +651,8 @@ deleteNote: (candidateId, noteId) =>
  
  scheduleInterview: (candidateId, interview) =>
  set((state) => {
+  const candidate = state.candidates.find((c) => c.id === candidateId);
+
   const updatedCandidates: Candidate[] = state.candidates.map((candidate) =>
    candidate.id !== candidateId
     ? candidate
@@ -663,6 +677,15 @@ deleteNote: (candidateId, noteId) =>
   );
 
   persistCandidates(updatedCandidates);
+
+  if (candidate) {
+   useNotificationStore.getState().addNotification({
+    title: `Interview Scheduled: ${candidate.fullName}`,
+    message: `${candidate.fullName} was moved to Interview stage (${interview.stage} interview scheduled).`,
+    type: "interview",
+    link: `/candidates/${candidate.id}`,
+   });
+  }
 
   return {
    candidates: updatedCandidates,
@@ -842,6 +865,7 @@ moveCandidateStage: (candidateId, status) =>
  }
 
  const now = new Date().toISOString();
+ const previousStatus = candidate.status;
 
  const updatedCandidates: Candidate[] = state.candidates.map(
  (candidate) =>
@@ -871,6 +895,19 @@ moveCandidateStage: (candidateId, status) =>
  );
 
  persistCandidates(updatedCandidates);
+console.log("STAGE NOTIFICATION:", {
+  previousStatus,
+  status,
+  candidate: candidate.fullName,
+});
+ if (previousStatus !== status) {
+  useNotificationStore.getState().addNotification({
+   title: `Candidate Moved to ${status}`,
+   message: `${candidate.fullName} has been moved from ${previousStatus} to ${status}.`,
+   type: "candidate",
+   link: `/candidates/${candidate.id}`,
+  });
+ }
 
  return {
  candidates: updatedCandidates,
@@ -1320,8 +1357,10 @@ rejectOffer: (candidateId, note) =>
  isLoading: false,
  };
  }),
+
+
+ 
 sendOffer: async (candidateId) => {
- console.log("🧪 DUMMY SEND OFFER FUNCTION CALLED", candidateId);
 
  const currentUser = useAuthStore.getState().user;
 
@@ -1392,10 +1431,7 @@ await setDoc(
  isLoading: false,
  });
 
- console.log(
- "✅ Dummy offer sent successfully."
- );
-
+ 
  return true;
  } catch (error) {
  console.error("Dummy offer error:", error);
@@ -1474,6 +1510,13 @@ acceptOffer: async (candidateId) => {
       );
 
       persistCandidates(updatedCandidates);
+
+      useNotificationStore.getState().addNotification({
+        title: `Candidate Hired: ${candidate.fullName} 🎉`,
+        message: `${candidate.fullName} accepted the offer and is now Hired!`,
+        type: "candidate",
+        link: `/candidates/${candidate.id}`,
+      });
 
       return {
         candidates: updatedCandidates,
@@ -1558,10 +1601,7 @@ subscribeToCandidates: () => {
         id: docSnap.id,
       }));
 
-      console.log(
-        "🔥 REAL-TIME CANDIDATE UPDATE:",
-        firebaseCandidates
-      );
+      
 
       set((state) => {
         const candidateMap = new Map(

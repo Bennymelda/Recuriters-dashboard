@@ -4,6 +4,7 @@ import { create } from "zustand";
 import type { TeamMember, TeamActivity, TeamInvitation, TeamRole } from "../types/team";
 import { teamMembers } from "../data/team";
 import { useCompanyStore } from "./companyStore";
+import { useAuthStore } from "./authStore";
 import {
   doc,
   setDoc,
@@ -118,10 +119,15 @@ addPendingMember: (
  }
  ) => void;
 
-syncTeamMemberProfile: (
- userId: string,
- fullName: string
-) => Promise<void>;
+syncTeamMemberProfile: (profile: {
+  userId: string;
+  email: string;
+  fullName: string;
+  avatar?: string;
+  phone?: string;
+  department?: string;
+  role?: string;
+}) => Promise<void>;
 
 }
 
@@ -786,7 +792,50 @@ acceptInvitation: (invitationId) =>
             return nextState;
           });
 
-          console.log("Updated existing team member:", existingMember.id);
+          console.log("Updated existing team member by invitationId:", existingMember.id);
+          return;
+        }
+      }
+      
+      // Fallback: check by email if invitationId match wasn't found
+      if (member.email) {
+        const qEmail = query(
+          collection(db, "teamMembers"),
+          where("email", "==", member.email.toLowerCase())
+        );
+        const emailSnapshot = await getDocs(qEmail);
+        if (!emailSnapshot.empty) {
+          const existingMemberDoc = emailSnapshot.docs[0];
+          const existingMember = existingMemberDoc.data() as TeamMember;
+          const memberRef = doc(db, "teamMembers", existingMember.id);
+          const updateData = {
+            userId: member.userId,
+            fullName: member.fullName,
+            email: member.email,
+            phone: member.phone,
+            avatar: member.avatar,
+            membershipStatus: "Active" as const,
+            presenceStatus: "Online" as const,
+            joinedAt: member.joinedAt || now,
+            lastActive: now,
+          };
+
+          await updateDoc(memberRef, updateData);
+          
+          set((state) => {
+            const nextState = {
+              ...state,
+              members: state.members.map((m) =>
+                m.id === existingMember.id || (m.email && m.email.toLowerCase() === member.email.toLowerCase())
+                  ? { ...m, ...updateData }
+                  : m
+              ),
+            };
+            persistTeamState(nextState);
+            return nextState;
+          });
+
+          console.log("Updated existing team member by email:", existingMember.id);
           return;
         }
       }
@@ -822,30 +871,18 @@ acceptInvitation: (invitationId) =>
   },
 
   // Update team member phone number (after profile update)
-  updateTeamMemberPhone: async (companyId: string, userId: string, phone: string): Promise<void> => {
+  updateTeamMemberPhone: async (_companyId: string, userId: string, phone: string): Promise<void> => {
     try {
-      // Find the team member by userId (authenticated user ID)
-      const q = query(
-        collection(db, "teamMembers"),
-        where("companyId", "==", companyId),
-        where("userId", "==", userId)
-      );
-      const querySnapshot = await getDocs(q);
-      
-      if (!querySnapshot.empty) {
-        const memberDoc = querySnapshot.docs[0];
-        const memberRef = doc(db, "teamMembers", memberDoc.id);
-        
-        await updateDoc(memberRef, {
-          phone: phone,
-          lastActive: new Date().toISOString(),
-        });
-        
-        console.log("Updated team member phone:", memberDoc.id);
-      }
+      const user = useAuthStore.getState().user;
+      await get().syncTeamMemberProfile({
+        userId: userId || user?.id || "",
+        email: user?.email || "",
+        fullName: user?.fullName || "",
+        phone: phone,
+      });
+      console.log("Updated team member phone for userId:", userId, "phone:", phone);
     } catch (error) {
       console.error("Error updating team member phone:", error);
-      // Don't throw - phone update is optional and shouldn't break the flow
     }
   },
 
@@ -881,6 +918,26 @@ acceptInvitation: (invitationId) =>
         firestoreMembers.forEach((fsMem) => {
           memberMap.set(fsMem.id, fsMem);
         });
+
+        // 4. Ensure current logged-in user profile details (like phone & avatar) are merged if missing
+        const currentUser = useAuthStore.getState().user;
+        if (currentUser) {
+          memberMap.forEach((mem, key) => {
+            const isMatch =
+              (mem.userId && mem.userId === currentUser.id) ||
+              (mem.email && mem.email.toLowerCase() === currentUser.email.toLowerCase());
+            if (isMatch) {
+              const updatedMem = {
+                ...mem,
+                userId: currentUser.id,
+                fullName: mem.fullName || currentUser.fullName,
+                phone: mem.phone || currentUser.phoneNumber || "",
+                avatar: mem.avatar || currentUser.avatar || "",
+              };
+              memberMap.set(key, updatedMem);
+            }
+          });
+        }
 
         const nextState = {
           ...state,
@@ -929,6 +986,26 @@ acceptInvitation: (invitationId) =>
             firestoreMembers.forEach((fsMem) => {
               memberMap.set(fsMem.id, fsMem);
             });
+
+            // 4. Ensure current logged-in user profile details (like phone & avatar) are merged if missing
+            const currentUser = useAuthStore.getState().user;
+            if (currentUser) {
+              memberMap.forEach((mem, key) => {
+                const isMatch =
+                  (mem.userId && mem.userId === currentUser.id) ||
+                  (mem.email && mem.email.toLowerCase() === currentUser.email.toLowerCase());
+                if (isMatch) {
+                  const updatedMem = {
+                    ...mem,
+                    userId: currentUser.id,
+                    fullName: mem.fullName || currentUser.fullName,
+                    phone: mem.phone || currentUser.phoneNumber || "",
+                    avatar: mem.avatar || currentUser.avatar || "",
+                  };
+                  memberMap.set(key, updatedMem);
+                }
+              });
+            }
 
             const nextState = {
               ...state,
@@ -1193,55 +1270,94 @@ acceptInvitation: (invitationId) =>
  return nextState;
  }),
 
- syncTeamMemberProfile: async (userId, fullName) => {
- try {
- const q = query(
- collection(db, "teamMembers"),
- where("userId", "==", userId)
- );
+  syncTeamMemberProfile: async ({
+    userId,
+    email,
+    fullName,
+    avatar,
+    phone,
+    department,
+    role,
+  }) => {
+    try {
+      console.log("Syncing team member profile:", { userId, email, fullName, avatar, phone, department, role });
+      
+      let memberDocId: string | null = null;
+      
+      // 1. Try finding by userId
+      if (userId) {
+        const qUser = query(
+          collection(db, "teamMembers"),
+          where("userId", "==", userId)
+        );
+        const userSnapshot = await getDocs(qUser);
+        if (!userSnapshot.empty) {
+          memberDocId = userSnapshot.docs[0].id;
+        }
+      }
 
- const querySnapshot = await getDocs(q);
+      // 2. Fallback to searching by email if userId match not found
+      if (!memberDocId && email) {
+        const qEmail = query(
+          collection(db, "teamMembers"),
+          where("email", "==", email.toLowerCase())
+        );
+        const emailSnapshot = await getDocs(qEmail);
+        if (!emailSnapshot.empty) {
+          memberDocId = emailSnapshot.docs[0].id;
+        }
+      }
 
- if (querySnapshot.empty) {
- return;
- }
+      const updateFields: Record<string, any> = {
+        fullName,
+      };
 
- const memberDoc = querySnapshot.docs[0];
- const memberId = memberDoc.id;
+      if (userId) updateFields.userId = userId;
+      if (avatar !== undefined) updateFields.avatar = avatar;
+      if (phone !== undefined) updateFields.phone = phone;
+      if (department !== undefined && department !== "") updateFields.department = department;
+      if (role !== undefined && role !== "") updateFields.role = role;
 
- await updateDoc(
- doc(db, "teamMembers", memberId),
- {
- fullName,
- }
- );
+      if (memberDocId) {
+        await updateDoc(doc(db, "teamMembers", memberDocId), updateFields);
+        console.log("Updated team member doc in Firestore:", memberDocId, updateFields);
+      }
 
- set((state) => {
- const nextState = {
- ...state,
- members: state.members.map((member) =>
- member.userId === userId
- ? {
- ...member,
- fullName,
- }
- : member
- ),
- };
+      // 3. Update Zustand state for immediate UI feedback on Team page
+      set((state) => {
+        const nextMembers = state.members.map((member) => {
+          const isMatch =
+            (userId && member.userId === userId) ||
+            (email && member.email.trim().toLowerCase() === email.trim().toLowerCase()) ||
+            (memberDocId && member.id === memberDocId);
 
- persistTeamState(nextState);
+          if (!isMatch) return member;
 
- return nextState;
- });
- } catch (error) {
- console.error(
- "Error syncing team member profile:",
- error
- );
+          return {
+            ...member,
+            ...(userId ? { userId } : {}),
+            fullName,
+            ...(avatar !== undefined ? { avatar } : {}),
+            ...(phone !== undefined ? { phone } : {}),
+            ...(department !== undefined && department !== "" ? { department: department as any } : {}),
+            ...(role !== undefined && role !== "" ? { role: role as any } : {}),
+          };
+        });
 
- throw error;
- }
-},
+        const nextState = {
+          ...state,
+          members: nextMembers,
+        };
+
+        persistTeamState(nextState);
+
+        return nextState;
+      });
+    } catch (error) {
+      console.error("Error syncing team member profile:", error);
+      throw error;
+    }
+  },
 
 
  })
