@@ -7,137 +7,133 @@ import DescriptionSection from "./DesriptionSection";
 import { useState } from "react";
 import type { Job } from "../../../types/job";
 import { useJobStore } from "../../../store/jobStore";
-
+import { useAuthStore } from "../../../store/authStore";
 import { useToastStore } from "../../toast/toastStore";
 import { useCompanyStore } from "../../../store/companyStore";
+
 interface JobFormProps {
  mode: "create" | "edit";
  onClose: () => void;
 }
 
 const JobForm = ({ mode, onClose }: JobFormProps) => {
-const showToast = useToastStore((state) => state.showToast);
-   const [responsibilities, setResponsibilities] = useState<string[]>([]);
-const [requirements, setRequirements] = useState<string[]>([]);
-const [benefits, setBenefits] = useState<string[]>([]);
-const [skills, setSkills] = useState<string[]>([]);
-const [title, setTitle] = useState("");
-const [department, setDepartment] = useState("");
-const [location, setLocation] = useState("");
-const [employmentType, setEmploymentType] =
- useState<Job["employmentType"]>("Full-time");
-const company = useCompanyStore(
- (state) => state.company
-);
-const [experienceLevel, setExperienceLevel] =
- useState<Job["experienceLevel"]>("Junior");
+ const showToast = useToastStore((state) => state.showToast);
+ const user = useAuthStore((state) => state.user);
+ const [responsibilities, setResponsibilities] = useState<string[]>([]);
+ const [requirements, setRequirements] = useState<string[]>([]);
+ const [benefits, setBenefits] = useState<string[]>([]);
+ const [skills, setSkills] = useState<string[]>([]);
+ const [title, setTitle] = useState("");
+ const [department, setDepartment] = useState("");
+ const [location, setLocation] = useState("");
+ const [employmentType, setEmploymentType] =
+  useState<Job["employmentType"]>("Full-time");
+ const company = useCompanyStore(
+  (state) => state.company
+ );
+ const [experienceLevel, setExperienceLevel] =
+  useState<Job["experienceLevel"]>("Junior");
 
-const [status, setStatus] =
- useState<Job["status"]>("Draft");
-const [salary, setSalary] = useState("");
-const [description, setDescription] = useState("");
-const { addJob} = useJobStore();
-const [isSubmitting, setIsSubmitting] = useState(false);
+ const [status, setStatus] =
+  useState<Job["status"]>("Active");
+ const [salary, setSalary] = useState("");
+ const [description, setDescription] = useState("");
+ const { addJob } = useJobStore();
+ const [isSubmitting, setIsSubmitting] = useState(false);
 
+ const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
 
-const handleSubmit = async (e: React.FormEvent) => {
- e.preventDefault();
+  if (isSubmitting) return;
 
- if (isSubmitting) return;
+  if (!title.trim()) {
+   showToast({
+    type: "warning",
+    title: "Job title required",
+    message: "Please enter a job title.",
+   });
+   return;
+  }
 
- if (!title.trim()) {
- showToast({
- type: "warning",
- title: "Job title required",
- message: "Please enter a job title.",
- });
- return;
- }
+  if (!department.trim()) {
+   showToast({
+    type: "warning",
+    title: "Department required",
+    message: "Please select a department.",
+   });
+   return;
+  }
 
- if (!department.trim()) {
- showToast({
- type: "warning",
- title: "Department required",
- message: "Please select a department.",
- });
- return;
- }
+  if (!location.trim()) {
+   showToast({
+    type: "warning",
+    title: "Location required",
+    message: "Please enter a location.",
+   });
+   return;
+  }
 
- if (!location.trim()) {
- showToast({
- type: "warning",
- title: "Location required",
- message: "Please enter a location.",
- });
- return;
- }
+  if (!description.trim()) {
+   showToast({
+    type: "warning",
+    title: "Description required",
+    message: "Please provide a job description.",
+   });
+   return;
+  }
 
- if (!description.trim()) {
- showToast({
- type: "warning",
- title: "Description required",
- message: "Please provide a job description.",
- });
- return;
- }
+  const effectiveCompanyId = user?.companyId || company?.id || "default_company";
 
- if (!company?.id) {
- showToast({
- type: "warning",
- title: "Company not found",
- message: "Unable to create this job without company information.",
- });
- return;
- }
+  setIsSubmitting(true);
 
- setIsSubmitting(true);
+  try {
+   const jobData = {
+    id: crypto.randomUUID(),
+    name: title,
+    icon: "work",
+    iconColor: "#408A71",
+    title,
+    companyId: effectiveCompanyId,
+    createdBy: user?.id || "",
+    createdById: user?.id || "",
+    department,
+    location,
+    employmentType,
+    experienceLevel,
+    experience: experienceLevel,
+    status,
+    description,
+    responsibilities,
+    requirements,
+    benefits,
+    skills,
+    salary,
+    applicantsCount: 0,
+    createdAt: new Date().toISOString(),
+   };
 
- try {
- const jobData = {
- id: crypto.randomUUID(),
- name: title,
- icon: "work",
- iconColor: "#408A71",
- title,
- companyId: company.id,
- department,
- location,
- employmentType,
- experienceLevel,
- experience: experienceLevel,
- status,
- description,
- responsibilities,
- requirements,
- benefits,
- skills,
- salary,
- applicantsCount: 0,
- createdAt: new Date().toISOString(),
- };
+   await addJob(jobData as unknown as Job);
 
- await addJob(jobData);
+   showToast({
+    type: "success",
+    title: "Job Created",
+    message: `${title} has been created successfully.`,
+   });
 
- showToast({
- type: "success",
- title: "Job Created",
- message: `${title} has been created successfully.`,
- });
+   setTitle("");
+   setDepartment("");
+   setLocation("");
+   setEmploymentType("Full-time");
+   setExperienceLevel("Junior");
+   setStatus("Active");
+   setSalary("");
+   setDescription("");
+   setResponsibilities([]);
+   setRequirements([]);
+   setBenefits([]);
+   setSkills([]);
 
- setTitle("");
- setDepartment("");
- setLocation("");
- setEmploymentType("Full-time");
- setExperienceLevel("Junior");
- setStatus("Draft");
- setSalary("");
- setDescription("");
- setResponsibilities([]);
- setRequirements([]);
- setBenefits([]);
- setSkills([]);
-
- onClose();
+   onClose();
  } catch (error) {
  console.error("Failed to create job:", error);
 

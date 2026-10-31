@@ -1,4 +1,4 @@
-﻿import { create } from "zustand";
+import { create } from "zustand";
 import { jobs as initialJobs } from "../data/jobs";
 import type { Job } from "../types/job";
 
@@ -11,6 +11,7 @@ import {
   query,
   where,
   deleteDoc,
+  onSnapshot,
 } from "firebase/firestore";
 
 import { db } from "../firebase";
@@ -20,6 +21,7 @@ interface JobStore {
   jobs: Job[];
   setJobs: (jobs: Job[]) => void;
   fetchJobs: () => Promise<void>;
+  subscribeToJobs: () => () => void;
   addJob: (job: Job) => Promise<void>;
   updateJob: (id: string, updatedJob: Partial<Job>) => Promise<void>;
   deleteJob: (id: string) => Promise<void>;
@@ -82,115 +84,133 @@ export const useJobStore = create<JobStore>((set, get) => ({
         ...(docSnap.data() as Job),
         id: docSnap.id,
       }));
-      const jobMap = new Map(
-        (initialJobs as Job[]).map((job) => [job.id, job])
+
+      set((state) => {
+        const jobMap = new Map<string, Job>();
+
+        // 1. Initial mock jobs
+        (initialJobs as Job[]).forEach((job) => jobMap.set(job.id, job));
+
+        // 2. Local state / persisted jobs
+        state.jobs.forEach((job) => jobMap.set(job.id, job));
+
+        // 3. Firestore jobs
+        firebaseJobs.forEach((job) => jobMap.set(job.id, job));
+
+        const jobs = Array.from(jobMap.values());
+        persistJobs(jobs);
+        return { jobs };
+      });
+    } catch (error) {
+      console.warn("Failed to fetch jobs from Firebase (using local storage):", error);
+    }
+  },
+
+  subscribeToJobs: () => {
+    try {
+      const unsub = onSnapshot(
+        collection(db, "jobs"),
+        (snapshot) => {
+          const firebaseJobs = snapshot.docs.map((docSnap) => ({
+            ...(docSnap.data() as Job),
+            id: docSnap.id,
+          }));
+
+          set((state) => {
+            const jobMap = new Map<string, Job>();
+
+            (initialJobs as Job[]).forEach((job) => jobMap.set(job.id, job));
+            state.jobs.forEach((job) => jobMap.set(job.id, job));
+            firebaseJobs.forEach((job) => jobMap.set(job.id, job));
+
+            const jobs = Array.from(jobMap.values());
+            persistJobs(jobs);
+            return { jobs };
+          });
+        },
+        (error) => {
+          console.warn("Firestore jobs realtime listener error:", error);
+        }
       );
 
-      get().jobs.forEach((job) => jobMap.set(job.id, job));
-      firebaseJobs.forEach((job) => jobMap.set(job.id, job));
-
-      const jobs = Array.from(jobMap.values());
-
-      persistJobs(jobs);
-      set({ jobs });
+      return unsub;
     } catch (error) {
-      console.error("Failed to fetch jobs:", error);
+      console.warn("Failed to initialize jobs listener:", error);
+      return () => {};
     }
   },
 
   addJob: async (job) => {
+    // 1. Optimistic update: instantly save to local state and localStorage
+    // This ensures the job is immediately visible and counted regardless of Firebase network/rules
+    set((state) => {
+      const existingIndex = state.jobs.findIndex((j) => j.id === job.id);
+      let nextJobs: Job[];
+      if (existingIndex >= 0) {
+        nextJobs = state.jobs.map((j) => (j.id === job.id ? job : j));
+      } else {
+        nextJobs = [job, ...state.jobs];
+      }
+      persistJobs(nextJobs);
+      return { jobs: nextJobs };
+    });
+
+    // 2. Persist to Firestore
     try {
       await setDoc(doc(db, "jobs", job.id), job);
-
-      set((state) => {
-        const nextJobs = [...state.jobs, job];
-        persistJobs(nextJobs);
-        return { jobs: nextJobs };
-      });
+      console.log(`✅ Job ${job.id} synced to Firestore.`);
     } catch (error) {
-      console.error("Failed to save job to Firebase:", error);
-      throw error;
+      console.warn("Failed to sync job to Firestore (kept locally in storage):", error);
     }
   },
 
   updateJob: async (id, updatedJob) => {
-    try {
-      await updateDoc(doc(db, "jobs", id), updatedJob as Record<string, unknown>);
-
-      set((state) => {
-        const nextJobs = state.jobs.map((job) =>
-          job.id === id ? { ...job, ...updatedJob } : job
-        );
-        persistJobs(nextJobs);
-        return { jobs: nextJobs };
-      });
-    } catch (error) {
-      console.error("Failed to update job:", error);
-      throw error;
-    }
-  },
-/*
-  deleteJob: async (id) => {
-    try {
-      await deleteDoc(doc(db, "jobs", id));
-
-      set((state) => {
-        const nextJobs = state.jobs.filter((job) => job.id !== id);
-        persistJobs(nextJobs);
-        return { jobs: nextJobs };
-      });
-    } catch (error) {
-      console.error("Failed to delete job:", error);
-      throw error;
-    }
-  },
-*/
-
-deleteJob: async (id) => {
-  try {
-    // Find all candidates belonging to this job
-    const candidatesQuery = query(
-      collection(db, "candidates"),
-      where("jobId", "==", id)
-    );
-
-    const candidatesSnapshot = await getDocs(candidatesQuery);
-
-    // Delete all related candidates from Firestore
-    await Promise.all(
-      candidatesSnapshot.docs.map((candidateDoc) =>
-        deleteDoc(candidateDoc.ref)
-      )
-    );
-
-    // Delete the job from Firestore
-    await deleteDoc(doc(db, "jobs", id));
-
-    // Remove the job from local state
+    // 1. Optimistic update
     set((state) => {
-      const nextJobs = state.jobs.filter(
-        (job) => job.id !== id
+      const nextJobs = state.jobs.map((job) =>
+        job.id === id ? { ...job, ...updatedJob } : job
       );
-
       persistJobs(nextJobs);
-
-      return {
-        jobs: nextJobs,
-      };
+      return { jobs: nextJobs };
     });
 
-    console.log(
-      `✅ Job ${id} and ${candidatesSnapshot.size} related candidate(s) deleted.`
-    );
-  } catch (error) {
-    console.error(
-      "Failed to delete job and related candidates:",
-      error
-    );
+    // 2. Sync to Firestore
+    try {
+      await updateDoc(doc(db, "jobs", id), updatedJob as Record<string, unknown>);
+    } catch (error) {
+      console.warn("Failed to update job in Firestore (updated locally):", error);
+    }
+  },
 
-    throw error;
-  }
-},
+  deleteJob: async (id) => {
+    // 1. Optimistic local removal
+    set((state) => {
+      const nextJobs = state.jobs.filter((job) => job.id !== id);
+      persistJobs(nextJobs);
+      return { jobs: nextJobs };
+    });
+
+    // 2. Remove from Firestore
+    try {
+      const candidatesQuery = query(
+        collection(db, "candidates"),
+        where("jobId", "==", id)
+      );
+
+      const candidatesSnapshot = await getDocs(candidatesQuery);
+
+      await Promise.all(
+        candidatesSnapshot.docs.map((candidateDoc) =>
+          deleteDoc(candidateDoc.ref)
+        )
+      );
+
+      await deleteDoc(doc(db, "jobs", id));
+      console.log(`✅ Job ${id} and candidates deleted from Firestore.`);
+    } catch (error) {
+      console.warn("Failed to delete job from Firestore (deleted locally):", error);
+    }
+  },
 
   duplicateJob: (id) => {
     set((state) => {
@@ -205,7 +225,7 @@ deleteJob: async (id) => {
         createdAt: new Date().toISOString(),
       };
 
-      const nextJobs = [...state.jobs, duplicatedJob];
+      const nextJobs = [duplicatedJob, ...state.jobs];
       persistJobs(nextJobs);
       return { jobs: nextJobs };
     });
@@ -242,3 +262,10 @@ deleteJob: async (id) => {
     set(() => ({ jobs: [] }));
   },
 }));
+
+// Automatically fetch latest jobs from Firestore in background when running in browser
+if (typeof window !== "undefined") {
+  setTimeout(() => {
+    useJobStore.getState().fetchJobs().catch(() => {});
+  }, 100);
+}

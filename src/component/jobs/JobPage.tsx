@@ -15,8 +15,18 @@ import { findCurrentMember, getVisibleJobs } from "../../utils/roleBasedDataFilt
 
 const JobPage = () => {
  const jobs = useJobStore((state) => state.jobs);
+ const fetchJobs = useJobStore((state) => state.fetchJobs);
+ const subscribeToJobs = useJobStore((state) => state.subscribeToJobs);
  const user = useAuthStore((state) => state.user);
  const members = useTeamStore((state) => state.members);
+
+ useEffect(() => {
+  fetchJobs();
+  const unsub = subscribeToJobs?.();
+  return () => {
+   unsub?.();
+  };
+ }, [fetchJobs, subscribeToJobs]);
 
  // Find current team member (matches both email AND companyId for multi-company support)
  const currentMember = findCurrentMember(members, user);

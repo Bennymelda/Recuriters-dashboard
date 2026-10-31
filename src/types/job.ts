@@ -20,9 +20,10 @@ companyId: string;
  benefits: string[];
  skills: string[];
 
- salary: string;
+  salary: string;
+  createdBy?: string;
+  createdById?: string;
+  applicantsCount?: number;
 
- 
-
- createdAt: string;
+  createdAt: string;
 }

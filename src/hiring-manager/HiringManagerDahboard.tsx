@@ -6,7 +6,7 @@ import { useAuthStore } from "../store/authStore";
 import { findCurrentMember, getVisibleJobs, getVisibleCandidates } from "../utils/roleBasedDataFiltering";
 import MoveStageModal from "../component/pipeline/MoveStageModal";
 import type { Candidate } from "../types/candidate";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import HiringOverview from "./HiringStas";
 
 import HiringApprovalRequests from "./HiringReview";
@@ -22,7 +22,15 @@ const HiringManagerDashboard = () => {
  const user = useAuthStore((state) => state.user);
  const members = useTeamStore((state) => state.members);
  const jobs = useJobStore((state) => state.jobs);
+ const fetchJobs = useJobStore((state) => state.fetchJobs);
  const candidates = useCandidateStore((state) => state.candidates);
+ const fetchCandidates = useCandidateStore((state) => state.fetchCandidates);
+
+ useEffect(() => {
+  fetchJobs();
+  fetchCandidates();
+ }, [fetchJobs, fetchCandidates]);
+
 const [selectedCandidate, setSelectedCandidate] =
  useState<Candidate | null>(null);
 const createOffer = useCandidateStore(

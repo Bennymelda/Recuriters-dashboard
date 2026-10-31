@@ -7,7 +7,7 @@ import DescriptionSection from "./JobForm/DesriptionSection";
 import { useState, useEffect } from "react";
 import type { Job } from "../../types/job";
 import { useJobStore } from "../../store/jobStore";
-
+import { useAuthStore } from "../../store/authStore";
 import { useToastStore } from "../toast/toastStore";
 import { useCompanyStore } from "../../store/companyStore";
 interface JobFormProps {
@@ -16,6 +16,7 @@ interface JobFormProps {
  job: Job; // Optional job prop for editing
 }
 const EditJobForm = ({ mode, onClose, job }: JobFormProps) => {
+const user = useAuthStore((state) => state.user);
 const [title, setTitle] = useState(job?.title ?? "");
 const [department, setDepartment] = useState(job?.department ?? "");
 const [location, setLocation] = useState(job?.location ?? "");
@@ -26,7 +27,7 @@ const [experienceLevel, setExperienceLevel] =
  useState<Job["experienceLevel"]>(job?.experienceLevel ?? "Junior");
 
 const [status, setStatus] =
- useState<Job["status"]>(job?.status ?? "Draft");
+ useState<Job["status"]>(job?.status ?? "Active");
 
 const [salary, setSalary] = useState(job?.salary ?? "");
 const [description, setDescription] = useState(job?.description ?? "");
@@ -59,29 +60,31 @@ const handleSubmit = (e: React.FormEvent) => {
 
  if (!title.trim()) return;
 
+ const effectiveCompanyId = user?.companyId || company?.id || "default_company";
+
  const jobData = {
- name: title,
- icon: "work",
- iconColor: "#408A71",
- title,
- companyId: company.id,
- department,
- location,
- employmentType,
- experienceLevel,
- experience: experienceLevel,
- status,
- description,
- responsibilities,
- requirements,
- benefits,
- skills,
- salary,
- applicantsCount: 0,
- createdAt: new Date().toISOString(),
-};
-
-
+  name: title,
+  icon: job?.icon || "work",
+  iconColor: job?.iconColor || "#408A71",
+  title,
+  companyId: job?.companyId || effectiveCompanyId,
+  createdBy: (job as unknown as { createdBy?: string })?.createdBy || user?.id || "",
+  createdById: (job as unknown as { createdById?: string })?.createdById || user?.id || "",
+  department,
+  location,
+  employmentType,
+  experienceLevel,
+  experience: experienceLevel,
+  status,
+  description,
+  responsibilities,
+  requirements,
+  benefits,
+  skills,
+  salary,
+  applicantsCount: (job as unknown as { applicantsCount?: number })?.applicantsCount ?? 0,
+  createdAt: job?.createdAt ?? new Date().toISOString(),
+ };
 
   if (mode === "create") {
  addJob({

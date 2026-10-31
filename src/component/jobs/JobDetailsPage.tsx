@@ -11,7 +11,7 @@ import {
 import { useCandidateStore } from "../../store/candidateStore";
 import { useJobStore } from "../../store/jobStore";
 import { useAuthStore } from "../../store/authStore";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Modal from "../ui/Modal";
 import EditJobForm from "./EditJobModal";
 import { FiEdit } from "react-icons/fi";
@@ -49,21 +49,17 @@ const showToast = useToastStore((state) => state.showToast);
  const { id } = useParams();
 const [deleteOpen, setDeleteOpen] = useState(false);
  const jobs = useJobStore((state) => state.jobs);
+ const fetchJobs = useJobStore((state) => state.fetchJobs);
 const [isEditOpen, setIsEditOpen] = useState(false);
+
+useEffect(() => {
+ fetchJobs();
+}, [fetchJobs]);
+
  const job = jobs.find((j) => j.id === id);
 const candidates = useCandidateStore(
  (state) => state.candidates
 );
-if (!job) return null;
-const applicantsCount = candidates.filter(
- (candidate) => candidate.jobId === job.id
-).length;
-
-const publicAppUrl = (
- import.meta.env.VITE_PUBLIC_APP_URL ||
- "https://recuriters-dashboard.onrender.com"
-).replace(/\/$/, "");
-const jobLink = `${publicAppUrl}/apply/${job.id}`;
 
  if (!job) {
  return (
@@ -83,6 +79,16 @@ const jobLink = `${publicAppUrl}/apply/${job.id}`;
 </div>
  );
  }
+
+ const applicantsCount = candidates.filter(
+ (candidate) => candidate.jobId === job.id
+ ).length;
+
+ const publicAppUrl = (
+ import.meta.env.VITE_PUBLIC_APP_URL ||
+ "https://recuriters-dashboard.onrender.com"
+ ).replace(/\/$/, "");
+ const jobLink = `${publicAppUrl}/apply/${job.id}`;
 
  return (
  <div className="space-y-8">

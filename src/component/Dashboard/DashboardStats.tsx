@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import {
     MdWork,
     MdPeople,
@@ -8,6 +9,9 @@ import {
 
 import { useJobStore } from "../../store/jobStore";
 import { useCandidateStore } from "../../store/candidateStore";
+import { useAuthStore } from "../../store/authStore";
+import { useTeamStore } from "../../store/teamStore";
+import { findCurrentMember, getVisibleJobs, getVisibleCandidates } from "../../utils/roleBasedDataFiltering";
 import { GoArrowUpRight } from "react-icons/go";
 import { AiOutlineRise } from "react-icons/ai";
 
@@ -15,20 +19,33 @@ import { useNavigate } from "react-router";
 
 const DashboardStats = () => {
     const jobs = useJobStore((state) => state.jobs);
+    const fetchJobs = useJobStore((state) => state.fetchJobs);
     const candidates = useCandidateStore((state) => state.candidates);
+    const fetchCandidates = useCandidateStore((state) => state.fetchCandidates);
+    const user = useAuthStore((state) => state.user);
+    const members = useTeamStore((state) => state.members);
 
-    const activeJobs = jobs.filter(
+    useEffect(() => {
+        fetchJobs();
+        fetchCandidates();
+    }, [fetchJobs, fetchCandidates]);
+
+    const currentMember = findCurrentMember(members, user);
+    const visibleJobs = getVisibleJobs(jobs, user, currentMember);
+    const visibleCandidates = getVisibleCandidates(candidates, user, currentMember);
+
+    const activeJobs = visibleJobs.filter(
         (job) => job.status === "Active"
     ).length;
 
-    const totalCandidates = candidates.length;
+    const totalCandidates = visibleCandidates.length;
 
     const interviewsToday = 0; // Replace later
-    const offersSent = candidates.filter(
+    const offersSent = visibleCandidates.filter(
         (candidate) => candidate.status === "Offer"
     ).length;
 
-    const hired = candidates.filter(
+    const hired = visibleCandidates.filter(
         (candidate) => candidate.status === "Hired"
     ).length;
 
