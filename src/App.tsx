@@ -29,6 +29,7 @@ import HiringManagerDashboard from './hiring-manager/HiringManagerDahboard';
 import CandidateOffer from './component/Candidates/CandidateOffer';
 import RecruiterDashboard from './Recuriter/RecuriterDashboard';
 import RecruiterOfferPage from './Recuriter/RecruiterOfferPage';
+import ToastContainer from './component/toast/ToastContainer';
 //import RecruiterOffers from './Recuriter/RecruiterOffer';
 
 function App() {
@@ -39,7 +40,9 @@ function App() {
   }, [pathname]);
 
   return (
-    <Routes>
+    <>
+      <ToastContainer />
+      <Routes>
       {/* PUBLIC ROUTES */}
       <Route path="/" element={<Home />} />
       <Route path="/signup" element={<Signup />} />
@@ -134,6 +137,7 @@ function App() {
         </Route>
       </Route>
     </Routes>
+    </>
   );
 }
 

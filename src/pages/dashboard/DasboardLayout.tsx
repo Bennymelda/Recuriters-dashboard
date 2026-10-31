@@ -1,5 +1,4 @@
 import { Outlet } from "react-router-dom";
-import ToastContainer from "../../component/toast/ToastContainer";
 import Sidebar from "../sidebar/Sidebar";
 import Header from "../header/Header";
 import { useState } from "react";
@@ -28,8 +27,6 @@ const DashboardLayout = () => {
  <main className="flex-1 overflow-hidden p-4 lg:p-6">
  <Outlet />
  </main>
-
- <ToastContainer />
 
  </div>
  </div>

@@ -302,6 +302,9 @@ dark:ring-zinc-900
  View Profile
  </button>
 
+
+
+
  {/* MOVE STAGE — RECRUITER ONLY */}
  {user?.role === "Recruiter" && (
  <button
@@ -602,6 +605,9 @@ dark:text-zinc-300
 </div>
 
 )}
+
+
+
  {/* Footer */}
 
  <div

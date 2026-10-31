@@ -291,7 +291,7 @@ const CandidateOffer = () => {
           {offer.status === "Accepted" && (
             <div className="mt-12 border-t border-zinc-200 pt-8 text-center dark:border-zinc-700">
               <p className="text-lg font-semibold text-emerald-700 dark:text-emerald-400">
-                ✓ Offer Accepted
+                 Offer Accepted
               </p>
 
               <p className="mt-2 text-sm leading-6 text-emerald-600 dark:text-emerald-500">

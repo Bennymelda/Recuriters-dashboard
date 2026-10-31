@@ -2,6 +2,7 @@ import {
  MdCheckCircle,
  MdError,
  MdInfo,
+ MdWarning,
  MdClose,
 } from "react-icons/md";
 import { useToastStore } from "../../store/toastStore";
@@ -21,6 +22,11 @@ const Toast = () => {
  icon: <MdError size={24} />,
  color: "text-red-600",
  border: "border-red-500",
+ },
+ warning: {
+ icon: <MdWarning size={24} />,
+ color: "text-amber-600",
+ border: "border-amber-500",
  },
  info: {
  icon: <MdInfo size={24} />,
